@@ -1,0 +1,412 @@
+<title>Карта комплекта Accelerator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: одна колонка 760px, закреплённое оглавление не нужно; разделы идут по порядку прохождения. */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --fg:#1c2421; --muted:#5b6762; --line:#d9dfdb;
+  --accent:#0f6b5c; --accent-soft:#dcefe9; --code-bg:#eceff0; --ok:#1d7a3f; --ok-soft:#dcf1e3;
+  --warn:#9a5b00; --warn-soft:#fbecd0; --bad:#a3302a; --bad-soft:#f8dcd9;
+  --display:'IBM Plex Serif',Georgia,serif; --body:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --surface:#1a211f; --fg:#e6ebe8; --muted:#9aa7a1; --line:#2d3834;
+  --accent:#5cc7b0; --accent-soft:#1c3a34; --code-bg:#232c29; --ok:#6fd194; --ok-soft:#173424;
+  --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --surface:#1a211f; --fg:#e6ebe8; --muted:#9aa7a1; --line:#2d3834;
+  --accent:#5cc7b0; --accent-soft:#1c3a34; --code-bg:#232c29; --ok:#6fd194; --ok-soft:#173424;
+  --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:2rem;font-weight:600}
+h2{font-size:1.4rem;font-weight:600;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:1.05rem;font-weight:600;margin-top:20px}
+p{margin:.6em 0}
+a{color:var(--accent)}
+code{font:0.88em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+pre{font:0.85rem/1.55 var(--mono);background:var(--code-bg);padding:14px 16px;border-radius:6px;overflow-x:auto;margin:10px 0;white-space:pre}
+pre code{background:none;padding:0}
+.lede{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font:500 .78rem var(--mono);padding:3px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.tablewrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:520px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font:500 .75rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.s{font:500 .75rem var(--mono);padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block}
+.s.ok{background:var(--ok-soft);color:var(--ok)} .s.todo{background:var(--warn-soft);color:var(--warn)} .s.no{background:var(--bad-soft);color:var(--bad)} .s.opt{background:var(--code-bg);color:var(--muted)}
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.95rem}
+.note.info{border-color:var(--accent);background:var(--accent-soft)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:14px 0}
+.flow div{flex:1 1 150px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:.9rem}
+.flow b{display:block;font:500 .8rem var(--mono);color:var(--accent);margin-bottom:2px}
+ol.steps{padding-left:1.3em;margin:8px 0} ol.steps li{margin:6px 0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin:10px 0}
+summary{cursor:pointer;font-weight:500}
+summary:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.copy{font:500 .85rem var(--body);background:var(--accent);color:var(--bg);border:0;border-radius:6px;padding:8px 14px;cursor:pointer}
+.copy[data-done]{background:var(--ok)}
+.promptbox{position:relative}
+.toolbar{display:flex;justify-content:flex-end;margin-bottom:-4px}
+@media (max-width:480px){h1{font-size:1.6rem}}
+</style>
+
+<main>
+<header>
+  <p class="chip" style="display:inline-block;margin:0 0 12px">версия 0.18.0 · комплект сертификации</p>
+  <h1>Карта комплекта Accelerator</h1>
+  <p class="lede">Что лежит в комплекте, как его поставить, как пройти упражнения 01–03 и как перенести всё на другой проект. Собрано из файлов в <code>E:\accelerator-kit</code> и из состояния машины на 5 ноября 2026.</p>
+  <div class="chips"><span class="chip">pwsh 7.6.9</span><span class="chip">git 2.55.0</span><span class="chip">Python 3.11.9</span><span class="chip">dbt 1.7.9 + duckdb 1.7.5</span><span class="chip">каталог v1.3.0</span></div>
+</header>
+
+<section id="what">
+  <h2>Что такое Accelerator</h2>
+  <p>Accelerator кладёт в проект небольшой набор навыков для AI-агента из общего каталога. Навык — это файл <code>SKILL.md</code>, по которому агент (Claude Code, Codex или Cursor) выполняет один вид задач.</p>
+  <div class="flow">
+    <div><b>1 · scan</b>читает проект, пишет <code>profile.draft.json</code></div>
+    <div><b>2 · анкета</b>навык <code>accelerator-setup</code> спрашивает то, чего скан не знает, пишет <code>profile.json</code></div>
+    <div><b>3 · install</b>копирует навыки в <code>.claude/skills/</code>, пишет <code>registry.json</code></div>
+  </div>
+  <p><code>install</code> ничего не спрашивает и не использует AI: один и тот же профиль всегда даёт один и тот же набор.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Слово</th><th>Что это</th></tr>
+    <tr><td>Артефакт</td><td>Одна запись в каталоге. Сейчас все артефакты — навыки.</td></tr>
+    <tr><td>Профиль</td><td><code>.accelerator/profile.json</code>: факты о проекте плюс ответы анкеты. Его коммитят.</td></tr>
+    <tr><td>Черновик</td><td><code>profile.draft.json</code>: результат <code>scan</code>. Установить из него нельзя.</td></tr>
+    <tr><td>Реестр</td><td><code>registry.json</code>: что поставил <code>install</code> и почему.</td></tr>
+    <tr><td><code>applies_to</code></td><td>Условия стека, которые навык заявляет. Если хоть одно не совпало с профилем, навык отфильтрован. <code>{}</code> значит «подходит всем».</td></tr>
+    <tr><td><code>strength</code></td><td><code>always</code> ставится сам в любой подходящий проект. <code>on-demand</code> ставится, только если его id выбрали. В каталоге v1.3.0 один <code>always</code>: <code>DOCKER-DATA-LOSS-CONFIRMATION</code>.</td></tr>
+    <tr><td><code>scope</code></td><td><code>project</code> идёт в профиль проекта, <code>user</code> — в личный <code>profile.user.json</code>, который не коммитят.</td></tr>
+    <tr><td>Фильтр и выбор</td><td>Фильтр решает, какие карточки показать. Выбор — то, что человек отметил. Ставится только выбранное.</td></tr>
+  </table></div>
+</section>
+
+<section id="kit">
+  <h2>Что в комплекте</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Файл</th><th>Для чего</th></tr>
+    <tr><td><code>README.md</code>, <code>README.ru.md</code></td><td>Общая картина, порядок прохождения, требования к упражнению 03.</td></tr>
+    <tr><td><code>installation/install-accelerator.ps1</code></td><td>Ставит команду <code>accelerator</code> и навык <code>accelerator-setup</code>. Нужен именно он, а не <code>install.ps1</code> или <code>install.sh</code>.</td></tr>
+    <tr><td><code>installation/accelerator-0.18.0.tar.gz</code> и <code>.zip</code>, <code>sha256.json</code></td><td>Архив и контрольная сумма. Скрипт находит их рядом с собой.</td></tr>
+    <tr><td><code>exercises/certification-setup.md</code> и <code>.ru.md</code></td><td>Пошаговое руководство от установки до конца упражнения 02.</td></tr>
+    <tr><td><code>exercises/epic-01-onboard-a-project.md</code></td><td>Упражнение 01: профиль и установка навыков.</td></tr>
+    <tr><td><code>exercises/epic-02-apply-a-skill.md</code></td><td>Упражнение 02: тесты dbt по навыку и разбор падений.</td></tr>
+    <tr><td><code>exercises/epic-03-author-an-artifact.md</code></td><td>Упражнение 03, необязательное: написать свой навык.</td></tr>
+    <tr><td><code>exercises/fixture/</code></td><td>Учебный dbt-проект, шесть файлов. Его копируют и работают с копией.</td></tr>
+    <tr><td><code>exercises/epic-02-data/</code></td><td>Два CSV и <code>ORDER-STATUSES.md</code> для упражнения 02. Лежат вне <code>fixture/</code> нарочно: <code>seeds/</code> при скане изменил бы ответы упражнения 01.</td></tr>
+  </table></div>
+</section>
+
+<section id="install">
+  <h2>Установка</h2>
+  <h3>Перед установкой</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Проверка</th><th>Команда</th><th>Здесь</th></tr>
+    <tr><td>PowerShell 7</td><td><code>pwsh --version</code></td><td><span class="s ok">7.6.9</span></td></tr>
+    <tr><td>Git 2.45.1+</td><td><code>git --version</code></td><td><span class="s ok">2.55.0</span></td></tr>
+    <tr><td>Python 3.9–3.11</td><td><code>py -3.11 --version</code></td><td><span class="s ok">3.11.9</span></td></tr>
+    <tr><td>Claude Code</td><td><code>claude --version</code></td><td><span class="s ok">2.1.206</span></td></tr>
+    <tr><td>Сеть до GitHub</td><td><code>git ls-remote https://github.com/innowise-ai/data-accelerator-toolset.git</code></td><td><span class="s todo">не перепроверено</span></td></tr>
+  </table></div>
+  <div class="note">В PATH по умолчанию стоит Python 3.9.0 на диске C, а <code>py</code> без аргументов выбирает 3.13 из Anaconda. dbt 1.7 на 3.13 не работает. Окружение создавайте через <code>py -3.11 -m venv .venv</code>.</div>
+  <h3>Команда установки</h3>
+<pre><code>pwsh -File install-accelerator.ps1 --agent claude</code></pre>
+  <p>Запускать из распакованной папки <code>installation</code>. После установки откройте новое окно терминала и перезапустите Claude Code: открытая сессия новый навык не подхватит. Если PowerShell не запускает скрипт: <code>Set-ExecutionPolicy -Scope Process Bypass -Force</code>.</p>
+  <h3>Проверка</h3>
+<pre><code>accelerator --version     # 0.18.0 и пути лаунчера, модуля, pwsh, git
+accelerator               # справка: значит, модуль импортируется</code></pre>
+  <p>В новой сессии <code>claude</code> введите <code>/</code>: в меню должен быть <code>/accelerator:accelerator-setup</code>.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Что</th><th>Где стоит</th><th>Статус</th></tr>
+    <tr><td>Команда <code>accelerator</code></td><td><code>E:\accelerator\bin\accelerator.ps1</code></td><td><span class="s ok">0.18.0</span></td></tr>
+    <tr><td>Плагин <code>accelerator@accelerator-installation</code></td><td>источник <code>E:\accelerator</code>, область user</td><td><span class="s ok">включён</span></td></tr>
+    <tr><td>Навык <code>accelerator-setup</code></td><td><code>E:\accelerator\skills\accelerator-setup\SKILL.md</code></td><td><span class="s ok">виден в новом чате</span></td></tr>
+    <tr><td>Старая установка в <code>%LOCALAPPDATA%</code></td><td>—</td><td><span class="s ok">удалена</span></td></tr>
+    <tr><td>Учебный проект</td><td><code>E:\orders-analytics</code></td><td><span class="s ok">на месте</span></td></tr>
+  </table></div>
+</section>
+
+<section id="path">
+  <h2>Весь путь по порядку</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Этап</th><th>Что делаете</th><th>Статус</th></tr>
+    <tr><td>Установка</td><td><code>install-accelerator.ps1 --agent claude</code>, проверка версии</td><td><span class="s ok">готово</span></td></tr>
+    <tr><td>01 · шаг 2–3</td><td>Копия <code>fixture</code>, <code>accelerator scan -ToolsetRef refs/tags/v1.3.0</code></td><td><span class="s ok">готово</span></td></tr>
+    <tr><td>01 · шаг 4</td><td><code>accelerator install</code> на черновике: ожидаемая ошибка <code>Profile not found</code></td><td><span class="s ok">готово</span></td></tr>
+    <tr><td>01 · шаг 5</td><td>Анкета: агент <code>claude-code</code>, темы <code>testing</code> и <code>data-quality</code>, три карточки</td><td><span class="s ok">готово</span></td></tr>
+    <tr><td>01 · шаг 6</td><td><code>accelerator install</code>, чтение реестра, ответы (a), (b), (c)</td><td><span class="s todo">ответы не записаны</span></td></tr>
+    <tr><td>01 · шаг 8</td><td>Необязательный эксперимент со Snowflake</td><td><span class="s opt">пропущен</span></td></tr>
+    <tr><td>02 · шаг 1</td><td><code>.venv</code> на 3.11, одна команда pip, <code>dbt debug</code></td><td><span class="s ok">готово</span></td></tr>
+    <tr><td>02 · шаг 2</td><td>Сиды, замена <code>source</code> на <code>ref</code>, <code>dbt seed</code>, <code>dbt build</code> зелёный</td><td><span class="s ok">PASS=9</span></td></tr>
+    <tr><td>02 · шаг 3</td><td>Прочитать <code>SKILL.md</code> навыка <code>DBT-MODEL-TESTING</code></td><td><span class="s todo">в процессе</span></td></tr>
+    <tr><td>02 · шаг 4</td><td>Фраза агенту, ревью диффа</td><td><span class="s todo">ждёт</span></td></tr>
+    <tr><td>02 · шаги 5–6</td><td><code>dbt test</code>, разбор падений, три заметки</td><td><span class="s todo">ждёт</span></td></tr>
+    <tr><td>03</td><td>Свой артефакт (по желанию)</td><td><span class="s opt">не начато</span></td></tr>
+  </table></div>
+  <div class="note info">Нумерация: в разговоре «шаг 4» и «шаг 5» — это шаг 3 и шаг 4 в тексте упражнения 02. Здесь используется нумерация документа.</div>
+</section>
+
+<section id="ex01">
+  <h2>Упражнение 01. Профиль и установка</h2>
+  <p>30 минут, шаг 8 добавляет около 15. Нужен рабочий <code>accelerator</code> и доступ к github.com.</p>
+  <h3>Шаг 3. Сначала предскажите, потом сканируйте</h3>
+  <p>Запишите заранее: какие языки найдёт скан, какие фреймворки и найдёт ли Snowflake. Затем:</p>
+<pre><code>accelerator scan -ToolsetRef refs/tags/v1.3.0</code></pre>
+  <p>Ожидаемый результат: языки <code>python</code> и <code>sql</code> (первый из <code>requirements.txt</code>, второй из моделей), фреймворк <code>dbt</code> (два сигнала: <code>dbt-core</code> и <code>dbt_project.yml</code>), Snowflake не найден. В черновике это видно: <code>test_runner: pytest</code>, <code>layout: single</code>, <code>uncertain: ["stack.languages"]</code>.</p>
+  <h3>Шаг 4. Установка из черновика не работает</h3>
+  <p>В <code>provenance</code> черновика три поля <code>unanswered</code>: <code>agents</code>, <code>intents</code>, <code>selected_artifacts</code>. <code>accelerator install</code> отвечает <code>Profile not found: …/profile.json</code> и указывает на навык настройки. Это правильный результат.</p>
+  <h3>Шаг 5. Анкета</h3>
+<pre><code>claude
+/accelerator:accelerator-setup</code></pre>
+  <ol class="steps">
+    <li>Языки и фреймворки: принять <code>python</code>, <code>sql</code>, <code>dbt</code>. Snowflake не добавлять.</li>
+    <li>Темы: <code>testing</code> и <code>data-quality</code>.</li>
+    <li>Карточек будет восемь, взять три: «Pick dbt schema tests for each column role» (<code>DBT-MODEL-TESTING</code>), «Define what belongs in each dbt layer» (<code>DBT-LAYER-BOUNDARIES</code>), «Test pipeline code with pytest, mocking I/O» (<code>PYTEST-DATA-PIPELINES</code>).</li>
+    <li>Агент: <code>claude-code</code>. С пустым <code>agents</code> профиль нельзя установить.</li>
+  </ol>
+  <p>Агент должен назвать навык <code>accelerator-setup</code> до начала работы. Если строки нет, навык не сработал.</p>
+  <h3>Шаг 6. Установка и три вопроса</h3>
+  <p>После <code>accelerator install</code> в реестре три навыка, у каждого <code>"strength": "on-demand"</code>. Ответьте письменно:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Вопрос</th><th>Мой вывод из правил отбора</th></tr>
+    <tr><td><b>(a)</b> Почему <code>AIRFLOW-DAG-STRUCTURE</code> не было среди восьми карточек?</td><td>У него <code>applies_to: {"frameworks":["airflow"]}</code>, а в профиле нет <code>airflow</code>. Одно несовпавшее условие отфильтровывает навык.</td></tr>
+    <tr><td><b>(b)</b> Почему <code>DATA-INCIDENT-TRACING</code> с <code>applies_to: {}</code> показали?</td><td>Пустое <code>applies_to</code> подходит любому стеку, а его темы <code>debugging</code> и <code>data-quality</code> пересекаются с выбранной вами <code>data-quality</code>.</td></tr>
+    <tr><td><b>(c)</b> Что сделал бы <code>always</code>-навык? Есть ли такой в каталоге?</td><td><code>always</code> ставится в любой подходящий проект без выбора. По тестам упражнения 03 в каталоге ровно один: <code>DOCKER-DATA-LOSS-CONFIRMATION</code>. Ему нужен Docker в профиле, поэтому здесь он не встал.</td></tr>
+  </table></div>
+  <div class="note">В документе ответов нет. Это мой вывод из правил и из файла <code>catalog-topics.json</code>, сверьте его с сертификатором на ревью.</div>
+  <h3>Шаг 7. Три способа ошибиться с id</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Что сделали не так</th><th>Что происходит</th></tr>
+    <tr><td>Указали id, которого нет в каталоге</td><td><span class="s no">ошибка</span></td></tr>
+    <tr><td>Указали навык с <code>scope: user</code> в проектном выборе</td><td><span class="s no">ошибка</span></td></tr>
+    <tr><td>Указали существующий навык, чей <code>applies_to</code> не совпал с профилем</td><td><span class="s todo">тишина</span>: навык отброшен, установка «успешна»</td></tr>
+  </table></div>
+  <h3>Шаг 8 (по желанию). Меняем одно поле и предсказываем разницу</h3>
+  <p>Добавить <code>snowflake</code> в <code>stack.frameworks</code>, поставить <code>intents</code> в <code>["performance"]</code>, выбрать <code>DBT-INCREMENTAL-STRATEGY</code> и три <code>SNOWFLAKE-*</code>. Перед <code>install</code> записать, сколько навыков встанет и что будет с исходными тремя. Потом убрать только слово <code>snowflake</code> и предсказать реестр ещё раз.</p>
+  <h3>Вопросы для самопроверки</h3>
+  <ul>
+    <li>Почему черновик нельзя установить и какие три поля этому мешают?</li>
+    <li>Чем «навык прошёл фильтр» отличается от «навык выбран»?</li>
+    <li>Почему скан никогда не угадывает <code>intents</code>?</li>
+    <li>Назовите то, чего скан знать не может, но что меняет набор.</li>
+    <li>Какая ошибка в <code>selected_artifacts</code> не даёт ни ошибки, ни предупреждения?</li>
+  </ul>
+  <h3>Если не сработало</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Симптом</th><th>Причина</th></tr>
+    <tr><td><code>install</code> не может разрешить каталог, ошибка похожа на неверный тег</td><td>Обычно соединение: прокси или файрвол. Повторите <code>git ls-remote</code>.</td></tr>
+    <tr><td>Скан не нашёл фреймворков</td><td>Вы не в копии учебного проекта.</td></tr>
+    <tr><td><code>install</code> пишет, что агент не указан</td><td>Пустой <code>agents</code>. Ответьте <code>claude-code</code>.</td></tr>
+  </table></div>
+</section>
+
+<section id="ex02">
+  <h2>Упражнение 02. Применить навык</h2>
+  <p>90 минут. Агент пишет тесты, вы проверяете его работу по тексту навыка. Начинается с профиля и реестра, которые оставило упражнение 01.</p>
+  <h3>Шаг 1. Окружение</h3>
+<pre><code>py -3.11 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt "dbt-duckdb==1.7.5"
+pip check          # No broken requirements found
+dbt debug          # All checks passed!</code></pre>
+  <p>Манифест и адаптер ставятся <b>одной</b> командой. Вторая команда <code>pip</code> заменит dbt-core, напечатает ошибку и всё равно завершится успешно; сломается всё на следующем вызове <code>dbt</code>: <code>No module named 'dbt.adapters.factory'</code>. Лечение одно: удалить <code>.venv</code> и поставить заново. В <code>requirements.txt</code> <code>dbt-duckdb</code> не добавлять, иначе изменится профиль.</p>
+  <p>Файл <code>profiles.yml</code> лежит в корне проекта:</p>
+<pre><code>orders_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: orders.duckdb</code></pre>
+  <h3>Шаг 2. Данные с изъянами</h3>
+  <p>Скопировать <code>seeds/</code> и <code>ORDER-STATUSES.md</code>, заменить <code>source('shop','raw_orders')</code> на <code>ref('raw_orders')</code> (и то же для клиентов), удалить блок <code>sources:</code> из <code>schema.yml</code>, затем <code>dbt seed</code> и <code>dbt build</code>. Всё это делает <code>_steps\step3.ps1</code>. Результат: 4 клиента, 7 заказов, <code>PASS=9 WARN=0 ERROR=0</code>.</p>
+  <p>Зелёная сборка не значит, что данные в порядке. В сидах два дефекта:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Строка</th><th>Что не так</th><th>Какой тест поймает</th></tr>
+    <tr><td>Заказ <code>O1005</code></td><td><code>customer_id = C999</code>, такого клиента нет</td><td><code>relationships</code></td></tr>
+    <tr><td>Заказ <code>O1006</code></td><td>статус <code>refunded</code>, которого нет в согласованных</td><td><code>accepted_values</code></td></tr>
+  </table></div>
+  <p>Согласованные статусы (март 2024): <code>pending</code>, <code>shipped</code>, <code>completed</code>, <code>cancelled</code>. Обычный путь <code>pending → shipped → completed</code>; <code>cancelled</code> конечный и следует только за <code>pending</code>.</p>
+  <h3>Шаг 3. Прочитайте навык до агента</h3>
+  <p>После запуска агента сравнивать его работу будет не с чем. Откройте <code>.claude/skills/DBT-MODEL-TESTING/SKILL.md</code>, затем проверьте: список YAML с тестами в <code>models/</code>, есть ли <code>packages.yml</code> (нет, значит тестов <code>dbt_utils</code> здесь не будет). Запишите правило выбора столбцов и два анти-паттерна.</p>
+  <details><summary>Что в навыке (конспект)</summary>
+    <div class="tablewrap"><table>
+      <tr><th>Роль столбца</th><th>Тесты</th></tr>
+      <tr><td>Первичный ключ</td><td><code>unique</code> и <code>not_null</code> вместе: это выражение зерна модели</td></tr>
+      <tr><td>Внешний ключ</td><td><code>not_null</code>, <code>relationships</code></td></tr>
+      <tr><td>Категориальный</td><td><code>accepted_values</code>; значения подтверждает владелец данных, а не сегодняшние строки</td></tr>
+      <tr><td>Обязательное бизнес-поле</td><td><code>not_null</code></td></tr>
+    </table></div>
+    <p>Упавший тест чаще прав: сначала посмотрите строки (<code>dbt show --inline</code>), потом решайте. <code>severity: warn</code> не прячет настоящие падения.</p>
+    <p>Анти-паттерны: <code>dbt_utils</code> без проверки <code>packages.yml</code>; <code>unique</code> без <code>not_null</code> на ключе; ослабить тест, не выяснив причину; <code>accepted_values</code> из сегодняшних значений; настоящее падение в <code>warn</code>; тесты только на очевидных столбцах; модели без тестов.</p>
+  </details>
+  <h3>Шаг 4. Агент пишет, вы проверяете</h3>
+  <p>В чат с агентом отправьте ровно это, ничего не добавляя и не вставляя правила навыка:</p>
+<pre><code>Add tests to models/schema.yml</code></pre>
+  <p>Затем откройте дифф и для каждого теста назовите правило навыка, которое его оправдывает. Итог должен содержать:</p>
+  <ul>
+    <li>тесты на <code>stg_customers</code>: <code>unique</code> и <code>not_null</code> на <code>customer_id</code>;</li>
+    <li><code>relationships</code> на <code>stg_orders.customer_id</code> к <code>stg_customers</code>, но не <code>unique</code>;</li>
+    <li><code>accepted_values</code> на <code>stg_orders.status</code>; выясните, откуда взят список значений;</li>
+    <li>больше покрытия на <code>fct_daily_orders</code>, чем один <code>order_date</code>;</li>
+    <li>ни одного теста из <code>dbt_utils</code> или <code>dbt_expectations</code>.</li>
+  </ul>
+  <p>«Выглядит правильно» ревью не считается. Назовите один столбец, который вы оставили без теста, и почему это верно. Проверка разбора YAML: <code>dbt parse</code>.</p>
+  <p>Сейчас в <code>models\schema.yml</code> только <code>unique</code> и <code>not_null</code> на <code>stg_orders.order_id</code> и <code>fct_daily_orders.order_date</code>. Копия до правок лежит в <code>%TEMP%\schema.before.yml</code>.</p>
+  <h3>Шаг 5. Запуск и реакция на красное</h3>
+<pre><code>dbt test
+dbt show --inline "select * from {{ ref('stg_orders') }}"</code></pre>
+  <p>Ожидаемо упадут тесты на <code>O1005</code> и <code>O1006</code>. Для каждого падения до правки запишите, что неверно: данные или тест, и почему. Правьте там, где проблема. Тест меняете: причину пишите в YAML. Данные меняете: снова <code>dbt seed</code>. Затем <code>dbt test</code> должен быть зелёным.</p>
+  <h3>Шаг 6. Три заметки</h3>
+  <ol class="steps">
+    <li>Что агент сделал не так (или что вы проверили, если всё верно).</li>
+    <li>Одно, что навык подсказал и вы бы пропустили сами.</li>
+    <li>Одно, что вы сделали иначе, чем в навыке, и почему. «Ничего» не годится.</li>
+  </ol>
+  <h3>Если не сработало</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Симптом</th><th>Причина и лечение</th></tr>
+    <tr><td><code>Could not find profile named 'orders_analytics'</code></td><td><code>dbt</code> запущен не из папки с <code>profiles.yml</code>.</td></tr>
+    <tr><td><code>No module named 'dbt.adapters.factory'</code>, конфликт в <code>pip check</code></td><td>Адаптер поставлен второй командой. Пересоздать <code>.venv</code>.</td></tr>
+    <tr><td>Ошибка про отсутствующий макрос</td><td>В тест попал <code>dbt_utils</code>; <code>packages.yml</code> нет. Убрать тест.</td></tr>
+    <tr><td><code>found 0 columns</code> при чтении CSV</td><td>В файле смешаны LF и CRLF. У файлов комплекта этой проблемы нет.</td></tr>
+    <tr><td>Изменился профиль из упражнения 01</td><td><code>dbt-duckdb</code> попал в <code>requirements.txt</code>.</td></tr>
+  </table></div>
+</section>
+
+<section id="ex03">
+  <h2>Упражнение 03. Свой артефакт (необязательное)</h2>
+  <p>Не входит в сертификацию. Делайте после 01 и 02: писать навык, ни разу не пройдя по чужому, трудно. Целевое время — до 60 минут.</p>
+  <h3>Что понадобится сверх комплекта</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Требование</th><th>Как получить</th></tr>
+    <tr><td>Клон каталога вне папки комплекта</td><td><code>git clone https://github.com/innowise-ai/data-accelerator-toolset.git</code>; каталог публичный</td></tr>
+    <tr><td>Git 2.45.1+</td><td><code>git --version</code></td></tr>
+    <tr><td>Pester ровно 5.6.1</td><td><code>Install-Module Pester -RequiredVersion 5.6.1 -Scope CurrentUser</code></td></tr>
+    <tr><td>PowerShell 7</td><td>уже стоит</td></tr>
+  </table></div>
+  <p>В общий каталог ничего не отправляется: работа идёт в локальном клоне, в конце его удаляют или возвращают ветку к <code>main</code>.</p>
+  <h3>Истории упражнения</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Номер</th><th>Что делаете</th></tr>
+    <tr><td>US-03.01</td><td>Заводите безопасное рабочее место в клоне</td></tr>
+    <tr><td>US-03.02</td><td>Решаете <code>strength</code>, <code>applies_to</code> и <code>topics</code> до создания папки и записываете причины. Задание: навык <code>DBT-SEED-CONVENTIONS</code>. Ожидаемо: <code>on-demand</code>, <code>frameworks: ["dbt"]</code>, темы <code>["data-modeling"]</code>.</td></tr>
+    <tr><td>US-03.03</td><td>Пишете <code>SKILL.md</code>, <code>metadata.json</code> и запись в <code>index.json</code></td></tr>
+    <tr><td>US-03.04</td><td>Запускаете <code>./scripts/validate-catalog.ps1 -IndexPath ./index.json</code>, читаете результат по <code>IsValid</code>, а не по коду выхода, и ломаете запись шестью способами. При успехе <code>ArtifactCount: 42</code></td></tr>
+    <tr><td>US-03.05</td><td>Запускаете каталожный набор тестов Pester</td></tr>
+    <tr><td>US-03.06</td><td>Ставите свой артефакт в копию учебного проекта из локального клона через <code>-RemoteUrl</code>: <code>intents</code> = <code>["data-modeling"]</code>, в <code>selected_artifacts</code> ваш id</td></tr>
+    <tr><td>US-03.07</td><td>Узнаёте, чего CI не проверяет (шесть дефектов проходят молча)</td></tr>
+    <tr><td>US-03.08</td><td>Убираете за собой</td></tr>
+  </table></div>
+  <h3>Поля записи в index.json</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Поле</th><th>Правило</th></tr>
+    <tr><td><code>id</code></td><td>Уникален без учёта регистра</td></tr>
+    <tr><td><code>version</code></td><td>Semver, ничем не проверяется</td></tr>
+    <tr><td><code>source_path</code></td><td>Не сверяется с файловой системой</td></tr>
+    <tr><td><code>applies_to</code></td><td>Обязателен; для «всем» пишут <code>{}</code> явно</td></tr>
+    <tr><td><code>strength</code></td><td><code>always</code> или <code>on-demand</code>, строчными, без значения по умолчанию</td></tr>
+    <tr><td><code>topics</code></td><td>Непустой для <code>on-demand</code>, из словаря каталога</td></tr>
+    <tr><td><code>scope</code>, <code>presentation</code></td><td>Схема 2: <code>project</code> или <code>user</code>; имя, краткое описание и преимущества для карточки анкеты</td></tr>
+  </table></div>
+  <p>Словарь тега v1.3.0: языки <code>typescript, javascript, python, csharp, go, sql</code>; фреймворки <code>nestjs, react, django, aspnet, airflow, dbt, duckdb, spark, trino, snowflake, databricks, docker, terraform, terragrunt, dataform, bigquery</code>; расположение <code>monorepo, single</code>; агенты <code>claude-code, codex, cursor</code>; шестнадцать тем от <code>code-review</code> до <code>database-administration</code>.</p>
+  <div class="note">Команды клонирования и тестов в этом упражнении я пересказал по смыслу документа. Перед запуском сверьте их с текстом файла <code>epic-03-author-an-artifact.md</code>.</div>
+</section>
+
+<section id="web">
+  <h2>Другой проект: веб-разработка</h2>
+  <p>Ставить Accelerator заново не нужно: команда и плагин уже на машине. Для нового проекта нужен свой профиль и установка навыков.</p>
+  <div class="note"><b>Чего ждать от каталога.</b> В v1.3.0 40 выбираемых навыков, и среди них нет навыков именно под React или NestJS: сканер эти фреймворки знает, но навыки в основном про dbt, Snowflake, Airflow, Docker, Terraform и Python. Веб-проекту подойдут навыки без привязки к стеку: <code>CODE-CHANGE-REVIEW</code>, <code>TEST-DESIGN-REVIEW</code>, <code>REQUIREMENTS-BRAINSTORMING</code>, <code>IMPLEMENTATION-PLANNING</code>, <code>PLAN-EXECUTION</code>, <code>COMPLETION-VERIFICATION</code>, <code>ERROR-DIAGNOSIS</code>, <code>REFACTOR-STEP-PLANNING</code>, <code>CODE-COMMENT-WRITING</code>, <code>PROJECT-DOCUMENTATION</code>, <code>PROJECT-ADAPTATION</code>, <code>SENSITIVE-DATA-HANDLING</code>. Docker-навыки написаны под Python и данные.</div>
+  <h3>Шаги руками</h3>
+  <ol class="steps">
+    <li>PowerShell 7 в папке проекта. Проверить <code>accelerator --version</code>, <code>git --version</code> и доступ к каталогу.</li>
+    <li>Запустить <code>claude</code> в корне и вызвать <code>/accelerator:accelerator-setup</code>.</li>
+    <li>Подтвердить скан, выбрать агента <code>claude-code</code>, темы и карточки. Навыки про dbt и пайплайны не брать.</li>
+    <li>Проверить <code>.accelerator/profile.json</code>, выполнить <code>accelerator install</code>, открыть <code>registry.json</code> и <code>.claude/skills</code>.</li>
+    <li>Закоммитить профиль, реестр и <code>.claude/skills</code>. <code>profile.user.json</code> и <code>registry.user.json</code> не коммитить.</li>
+  </ol>
+  <h3>Промпт для Claude Code</h3>
+  <p>Вставьте в сессию <code>claude</code>, запущенную в корне веб-проекта.</p>
+  <div class="promptbox">
+    <div class="toolbar"><button class="copy" id="copybtn" type="button">Скопировать промпт</button></div>
+<pre id="prompt"><code>Настрой Accelerator для этого проекта. Работай по шагам и останавливайся там, где
+написано "спроси".
+
+Контекст. Это веб-проект. Команда `accelerator` и плагин accelerator@accelerator-installation
+уже установлены на машине, переустанавливать их не нужно. Нужен только профиль этого
+проекта и установка навыков из каталога.
+
+Шаг 0. Проверки. Выполни и покажи результат: `pwsh --version`, `git --version`
+(нужен 2.45.1 или новее), `accelerator --version` (должна быть 0.18.0, не
+transport-spike), `git ls-remote https://github.com/innowise-ai/data-accelerator-toolset.git`.
+Если что-то не проходит, остановись, объясни причину и не продолжай.
+
+Шаг 1. Защита. Проверь, есть ли `.accelerator/profile.json`. Если есть, не
+перезаписывай его: покажи и спроси, что делать.
+
+Шаг 2. Настройка. Вызови навык accelerator-setup (в ответе должно быть видно его
+имя перед действиями). Не читай package.json и другие манифесты сам, чтобы
+восстановить скан: если сканер упал, покажи ошибку и остановись.
+Версию каталога покажи и спроси подтверждение, потом используй её.
+
+Шаг 3. Ответы на анкету. Дай мне подтвердить сказанное сканером (языки, фреймворки,
+структура). Не добавляй фреймворки, которых нет в проекте. Агент: claude-code.
+Темы предложи на выбор из: testing, code-review, debugging, refactoring,
+development-process, documentation, security, containerization. Карточки навыков
+показывай по именам, а не только по id. Не выбирай навыки про dbt, Snowflake,
+Airflow и пайплайны данных. Перед записью профиля спроси, что я выбрала.
+
+Шаг 4. Профиль. Запиши `.accelerator/profile.json`, покажи его целиком и убедись,
+что в нём нет полей `unanswered`.
+
+Шаг 5. Установка. После моего подтверждения выполни `accelerator install`. Покажи
+вывод, затем `.accelerator/registry.json` и список папок в `.claude/skills`.
+
+Шаг 6. Отчёт. Для каждого выбранного навыка скажи, установлен он или нет. Если
+выбранный мной навык не установился, объясни почему (скорее всего его applies_to
+не совпал с профилем: install в таком случае не выдаёт ни ошибки, ни предупреждения).
+Назови, что закоммитить (`.accelerator/profile.json`, `.accelerator/registry.json`,
+`.claude/skills/`) и что оставить локально (`.accelerator/profile.user.json`,
+`.accelerator/registry.user.json`). Сам ничего не коммить.</code></pre>
+  </div>
+  <h3>Как работать потом</h3>
+  <ul>
+    <li>Навыки лежат в <code>.claude/skills/&lt;ID&gt;/SKILL.md</code>. Новая сессия их подхватывает; открытую во время установки перезапустите.</li>
+    <li>Описывайте задачу словами: «Сделай ревью этого изменения», «Составь план», «Найди причину этой ошибки». Агент должен назвать навык до работы.</li>
+    <li>Сверяйте результат с текстом навыка, как в упражнении 02.</li>
+    <li><code>accelerator update</code> повторно применяет план и сохраняет правки файлов; <code>accelerator uninstall</code> убирает то, что записано в реестрах.</li>
+    <li>Коллега клонирует репозиторий и запускает <code>accelerator install</code> по закоммиченному профилю. Анкета нужна одному человеку.</li>
+  </ul>
+</section>
+
+<section id="gaps">
+  <h2>Расхождения в документах</h2>
+  <p>Мелочи, которые стоит передать сертификатору.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Где</th><th>Что не сходится</th></tr>
+    <tr><td><code>README.md</code> и упражнение 01, шаг 1</td><td>README говорит, что 01 и 02 идут офлайн, а шаг 1 и сам <code>install</code> требуют доступа к github.com.</td></tr>
+    <tr><td>Упражнение 03 и каталог</td><td>В документе базовая линия 41 артефакт, а в <code>catalog-topics.json</code> на теге v1.3.0 их 40 (единственный <code>always</code>, скорее всего, в анкету не попадает).</td></tr>
+    <tr><td>Упражнения 01 и 02</td><td>Пути в командах копирования написаны под репозиторий (<code>docs/onboarding/…</code>); для комплекта с Drive префикс убирают.</td></tr>
+    <tr><td>Сообщения <code>accelerator</code></td><td>Конец <code>scan</code> и ошибка <code>install</code> ведут на страницу GitHub «Install the setup skill», к которой у кандидата доступа нет. Навык уже стоит, ссылку игнорируют.</td></tr>
+    <tr><td>Упражнение 01, шаг 6</td><td>Вопросы (a)–(c) без ответов в тексте; ответы знает только сертификатор.</td></tr>
+  </table></div>
+  <div class="note info">Не читал: <code>install.ps1</code>, <code>install.sh</code>, <code>sha256.json</code>, английский <code>certification-setup.md</code> и содержимое архива. Упражнение 03 просмотрено по оглавлению и таблицам, а не построчно.</div>
+</section>
+</main>
+
+<script>
+(function(){
+  var btn=document.getElementById('copybtn'), pre=document.getElementById('prompt');
+  if(!btn||!pre) return;
+  function done(){btn.textContent='Скопировано';btn.setAttribute('data-done','1');setTimeout(function(){btn.textContent='Скопировать промпт';btn.removeAttribute('data-done')},2000)}
+  function fallback(){var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Выделено, нажмите Ctrl+C'}
+  btn.addEventListener('click',function(){
+    var t=pre.innerText;
+    try{ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fallback)} else {fallback()} }catch(e){fallback()}
+  });
+})();
+</script>

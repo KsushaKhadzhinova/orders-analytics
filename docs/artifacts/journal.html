@@ -1,0 +1,115 @@
+<title>Журнал Accelerator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: статус сверху, затем вертикальная лента событий и список того, что осталось. */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --fg:#1c2421; --muted:#5b6762; --line:#d9dfdb;
+  --accent:#0f6b5c; --accent-soft:#dcefe9; --code-bg:#eceff0;
+  --ok:#1d7a3f; --ok-soft:#dcf1e3; --warn:#9a5b00; --warn-soft:#fbecd0; --bad:#a3302a; --bad-soft:#f8dcd9;
+  --display:'IBM Plex Serif',Georgia,serif; --body:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121816; --surface:#1a211f; --fg:#e6ebe8; --muted:#9aa7a1; --line:#2d3834;
+  --accent:#5cc7b0; --accent-soft:#1c3a34; --code-bg:#232c29;
+  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121816; --surface:#1a211f; --fg:#e6ebe8; --muted:#9aa7a1; --line:#2d3834;
+  --accent:#5cc7b0; --accent-soft:#1c3a34; --code-bg:#232c29;
+  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+h1,h2{font-family:var(--display);line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:2rem;font-weight:600} h2{font-size:1.35rem;font-weight:600;padding-top:8px;border-top:1px solid var(--line)}
+p{margin:.5em 0} .lede{color:var(--muted);max-width:62ch}
+code{font:0.88em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+pre{font:0.85rem/1.55 var(--mono);background:var(--code-bg);padding:12px 14px;border-radius:6px;overflow-x:auto;margin:8px 0}
+pre code{background:none;padding:0}
+.s{font:500 .75rem var(--mono);padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block}
+.s.ok{background:var(--ok-soft);color:var(--ok)} .s.todo{background:var(--warn-soft);color:var(--warn)} .s.no{background:var(--bad-soft);color:var(--bad)}
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.status div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+.status small{display:block;font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.status b{font-weight:600}
+ol.log{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:18px}
+ol.log li{position:relative}
+ol.log li::before{content:"";position:absolute;left:-25px;top:.5em;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+ol.log li.now::before{background:var(--warn)}
+.when{font:500 .78rem var(--mono);color:var(--muted)}
+ol.log b{display:block}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:480px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font:500 .75rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+ul.todo{padding-left:1.2em;margin:8px 0} ul.todo li{margin:6px 0}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;font-size:.95rem}
+a{color:var(--accent)}
+</style>
+
+<main>
+<header>
+  <h1>Журнал Accelerator</h1>
+  <p class="lede">Что сделано в проекте <code>E:\orders-analytics</code>, что проверено и что осталось. Обновлено 5 ноября 2026 по состоянию файлов и вашему терминалу.</p>
+</header>
+
+<section class="status" aria-label="Состояние">
+  <div><small>Сейчас</small><b>Упражнение 02, шаг 3</b><br>читаете навык</div>
+  <div><small>Сборка</small><b>PASS=9 WARN=0 ERROR=0</b><br>тесты зелёные, пока их мало</div>
+  <div><small>Дальше</small><b>Фраза агенту</b><br><code>Add tests to models/schema.yml</code></div>
+</section>
+
+<section>
+  <h2>Лента событий</h2>
+  <ol class="log">
+    <li><span class="when">до 4 ноября</span><b>Accelerator перенесён на диск E:</b>Установка в <code>E:\accelerator</code>, версия 0.18.0. Старая в <code>%LOCALAPPDATA%</code> удалена, плагин <code>accelerator@accelerator-installation</code> включён.</li>
+    <li><span class="when">4 ноября, 18:39</span><b>Упражнение 01: скан</b>Создан <code>profile.draft.json</code> на теге <code>refs/tags/v1.3.0</code>: языки <code>python</code>, <code>sql</code>, фреймворк <code>dbt</code>, <code>layout: single</code>.</li>
+    <li><span class="when">4 ноября, 18:57</span><b>Упражнение 01: профиль и установка</b>В <code>profile.json</code> записаны агент <code>claude-code</code>, темы <code>data-quality</code> и <code>testing</code> и три навыка. <code>accelerator install</code> поставил <code>DBT-LAYER-BOUNDARIES</code>, <code>DBT-MODEL-TESTING</code>, <code>PYTEST-DATA-PIPELINES</code> версии 0.1.1. Реестр записан, в <code>.claude\skills</code> три папки.</li>
+    <li><span class="when">4 ноября</span><b>Упражнение 02, шаг 1: окружение</b><code>.venv</code> на Python 3.11.9, одна команда pip для манифеста и <code>dbt-duckdb==1.7.5</code>, <code>pip check</code> без конфликтов, <code>dbt debug</code> — All checks passed.</li>
+    <li><span class="when">4 ноября, 19:14</span><b>Упражнение 02, шаг 2: данные</b><code>_steps\step3.ps1</code> скопировал сиды, заменил <code>source</code> на <code>ref</code>, убрал блок <code>sources</code>. <code>dbt seed</code>: 4 клиента и 7 заказов. <code>dbt build</code>: PASS=9.</li>
+    <li><span class="when">5 ноября</span><b>Проверка в новом чате</b><code>accelerator --version</code> даёт 0.18.0, плагин включён, навык <code>accelerator-setup</code> виден в списке сессии. Копия <code>schema.yml</code> до правок сохранена в <code>%TEMP%\schema.before.yml</code>, текущий файл с ней совпадает.</li>
+    <li class="now"><span class="when">5 ноября, сейчас</span><b>Упражнение 02, шаг 3 в процессе</b>В Блокноте открыт <code>SKILL.md</code> навыка <code>DBT-MODEL-TESTING</code>. Нужно записать два пункта: какой тест на какую роль столбца и два анти-паттерна.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Дефекты в данных</h2>
+  <p>Сборка зелёная, потому что тесты пока их не проверяют. После теста <code>relationships</code> и <code>accepted_values</code> они станут красными.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Заказ</th><th>Что не так</th><th>Поймает</th></tr>
+    <tr><td><code>O1005</code></td><td>клиент <code>C999</code> не существует</td><td><code>relationships</code></td></tr>
+    <tr><td><code>O1006</code></td><td>статус <code>refunded</code>, согласованы только <code>pending</code>, <code>shipped</code>, <code>completed</code>, <code>cancelled</code></td><td><code>accepted_values</code></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Что осталось</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Задача</th><th>Статус</th></tr>
+    <tr><td>Прочитать навык и записать два пункта (02, шаг 3)</td><td><span class="s todo">вы</span></td></tr>
+    <tr><td>Отправить агенту фразу и проверить дифф (02, шаг 4)</td><td><span class="s todo">ждёт</span></td></tr>
+    <tr><td><code>dbt test</code>: записать, что упало; для каждого падения решить, данные или тест (02, шаг 5)</td><td><span class="s todo">ждёт</span></td></tr>
+    <tr><td>Три заметки (02, шаг 6)</td><td><span class="s todo">ждёт</span></td></tr>
+    <tr><td>Письменные ответы (a), (b), (c) к упражнению 01, шаг 6</td><td><span class="s todo">не записаны</span></td></tr>
+    <tr><td>Доступ к GitHub с этой машины (<code>git ls-remote</code>)</td><td><span class="s todo">не перепроверен</span></td></tr>
+    <tr><td>Копия учебного проекта в <code>%TEMP%\orders-analytics</code></td><td><span class="s todo">можно удалить</span></td></tr>
+    <tr><td>Упражнение 03 (по желанию)</td><td><span class="s todo">не начато</span></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Файлы</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Путь</th><th>Для чего</th></tr>
+    <tr><td><code>E:\orders-analytics\.accelerator\profile.json</code></td><td>Профиль проекта, его коммитят</td></tr>
+    <tr><td><code>E:\orders-analytics\.accelerator\registry.json</code></td><td>Что установлено и почему</td></tr>
+    <tr><td><code>E:\orders-analytics\.claude\skills\</code></td><td>Три установленных навыка</td></tr>
+    <tr><td><code>E:\orders-analytics\_steps\step3.ps1</code></td><td>Скрипт шага 2 упражнения 02</td></tr>
+    <tr><td><code>E:\orders-analytics\_steps\accelerator-web-project-prompt.md</code></td><td>Инструкция и промпт для веб-проекта</td></tr>
+    <tr><td><code>E:\accelerator-kit\</code></td><td>Исходный комплект с упражнениями</td></tr>
+  </table></div>
+  <p class="note">Подробности по упражнениям и промпт для веб-проекта — на странице «Карта комплекта Accelerator».</p>
+</section>
+</main>
