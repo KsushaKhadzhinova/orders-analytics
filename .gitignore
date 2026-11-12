@@ -1,0 +1,16 @@
+# Python environment
+.venv/
+
+# dbt build output and generated files
+target/
+logs/
+dbt_packages/
+*.duckdb
+*.duckdb.wal
+.user.yml
+
+# Accelerator: local-only and scratch files
+.accelerator/profile.user.json
+.accelerator/registry.user.json
+.accelerator/profile.draft.json
+.accelerator/catalog-topics.json
