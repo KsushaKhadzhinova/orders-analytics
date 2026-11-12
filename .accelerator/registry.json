@@ -1,0 +1,48 @@
+{
+  "schema_version": "1",
+  "toolset_ref": "v1.3.0",
+  "installed": [
+    {
+      "id": "DBT-LAYER-BOUNDARIES",
+      "version": "0.1.1",
+      "source_path": "artifacts/DBT-LAYER-BOUNDARIES",
+      "reason": {
+        "strength": "on-demand",
+        "selected_artifact": "DBT-LAYER-BOUNDARIES"
+      },
+      "target": "claude-code",
+      "files": {
+        "SKILL.md": "sha256:e86960e1a139a000a0994101ac756d142636753e6e087343aeda623bf2665658",
+        "metadata.json": "sha256:0fcc545df08709ddc8b2dbaff6b884e7d36034ef9ba27494752d76135c87f17f"
+      }
+    },
+    {
+      "id": "DBT-MODEL-TESTING",
+      "version": "0.1.1",
+      "source_path": "artifacts/DBT-MODEL-TESTING",
+      "reason": {
+        "strength": "on-demand",
+        "selected_artifact": "DBT-MODEL-TESTING"
+      },
+      "target": "claude-code",
+      "files": {
+        "SKILL.md": "sha256:3b0abe4544df27b56ce2d85c376f7fd989e6c59937d49f44ee4727632479b20b",
+        "metadata.json": "sha256:2186a8836ab01656e2be950cf7229ac2306232ba021ce0bb7a64a0bfd5aed446"
+      }
+    },
+    {
+      "id": "PYTEST-DATA-PIPELINES",
+      "version": "0.1.1",
+      "source_path": "artifacts/PYTEST-DATA-PIPELINES",
+      "reason": {
+        "strength": "on-demand",
+        "selected_artifact": "PYTEST-DATA-PIPELINES"
+      },
+      "target": "claude-code",
+      "files": {
+        "SKILL.md": "sha256:cfc3a7811a90603640ac72d6111b6b51b0983e7a5b7d9b9598bea500bbe060b8",
+        "metadata.json": "sha256:3c2d1efc76bdf54e376d9bcb3e90989fe32915f99dbffbde8b6b2541f0cdb465"
+      }
+    }
+  ]
+}

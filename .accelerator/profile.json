@@ -1,0 +1,38 @@
+{
+  "schema_version": "1",
+  "toolset_ref": "refs/tags/v1.3.0",
+  "stack": {
+    "languages": [
+      "python",
+      "sql"
+    ],
+    "frameworks": [
+      "dbt"
+    ],
+    "test_runner": "pytest",
+    "package_manager": null
+  },
+  "shape": {
+    "layout": "single",
+    "ci": null
+  },
+  "agents": [
+    "claude-code"
+  ],
+  "intents": [
+    "data-quality",
+    "testing"
+  ],
+  "provenance": {
+    "stack": "confirmed",
+    "shape": "scanned",
+    "agents": "answered",
+    "intents": "answered",
+    "selected_artifacts": "answered"
+  },
+  "selected_artifacts": [
+    "DBT-LAYER-BOUNDARIES",
+    "DBT-MODEL-TESTING",
+    "PYTEST-DATA-PIPELINES"
+  ]
+}
