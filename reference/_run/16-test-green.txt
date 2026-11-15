@@ -1,0 +1,41 @@
+[0m07:59:10  Running with dbt=1.7.9
+[0m07:59:10  Registered adapter: duckdb=1.7.5
+[0m07:59:10  Found 3 models, 2 seeds, 14 tests, 0 sources, 0 exposures, 0 metrics, 394 macros, 0 groups, 0 semantic models
+[0m07:59:10  
+[0m07:59:11  Concurrency: 1 threads (target='dev')
+[0m07:59:11  
+[0m07:59:11  1 of 14 START test accepted_values_stg_orders_status__pending__shipped__completed__cancelled  [RUN]
+[0m07:59:11  1 of 14 PASS accepted_values_stg_orders_status__pending__shipped__completed__cancelled  [[32mPASS[0m in 0.13s]
+[0m07:59:11  2 of 14 START test not_null_fct_daily_orders_order_count ....................... [RUN]
+[0m07:59:11  2 of 14 PASS not_null_fct_daily_orders_order_count ............................. [[32mPASS[0m in 0.11s]
+[0m07:59:11  3 of 14 START test not_null_fct_daily_orders_order_date ........................ [RUN]
+[0m07:59:11  3 of 14 PASS not_null_fct_daily_orders_order_date .............................. [[32mPASS[0m in 0.07s]
+[0m07:59:11  4 of 14 START test not_null_fct_daily_orders_order_total ....................... [RUN]
+[0m07:59:11  4 of 14 PASS not_null_fct_daily_orders_order_total ............................. [[32mPASS[0m in 0.11s]
+[0m07:59:11  5 of 14 START test not_null_stg_customers_customer_id .......................... [RUN]
+[0m07:59:11  5 of 14 PASS not_null_stg_customers_customer_id ................................ [[32mPASS[0m in 0.09s]
+[0m07:59:11  6 of 14 START test not_null_stg_customers_email ................................ [RUN]
+[0m07:59:11  6 of 14 PASS not_null_stg_customers_email ...................................... [[32mPASS[0m in 0.12s]
+[0m07:59:11  7 of 14 START test not_null_stg_orders_amount_cents ............................ [RUN]
+[0m07:59:11  7 of 14 PASS not_null_stg_orders_amount_cents .................................. [[32mPASS[0m in 0.12s]
+[0m07:59:11  8 of 14 START test not_null_stg_orders_customer_id ............................. [RUN]
+[0m07:59:12  8 of 14 PASS not_null_stg_orders_customer_id ................................... [[32mPASS[0m in 0.10s]
+[0m07:59:12  9 of 14 START test not_null_stg_orders_order_id ................................ [RUN]
+[0m07:59:12  9 of 14 PASS not_null_stg_orders_order_id ...................................... [[32mPASS[0m in 0.11s]
+[0m07:59:12  10 of 14 START test not_null_stg_orders_ordered_at ............................. [RUN]
+[0m07:59:12  10 of 14 PASS not_null_stg_orders_ordered_at ................................... [[32mPASS[0m in 0.12s]
+[0m07:59:12  11 of 14 START test relationships_stg_orders_customer_id__customer_id__ref_stg_customers_  [RUN]
+[0m07:59:12  11 of 14 PASS relationships_stg_orders_customer_id__customer_id__ref_stg_customers_  [[32mPASS[0m in 0.12s]
+[0m07:59:12  12 of 14 START test unique_fct_daily_orders_order_date ......................... [RUN]
+[0m07:59:12  12 of 14 PASS unique_fct_daily_orders_order_date ............................... [[32mPASS[0m in 0.12s]
+[0m07:59:12  13 of 14 START test unique_stg_customers_customer_id ........................... [RUN]
+[0m07:59:12  13 of 14 PASS unique_stg_customers_customer_id ................................. [[32mPASS[0m in 0.10s]
+[0m07:59:12  14 of 14 START test unique_stg_orders_order_id ................................. [RUN]
+[0m07:59:12  14 of 14 PASS unique_stg_orders_order_id ....................................... [[32mPASS[0m in 0.09s]
+[0m07:59:12  
+[0m07:59:12  Finished running 14 tests in 0 hours 0 minutes and 1.89 seconds (1.89s).
+[0m07:59:12  
+[0m07:59:12  [32mCompleted successfully[0m
+[0m07:59:12  
+[0m07:59:12  Done. PASS=14 WARN=0 ERROR=0 SKIP=0 TOTAL=14
+exit=0

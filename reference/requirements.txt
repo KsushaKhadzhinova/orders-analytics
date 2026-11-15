@@ -1,0 +1,13 @@
+# The file that makes this project legible to `accelerator scan`.
+# dbt-core is what puts `dbt` in the profile's frameworks; its presence
+# alongside any Python manifest is also what sets the language to python.
+#
+# Installing this file alone does NOT give you a runnable project: it pins the
+# warehouse adapter this project is scanned as using, not the one Epic-02 runs
+# against locally. The local test adapter is deliberately absent here, because
+# naming it would change the scanned profile and, downstream, what Epic-01
+# installs. Install it alongside this file instead - see the setup step in
+# docs/onboarding/epic-02-apply-a-skill.md for the exact command and version.
+dbt-core==1.7.9
+dbt-snowflake==1.7.2
+pytest==8.1.1

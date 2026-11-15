@@ -1,0 +1,51 @@
+[0m07:57:09  Running with dbt=1.7.9
+[0m07:57:09  Registered adapter: duckdb=1.7.5
+[0m07:57:10  Found 3 models, 2 seeds, 14 tests, 0 sources, 0 exposures, 0 metrics, 394 macros, 0 groups, 0 semantic models
+[0m07:57:10  
+[0m07:57:10  Concurrency: 1 threads (target='dev')
+[0m07:57:10  
+[0m07:57:10  1 of 14 START test accepted_values_stg_orders_status__pending__shipped__completed__cancelled  [RUN]
+[0m07:57:10  1 of 14 FAIL 1 accepted_values_stg_orders_status__pending__shipped__completed__cancelled  [[31mFAIL 1[0m in 0.10s]
+[0m07:57:10  2 of 14 START test not_null_fct_daily_orders_order_count ....................... [RUN]
+[0m07:57:10  2 of 14 PASS not_null_fct_daily_orders_order_count ............................. [[32mPASS[0m in 0.07s]
+[0m07:57:10  3 of 14 START test not_null_fct_daily_orders_order_date ........................ [RUN]
+[0m07:57:10  3 of 14 PASS not_null_fct_daily_orders_order_date .............................. [[32mPASS[0m in 0.08s]
+[0m07:57:10  4 of 14 START test not_null_fct_daily_orders_order_total ....................... [RUN]
+[0m07:57:10  4 of 14 PASS not_null_fct_daily_orders_order_total ............................. [[32mPASS[0m in 0.10s]
+[0m07:57:10  5 of 14 START test not_null_stg_customers_customer_id .......................... [RUN]
+[0m07:57:10  5 of 14 PASS not_null_stg_customers_customer_id ................................ [[32mPASS[0m in 0.09s]
+[0m07:57:10  6 of 14 START test not_null_stg_customers_email ................................ [RUN]
+[0m07:57:10  6 of 14 PASS not_null_stg_customers_email ...................................... [[32mPASS[0m in 0.10s]
+[0m07:57:10  7 of 14 START test not_null_stg_orders_amount_cents ............................ [RUN]
+[0m07:57:10  7 of 14 PASS not_null_stg_orders_amount_cents .................................. [[32mPASS[0m in 0.08s]
+[0m07:57:10  8 of 14 START test not_null_stg_orders_customer_id ............................. [RUN]
+[0m07:57:10  8 of 14 PASS not_null_stg_orders_customer_id ................................... [[32mPASS[0m in 0.07s]
+[0m07:57:10  9 of 14 START test not_null_stg_orders_order_id ................................ [RUN]
+[0m07:57:11  9 of 14 PASS not_null_stg_orders_order_id ...................................... [[32mPASS[0m in 0.08s]
+[0m07:57:11  10 of 14 START test not_null_stg_orders_ordered_at ............................. [RUN]
+[0m07:57:11  10 of 14 PASS not_null_stg_orders_ordered_at ................................... [[32mPASS[0m in 0.09s]
+[0m07:57:11  11 of 14 START test relationships_stg_orders_customer_id__customer_id__ref_stg_customers_  [RUN]
+[0m07:57:11  11 of 14 FAIL 1 relationships_stg_orders_customer_id__customer_id__ref_stg_customers_  [[31mFAIL 1[0m in 0.11s]
+[0m07:57:11  12 of 14 START test unique_fct_daily_orders_order_date ......................... [RUN]
+[0m07:57:11  12 of 14 PASS unique_fct_daily_orders_order_date ............................... [[32mPASS[0m in 0.13s]
+[0m07:57:11  13 of 14 START test unique_stg_customers_customer_id ........................... [RUN]
+[0m07:57:11  13 of 14 PASS unique_stg_customers_customer_id ................................. [[32mPASS[0m in 0.12s]
+[0m07:57:11  14 of 14 START test unique_stg_orders_order_id ................................. [RUN]
+[0m07:57:11  14 of 14 PASS unique_stg_orders_order_id ....................................... [[32mPASS[0m in 0.09s]
+[0m07:57:11  
+[0m07:57:11  Finished running 14 tests in 0 hours 0 minutes and 1.63 seconds (1.63s).
+[0m07:57:11  
+[0m07:57:11  [31mCompleted with 2 errors and 0 warnings:[0m
+[0m07:57:11  
+[0m07:57:11  [31mFailure in test accepted_values_stg_orders_status__pending__shipped__completed__cancelled (models\schema.yml)[0m
+[0m07:57:11    Got 1 result, configured to fail if != 0
+[0m07:57:11  
+[0m07:57:11    compiled Code at target\compiled\orders_analytics\models\schema.yml\accepted_values_stg_orders_1f33e03615de531ea47640b5b0ef6f80.sql
+[0m07:57:11  
+[0m07:57:11  [31mFailure in test relationships_stg_orders_customer_id__customer_id__ref_stg_customers_ (models\schema.yml)[0m
+[0m07:57:11    Got 1 result, configured to fail if != 0
+[0m07:57:11  
+[0m07:57:11    compiled Code at target\compiled\orders_analytics\models\schema.yml\relationships_stg_orders_96411fe0c89b49c3f4da955dfd358ba0.sql
+[0m07:57:11  
+[0m07:57:11  Done. PASS=12 WARN=0 ERROR=2 SKIP=0 TOTAL=14
+exit=1

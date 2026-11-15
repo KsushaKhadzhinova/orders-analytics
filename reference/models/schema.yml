@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: One row per customer.
+    columns:
+      - name: customer_id
+        description: Primary key. unique + not_null assert the grain.
+        tests: [unique, not_null]
+      - name: email
+        description: Required business field.
+        tests: [not_null]
+      # created_at is deliberately untested: no model reads it and an empty
+      # value would not make a customer row meaningless.
+
+  - name: stg_orders
+    description: One row per order, types cast, nothing else.
+    columns:
+      - name: order_id
+        description: Primary key.
+        tests: [unique, not_null]
+      - name: customer_id
+        description: >
+          Foreign key to stg_customers. NOT unique: one customer may place many
+          orders. relationships catches orphan orders.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: ordered_at
+        description: Required, the mart groups by its date.
+        tests: [not_null]
+      - name: status
+        description: >
+          Order state. Allowed values come from ORDER-STATUSES.md (agreed with
+          the source owner, March 2024), NOT from today's distinct values.
+          Do not extend this list without the owner's confirmation.
+        tests:
+          - accepted_values:
+              values: ['pending', 'shipped', 'completed', 'cancelled']
+      - name: amount_cents
+        description: Required, an order without an amount is meaningless.
+        tests: [not_null]
+
+  - name: fct_daily_orders
+    description: Daily order totals (incremental, one row per day).
+    columns:
+      - name: order_date
+        description: Grain of the table, one row per day.
+        tests: [unique, not_null]
+      - name: order_count
+        tests: [not_null]
+      - name: order_total
+        tests: [not_null]

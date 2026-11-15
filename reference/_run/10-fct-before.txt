@@ -1,0 +1,14 @@
+[0m07:58:30  Running with dbt=1.7.9
+[0m07:58:30  Registered adapter: duckdb=1.7.5
+[0m07:58:31  Found 3 models, 2 seeds, 14 tests, 0 sources, 0 exposures, 0 metrics, 394 macros, 0 groups, 0 semantic models
+[0m07:58:31  
+[0m07:58:31  Concurrency: 1 threads (target='dev')
+[0m07:58:31  
+[0m07:58:31  Previewing inline node:
+|          order_date | order_count | order_total |
+| ------------------- | ----------- | ----------- |
+| 2024-02-01 00:00:00 |           2 |       174.5 |
+| 2024-02-02 00:00:00 |           2 |       309.0 |
+| 2024-02-03 00:00:00 |           2 |       249.0 |
+| 2024-02-04 00:00:00 |           1 |        32.0 |
+

@@ -1,0 +1,3 @@
+id,customer_id,ordered_at,status,amount_cents,rejected_reason
+O1005,C999,2024-02-03 11:20:00,completed,9900,orphan: customer C999 does not exist in raw_customers
+O1006,C004,2024-02-03 13:05:00,refunded,15000,status refunded is not in the agreed list (ORDER-STATUSES.md)

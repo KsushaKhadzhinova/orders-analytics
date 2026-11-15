@@ -1,0 +1,4 @@
+[0m07:57:04  Running with dbt=1.7.9
+[0m07:57:04  Registered adapter: duckdb=1.7.5
+[0m07:57:04  Performance info: E:\orders-analytics-reference\target\perf_info.json
+exit=0

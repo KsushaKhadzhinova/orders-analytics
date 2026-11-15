@@ -1,0 +1,17 @@
+[0m07:57:31  Running with dbt=1.7.9
+[0m07:57:32  Registered adapter: duckdb=1.7.5
+[0m07:57:32  Found 3 models, 2 seeds, 14 tests, 0 sources, 0 exposures, 0 metrics, 394 macros, 0 groups, 0 semantic models
+[0m07:57:32  
+[0m07:57:32  Concurrency: 1 threads (target='dev')
+[0m07:57:32  
+[0m07:57:33  Previewing inline node:
+| order_id | customer_id |          ordered_at | status    | amount_cents |
+| -------- | ----------- | ------------------- | --------- | ------------ |
+| O1001    | C001        | 2024-02-01 10:00:00 | completed |        12900 |
+| O1002    | C002        | 2024-02-01 12:30:00 | completed |         4550 |
+| O1003    | C001        | 2024-02-02 09:10:00 | pending   |         7800 |
+| O1004    | C003        | 2024-02-02 16:45:00 | shipped   |        23100 |
+| O1005    | C999        | 2024-02-03 11:20:00 | completed |         9900 |
+| O1006    | C004        | 2024-02-03 13:05:00 | refunded  |        15000 |
+| O1007    | C002        | 2024-02-04 08:55:00 | pending   |         3200 |
+
