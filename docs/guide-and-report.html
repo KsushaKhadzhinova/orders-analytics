@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>Гайд и отчёт по проекту orders-analytics</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
@@ -14,16 +15,8 @@
   --term-bg:#0e1412; --term-fg:#d5dfda; --term-dim:#7d8c86; --term-ok:#6fd194; --term-bad:#ff8f86; --term-warn:#e8b25a; --term-bar:#1a2320;
   --display:'IBM Plex Serif',Georgia,serif; --body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#101615; --surface:#182120; --fg:#e4eae7; --muted:#9aa8a2; --line:#2b3733;
-  --accent:#5cc7b0; --accent-soft:#1b3b34; --code-bg:#222c29;
-  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d;
-  --blue:#8fb4ee; --blue-soft:#1d2d4a; --violet:#c2a1ee; --violet-soft:#33264a; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#101615; --surface:#182120; --fg:#e4eae7; --muted:#9aa8a2; --line:#2b3733;
-  --accent:#5cc7b0; --accent-soft:#1b3b34; --code-bg:#222c29;
-  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d;
-  --blue:#8fb4ee; --blue-soft:#1d2d4a; --violet:#c2a1ee; --violet-soft:#33264a; color-scheme:dark}
+
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:74px}
 body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--body);margin:0;
@@ -95,6 +88,16 @@ tr.hit td{background:var(--bad-soft)} tr.hitw td{background:var(--warn-soft)}
 .tree .c{color:var(--muted)} .tree .y{color:var(--accent);font-weight:500} .tree .r{color:var(--bad)}
 .term .t-pr{color:#7fb7ff}
 .sim{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+
+:root{color-scheme:light;
+  --term-bg:#f3f6f4; --term-fg:#1b2420; --term-dim:#6a7872; --term-ok:#1b7a3d; --term-bad:#b3261e; --term-warn:#955700; --term-bar:#e4ebe7}
+html{background:#f5f7f6}
+.term{border-color:#cdd8d2;background:var(--term-bg)}
+.term .bar i{background:#bcc9c2}
+.term .cap{border-top-color:#cdd8d2}
+.term .cap code{background:#d8e2dc;color:#1b2420}
+.term .t-pr,.t-pr{color:#2457a6}
+.term pre{color:var(--term-fg)}
 
 /* Layout: липкая панель (разделы + действия), затем разделы. Каждый шаг: инструкция сверху, ваш отчёт по шагу внизу. */
 body{padding-block:0 90px}
@@ -272,6 +275,327 @@ table.log input,table.log textarea{min-width:120px} table.log textarea{min-heigh
 ├─ docs\                                           <span class="c">← контекст, диалог, артефакты</span>
 └─ <span class="r">.venv\ target\ logs\ orders.duckdb</span>                <span class="c">← генерируется, в git не входит</span></div>
 </section>
+<section class="sec" id="sec-task">
+  <h2>Разбор задания</h2>
+  <p class="lede">Здесь по порядку: что от вас хотят, из чего состоит задание, что вы получаете на входе, что должны сдать, по каким вопросам вас будут проверять и где чаще всего ошибаются. Дальше идёт теория по Claude и по самим упражнениям.</p>
+
+  <h3>Общая картина: путь к сертификации</h3>
+  <figure class="fig">
+<svg viewBox="0 0 800 150" role="img" aria-label="Путь к AI-сертификации">
+  <defs><marker id="at1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="no" x="10" y="26" width="140" height="66" rx="9"/><text class="h" x="22" y="52">Курс в LMS</text><text class="mono dim" x="22" y="72">пройден</text>
+  <rect class="na" x="180" y="26" width="170" height="66" rx="9"/><text class="h" x="192" y="52">Задача</text><text class="mono dim" x="192" y="72">установка + 01 + 02</text>
+  <rect class="nv" x="380" y="26" width="140" height="66" rx="9"/><text class="h" x="392" y="52">Защита</text><text class="mono dim" x="392" y="72">показ и вопросы</text>
+  <rect class="nw" x="550" y="26" width="120" height="66" rx="9"/><text class="h" x="562" y="52">Интервью</text><text class="mono dim" x="562" y="72">для сертификации</text>
+  <rect class="no" x="700" y="26" width="90" height="66" rx="9"/><text class="h" x="712" y="52">Итог</text>
+  <path class="ar" d="M150 59H178" marker-end="url(#at1)"/><path class="ar" d="M350 59H378" marker-end="url(#at1)"/><path class="ar" d="M520 59H548" marker-end="url(#at1)"/><path class="ar" d="M670 59H698" marker-end="url(#at1)"/>
+  <text class="dim" x="180" y="118">Упражнение 03 по желанию, в сертификацию не входит.</text>
+  <text class="dim" x="180" y="136">Вы сейчас на этапе «Задача».</text>
+</svg>
+    <figcaption>Рис. T1. Этапы по сообщению куратора. Подробностей про защиту и интервью в материалах нет: ниже мои предположения, они помечены.</figcaption>
+  </figure>
+  <div class="tablewrap"><table>
+    <tr><th>Этап</th><th>Что это</th><th>Результат</th></tr>
+    <tr><td>Курс в LMS</td><td>теоретическая часть</td><td>пройден (по словам куратора)</td></tr>
+    <tr><td>Задача</td><td>Установка Accelerator, упражнение 01, упражнение 02 (по порядку; 02 продолжает 01). Упражнение 03 по желанию.</td><td>рабочий проект с профилем и тремя навыками, тесты dbt по навыку, разобранные падения, ответы и заметки</td></tr>
+    <tr><td>Защита</td><td>вы показываете и объясняете результат (формат определяет куратор)</td><td>вы объясняете каждое решение</td></tr>
+    <tr><td>Интервью</td><td>разговор для сертификации (формат неизвестен)</td><td>решение о сертификации</td></tr>
+  </table></div>
+  <div class="note warn"><b>Чего я не знаю.</b> Критерии оценки, формат защиты и вопросы интервью в материалах не описаны. Всё, что ниже называется «чем проверяют», я вывела из самих упражнений: из разделов «Check yourself» и из фразы куратора о ревью. Уточняйте у куратора.</div>
+
+  <h3>Что проверяется (мой вывод из текста упражнений)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Умение</th><th>Где проявляется</th></tr>
+    <tr><td>Установить и проверить инструмент по инструкции</td><td>Установка: проверки, <code>accelerator --version</code>, навык в меню</td></tr>
+    <tr><td>Понять, как инструмент принимает решения</td><td>01: скан, фильтр, выбор, реестр, вопросы (a)–(c)</td></tr>
+    <tr><td>Отличить предложение системы от решения человека</td><td>01: черновик против профиля; «тихие» ошибки выбора</td></tr>
+    <tr><td>Поручить задачу агенту коротко и по существу</td><td>02, шаг 4: одна фраза без правил</td></tr>
+    <tr><td>Проверить результат агента по независимому эталону</td><td>02: ревью диффа по навыку и по справочнику статусов</td></tr>
+    <tr><td>Принять решение по упавшему тесту</td><td>02, шаг 5: данные или тест, причина до правки</td></tr>
+    <tr><td>Дать обратную связь по навыку</td><td>02, шаг 6: три заметки</td></tr>
+    <tr><td>Писать собственный навык (по желанию)</td><td>03: артефакт, валидатор, установка, ревью</td></tr>
+  </table></div>
+
+  <h3>Задание по частям</h3>
+
+  <details class="qa" open><summary>Часть 0. Установка Accelerator</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><td><b>Цель</b></td><td>получить рабочую команду <code>accelerator</code> и навык <code>accelerator-setup</code> в Claude Code, убедиться в этом.</td></tr>
+      <tr><td><b>Вход</b></td><td>папки <code>installation</code> и <code>exercises</code> с Drive, PowerShell 7, Git 2.45.1+, Python 3.9–3.11 (на практике 3.11), Claude Code, доступ к GitHub.</td></tr>
+      <tr><td><b>Что делаете</b></td><td>пять проверок (раздел 1 руководства) → <code>pwsh -File install-accelerator.ps1 --agent claude</code> → новое окно терминала и перезапуск Claude Code → <code>accelerator --version</code> и <code>/accelerator:accelerator-setup</code> в меню → чеклист раздела 6.</td></tr>
+      <tr><td><b>Результат</b></td><td>версия 0.18.0 (не <code>transport-spike</code>), справка команды, навык виден в меню <code>/</code>.</td></tr>
+      <tr><td><b>Типичные ошибки</b></td><td>запуск <code>install.ps1</code> вместо <code>install-accelerator.ps1</code>; старое окно терминала; Claude Code не в PATH при установке; Python 3.12+; блокировка GitHub прокси.</td></tr>
+      <tr><td><b>Гайд</b></td><td>шаги A1–C4.</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>Часть 1. Упражнение 01: профиль и установка навыков</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><td><b>Цель</b></td><td>настроить Accelerator на небольшом dbt-проекте и <b>объяснить, почему получился именно этот набор навыков</b>.</td></tr>
+      <tr><td><b>Время</b></td><td>около 30 минут; шаг 8 необязательный (+15).</td></tr>
+      <tr><td><b>Вход</b></td><td>рабочая команда <code>accelerator</code>, сеть до github.com, папка <code>fixture</code> (6 файлов).</td></tr>
+      <tr><td><b>Шаги документа</b></td><td>1 проверить установку; 2 скопировать fixture; 3 предсказать и запустить scan; 4 попробовать установить черновик (ожидаемая ошибка); 5 анкета (<code>/accelerator:accelerator-setup</code>); 6 install и реестр, три вопроса; 7 почему анкета нужна человеку; 8 (по желанию) изменить одно поле и предсказать разницу.</td></tr>
+      <tr><td><b>Что сдаёте</b></td><td><code>profile.json</code> (без <code>unanswered</code>), <code>registry.json</code> с тремя навыками, письменные ответы (a), (b), (c), записанные предсказания.</td></tr>
+      <tr><td><b>Ответы анкеты</b></td><td>языки/фреймворки: python, sql, dbt (без Snowflake); темы testing и data-quality; три карточки: <code>DBT-MODEL-TESTING</code>, <code>DBT-LAYER-BOUNDARIES</code>, <code>PYTEST-DATA-PIPELINES</code>; агент <code>claude-code</code>.</td></tr>
+      <tr><td><b>Вопросы ревью</b></td><td>почему черновик нельзя установить; чем «прошёл фильтр» отличается от «выбран»; почему скан не угадывает intents; что скан не знает; какая ошибка выбора молчит.</td></tr>
+      <tr><td><b>Типичные ошибки</b></td><td>добавить Snowflake в анкету; взять больше или меньше трёх карточек; оставить пустым <code>agents</code>; не записать предсказание до запуска; считать успешный install доказательством, что всё выбрано правильно.</td></tr>
+      <tr><td><b>Гайд</b></td><td>шаги D1–D12.</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>Часть 2. Упражнение 02: применить навык</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><td><b>Цель</b></td><td>агент пишет тесты dbt по установленному навыку, а вы <b>проверяете его по навыку</b> и разбираете падения на настоящей базе.</td></tr>
+      <tr><td><b>Время</b></td><td>около 90 минут.</td></tr>
+      <tr><td><b>Вход</b></td><td>копия проекта из 01 (профиль, реестр, три навыка), Python 3.11, Claude Code; после <code>pip install</code> сеть не нужна.</td></tr>
+      <tr><td><b>Шаги документа</b></td><td>1 окружение, одна команда pip, <code>profiles.yml</code>, <code>dbt debug</code>; 2 сиды, замена <code>source</code> на <code>ref</code>, зелёная сборка; 3 прочитать навык ДО агента; 4 фраза агенту и ревью; 5 <code>dbt test</code> и решение по падениям; 6 три заметки.</td></tr>
+      <tr><td><b>Что сдаёте</b></td><td><code>models/schema.yml</code> с тестами; зелёный <code>dbt test</code>; записанные решения «данные или тест» с причинами; три заметки; два пункта из навыка.</td></tr>
+      <tr><td><b>Проверка итога (документ)</b></td><td>тесты на <code>stg_customers</code>; <code>unique</code>+<code>not_null</code> на <code>customer_id</code>; <code>relationships</code> на <code>stg_orders.customer_id</code>, не <code>unique</code>; <code>accepted_values</code> на <code>status</code> (откуда список?); больше покрытия на <code>fct_daily_orders</code>; нет <code>dbt_utils</code>/<code>dbt_expectations</code>; назван один столбец без теста.</td></tr>
+      <tr><td><b>Заложенные дефекты</b></td><td>заказ <code>O1005</code> (нет клиента <code>C999</code>) и <code>O1006</code> (статус <code>refunded</code> не из справочника).</td></tr>
+      <tr><td><b>Типичные ошибки</b></td><td>вставить правила навыка в запрос; поверить итогу агента; <code>accepted_values</code> из сегодняшних данных; <code>unique</code> на внешнем ключе; <code>severity: warn</code> вместо решения; расширить список «чтобы позеленело»; забыть <code>dbt seed</code> после правки данных; не пересобрать инкрементальную модель.</td></tr>
+      <tr><td><b>Гайд</b></td><td>шаги E1–E16.</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>Часть 3. Упражнение 03: написать свой артефакт (по желанию)</summary><div class="inner">
+    <p>Не входит в сертификацию. Учит <b>расширять</b> каталог: написать навык <code>DBT-SEED-CONVENTIONS</code>, прогнать его через валидатор и установить в свой проект. Целевое время до 60 минут.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Часть</th><th>Что делаете</th></tr>
+      <tr><td>US-03.01 рабочее место</td><td>клон каталога вне папки комплекта, ветка (не main), валидатор до правок: <code>IsValid: True</code>, <code>ArtifactCount: 41</code>; ничего не пушите.</td></tr>
+      <tr><td>US-03.02 три решения</td><td><code>strength</code> = <code>on-demand</code>, <code>applies_to</code> = <code>{"frameworks":["dbt"]}</code> (одно измерение), <code>topics</code> = <code>["data-modeling"]</code>; письменно с причинами ДО создания папки. Отдельно рассмотреть и отвергнуть <code>layout: ["monorepo"]</code>.</td></tr>
+      <tr><td>US-03.03 артефакт</td><td>папка <code>artifacts/DBT-SEED-CONVENTIONS/</code> с <code>SKILL.md</code> (frontmatter <code>name</code> в lower-kebab и <code>description</code>) и <code>metadata.json</code>; запись в <code>index.json</code> (поля совпадают). Id встречается в четырёх местах, все должны совпасть.</td></tr>
+      <tr><td>US-03.04 валидатор</td><td><code>./scripts/validate-catalog.ps1 -IndexPath ./index.json</code>; результат читать по <code>IsValid</code>, а не по коду выхода; сломать запись шестью способами; два дефекта сразу показываются в одном запуске.</td></tr>
+      <tr><td>US-03.05 тесты</td><td>Pester ровно 5.6.1; <code>Failed: 0</code>; не пугаться множества строк <code>ERROR:</code> (набор нарочно подаёт валидатору сломанные индексы).</td></tr>
+      <tr><td>US-03.06 установка</td><td>установить свой навык в fixture через <code>-RemoteUrl</code> с локальным клоном. Негативный случай: добавить в <code>applies_to</code> <code>layout: ["monorepo"]</code>: валидатор зелёный, а навык не устанавливается и ошибки нет.</td></tr>
+      <tr><td>US-03.07 что CI не ловит</td><td>шесть «тихих» дефектов (см. ниже в теории по упражнениям); предсказать до проверки.</td></tr>
+      <tr><td>US-03.08 уборка</td><td>удалить клон или вернуть ветку к main; ничего не пушить, PR не открывать.</td></tr>
+    </table></div>
+    <div class="note warn">Команды клонирования и запуска Pester в моём разборе не расписаны: сверяйте их с текстом <code>epic-03-author-an-artifact.md</code>.</div>
+  </div></details>
+
+  <h3>Как выглядит хорошая сдача (мои критерии)</h3>
+  <ul>
+    <li><b>Воспроизводимость.</b> Любой может повторить ваши шаги по вашим записям и получить тот же результат.</li>
+    <li><b>Причины, а не только действия.</b> Для каждого решения есть «почему», сформулированное до правки.</li>
+    <li><b>Источник истины назван.</b> Вы ссылаетесь на навык, справочник статусов, текст документа, а не на «так показалось».</li>
+    <li><b>Честность о пределах.</b> Вы говорите, что проверили, а что нет; называете один непокрытый столбец; признаёте, где агент был прав.</li>
+    <li><b>Короткие точные заметки.</b> Три заметки по несколько предложений, с конкретикой.</li>
+    <li><b>Аккуратность.</b> Нет лишних файлов в проекте, <code>dbt-duckdb</code> не добавлен в <code>requirements.txt</code>, профиль не испорчен.</li>
+  </ul>
+</section>
+
+<section class="sec" id="sec-claude">
+  <h2>Теория по Claude и Claude Code</h2>
+  <p class="lede">Всё, что нужно знать про Claude, чтобы уверенно давать задачи агенту и проверять его работу. Особенности команд и экранов могут отличаться в вашей версии Claude Code (у вас 2.1.206): если что-то выглядит иначе, ориентируйтесь на <code>/help</code> внутри Claude Code.</p>
+
+  <details class="qa" open><summary>1. Что такое Claude и чем отличаются «Claude», «Claude Code» и «API»</summary><div class="inner">
+    <p><b>Claude</b> — семейство больших языковых моделей (LLM) компании Anthropic. Модели бывают разных размеров: более крупные точнее в сложных задачах, но медленнее и дороже; меньшие быстрее и дешевле. Конкретные названия и номера версий меняются, поэтому актуальный список смотрите командой <code>/model</code> в Claude Code.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Что</th><th>Что это</th><th>Где вы с этим встречаетесь</th></tr>
+      <tr><td>Claude.ai</td><td>чат в браузере и приложении</td><td>вход под вашим аккаунтом, проверка подписки (шаг A1)</td></tr>
+      <tr><td>Claude Code</td><td>агент в терминале: читает файлы, пишет код, запускает команды в вашей папке</td><td>упражнения 01 и 02</td></tr>
+      <tr><td>API</td><td>доступ к модели из своего кода</td><td>в заданиях не нужен</td></tr>
+    </table></div>
+    <p>Эти продукты используют одну и ту же модель, но у них разные «руки»: чат только разговаривает, а Claude Code ещё и действует на вашем компьютере. Поэтому к Claude Code относятся строже: читают дифф и разрешения.</p>
+  </div></details>
+
+  <details class="qa"><summary>2. Как работает языковая модель (то, что влияет на вашу работу)</summary><div class="inner">
+    <ul>
+      <li><b>Токены.</b> Модель читает и пишет не буквы, а токены (кусочки слов). Всё, что вы передаёте модели (запрос, файлы, вывод команд), измеряется в токенах.</li>
+      <li><b>Контекстное окно.</b> Это «рабочий стол» модели: всё, что она видит в этот момент. У него есть предел. Что в окне не лежит, того для модели не существует. Между сессиями она ничего не помнит: новая сессия начинается с чистого листа (память дают файлы, например <code>CLAUDE.md</code>).</li>
+      <li><b>Вероятностность.</b> Модель выбирает продолжение, а не вычисляет единственный ответ. Один и тот же запрос может дать немного разный результат. Поэтому результат агента <b>проверяют</b>, а не воспроизводят слово в слово.</li>
+      <li><b>Ошибки.</b> Модель может уверенно написать неверное: придумать несуществующий макрос или параметр, подогнать решение под зелёные тесты, пропустить условие. Это не «глюк», а свойство метода.</li>
+      <li><b>Дата знаний.</b> Модель знает мир до определённой даты. Свежие версии инструментов она может не знать: сверяйтесь с документацией и с тем, что выводит ваша машина.</li>
+    </ul>
+    <figure class="fig">
+<svg viewBox="0 0 780 190" role="img" aria-label="Что лежит в контексте агента">
+  <rect class="n" x="14" y="14" width="752" height="36" rx="8"/><text class="h" x="28" y="37">Контекстное окно агента (ограниченный объём)</text>
+  <rect class="nw" x="14" y="66" width="160" height="90" rx="9"/><text class="h" x="26" y="90">Системные</text><text class="dim" x="26" y="110">инструкции,</text><text class="dim" x="26" y="128">описания навыков</text>
+  <rect class="nb" x="186" y="66" width="170" height="90" rx="9"/><text class="h" x="198" y="90">Ваш запрос</text><text class="mono dim" x="198" y="112">Add tests to</text><text class="mono dim" x="198" y="128">models/schema.yml</text>
+  <rect class="na" x="368" y="66" width="190" height="90" rx="9"/><text class="h" x="380" y="90">Что агент прочитал</text><text class="dim" x="380" y="110">schema.yml, модели,</text><text class="dim" x="380" y="128">SKILL.md, справочник</text>
+  <rect class="nv" x="570" y="66" width="196" height="90" rx="9"/><text class="h" x="582" y="90">Результаты действий</text><text class="dim" x="582" y="110">вывод команд,</text><text class="dim" x="582" y="128">правки, ответы</text>
+  <text class="dim" x="14" y="180">Когда окно заполняется, старое сжимается или вытесняется: поэтому важное лучше держать в файлах проекта.</text>
+</svg>
+      <figcaption>Рис. C1. Из чего состоит контекст. Навык попадает в него, только когда агент решил, что он нужен.</figcaption>
+    </figure>
+  </div></details>
+
+  <details class="qa"><summary>3. Агент: цикл «подумал → сделал → проверил»</summary><div class="inner">
+    <p>Агент — это модель, которой дали <b>инструменты</b> и позволили повторять цикл до выполнения задачи. Инструменты Claude Code: чтение файлов, правка и запись файлов, поиск по файлам и по тексту, запуск команд в терминале, обращение к вебу и к подключённым внешним сервисам. Модель сама решает, какой инструмент вызвать, а Claude Code исполняет вызов и возвращает результат модели.</p>
+    <figure class="fig">
+<svg viewBox="0 0 780 210" role="img" aria-label="Цикл агента">
+  <defs><marker id="ac1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="nb" x="14" y="70" width="140" height="62" rx="9"/><text class="h" x="26" y="96">Задача</text><text class="dim" x="26" y="116">от вас</text>
+  <rect class="na" x="214" y="20" width="170" height="62" rx="9"/><text class="h" x="226" y="46">Модель решает</text><text class="dim" x="226" y="66">что делать дальше</text>
+  <rect class="nw" x="444" y="20" width="170" height="62" rx="9"/><text class="h" x="456" y="46">Инструмент</text><text class="dim" x="456" y="66">читает/пишет/запускает</text>
+  <rect class="nv" x="444" y="120" width="170" height="62" rx="9"/><text class="h" x="456" y="146">Результат</text><text class="dim" x="456" y="166">возвращается модели</text>
+  <rect class="no" x="640" y="70" width="126" height="62" rx="9"/><text class="h" x="652" y="96">Итог вам</text><text class="dim" x="652" y="116">дифф + рассказ</text>
+  <path class="ar" d="M154 101H212"/><path class="ar" d="M154 101L212 60" marker-end="url(#ac1)"/>
+  <path class="ar" d="M384 51H442" marker-end="url(#ac1)"/>
+  <path class="ar" d="M529 82V118" marker-end="url(#ac1)"/>
+  <path class="ar" d="M444 151H299V84" marker-end="url(#ac1)"/>
+  <path class="ar" d="M614 51H700V68" marker-end="url(#ac1)"/>
+  <text class="mono dim" x="300" y="195">цикл повторяется, пока модель не решит, что задача выполнена</text>
+</svg>
+      <figcaption>Рис. C2. Цикл агента. Вы вмешиваетесь на двух точках: разрешаете действия и проверяете итог.</figcaption>
+    </figure>
+    <p><b>Практический вывод.</b> «Итог агента» — это пересказ собственной работы. Он может быть неполным или слишком оптимистичным. Реальный результат — файлы на диске и вывод команд, которые вы запустите сами.</p>
+  </div></details>
+
+  <details class="qa"><summary>4. Claude Code: запуск, папка, сессии</summary><div class="inner">
+    <ul>
+      <li><b>Рабочая папка.</b> Claude Code работает в той папке, где вы его запустили (<code>claude</code>). Он видит её файлы и её <code>.claude\skills</code>. Для упражнений запускайте внутри проекта.</li>
+      <li><b>Сессия.</b> Один непрерывный разговор. Новая сессия не знает предыдущей. Вернуться к прежней можно командой <code>/resume</code>.</li>
+      <li><b>Очистка и сжатие.</b> <code>/clear</code> начинает с чистого листа. <code>/compact</code> сжимает длинный разговор в краткое содержание, освобождая контекст.</li>
+      <li><b>Прерывание.</b> Клавиша Esc останавливает действие агента, если он пошёл не туда.</li>
+      <li><b>Выход.</b> <code>/exit</code> или Ctrl+C дважды.</li>
+      <li><b>Подписка и лимиты.</b> Использование ограничено планом. Если упёрлись в лимит, Claude Code сообщит и покажет, когда он сбросится.</li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>5. Разрешения и безопасность</summary><div class="inner">
+    <p>Перед действиями, которые меняют что-то на вашем компьютере (запись файла, запуск команды), Claude Code спрашивает разрешение. Это главная ваша защита.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Правило</th><th>Почему</th></tr>
+      <tr><td>Читайте дифф перед согласием на запись</td><td>вы видите, какие строки изменятся, и ловите лишнее</td></tr>
+      <tr><td>Не разрешайте «всё и всегда», пока не поймёте последствия</td><td>общее разрешение снимает вашу проверку</td></tr>
+      <tr><td>Не вставляйте в запрос пароли, ключи, токены</td><td>всё, что в контексте, уходит модели</td></tr>
+      <tr><td>Запускайте агента в папке проекта, а не в корне диска или домашней папке</td><td>он видит и может менять всё, что ниже рабочей папки</td></tr>
+      <tr><td>Данные из файлов и веб-страниц — это данные, а не команды</td><td>текст внутри файла может содержать «инструкции» для модели (prompt injection); слушаться надо вас, а не файла</td></tr>
+      <tr><td>Режим «пропускать все разрешения» не включайте</td><td>в нём агент действует без вопросов</td></tr>
+    </table></div>
+    <p>В упражнении безопасность выглядит просто: агент правит <code>schema.yml</code> (вы читаете дифф), а <code>dbt</code> запускаете вы.</p>
+  </div></details>
+
+  <details class="qa"><summary>6. Слэш-команды: что набирать в Claude Code</summary><div class="inner">
+    <p>Начните ввод с <code>/</code>, и откроется меню. Список зависит от версии: <code>/help</code> покажет все команды вашей версии. Самые полезные:</p>
+    <div class="tablewrap"><table>
+      <tr><th>Команда</th><th>Что делает</th></tr>
+      <tr><td><code>/help</code></td><td>справка и список команд</td></tr>
+      <tr><td><code>/login</code>, <code>/logout</code></td><td>вход в аккаунт и выход</td></tr>
+      <tr><td><code>/status</code></td><td>сведения о сессии: версия, аккаунт, модель</td></tr>
+      <tr><td><code>/model</code></td><td>выбрать модель</td></tr>
+      <tr><td><code>/clear</code>, <code>/compact</code>, <code>/resume</code></td><td>очистить, сжать, вернуться к прошлой сессии</td></tr>
+      <tr><td><code>/init</code></td><td>создать файл <code>CLAUDE.md</code> с описанием проекта</td></tr>
+      <tr><td><code>/memory</code></td><td>править файлы памяти (<code>CLAUDE.md</code>)</td></tr>
+      <tr><td><code>/permissions</code>, <code>/config</code></td><td>разрешения и настройки</td></tr>
+      <tr><td><code>/mcp</code>, <code>/agents</code>, <code>/hooks</code></td><td>внешние сервисы, подагенты, хуки (для справки, в упражнениях не нужны)</td></tr>
+      <tr><td><code>/accelerator:accelerator-setup</code></td><td>команда плагина Accelerator: анкета (из упражнения 01)</td></tr>
+    </table></div>
+    <p>Форма <code>/&lt;плагин&gt;:&lt;навык&gt;</code> означает «навык из плагина». Так вызываются навыки, которые поставляет плагин.</p>
+  </div></details>
+
+  <details class="qa"><summary>7. Навыки (skills): формат, расположение, как подхватываются</summary><div class="inner">
+    <p>Навык — это папка с файлом <code>SKILL.md</code>. В начале файла блок «frontmatter» с двумя главными полями: <code>name</code> и <code>description</code>. По описанию Claude решает, нужен ли навык для текущей задачи. Вот настоящий пример из вашего проекта:</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>.claude\skills\DBT-MODEL-TESTING\SKILL.md (начало)</span></div><pre>---
+name: dbt-model-testing
+description: Choosing dbt schema tests that catch real defects - what to test per
+  column role, and what to do when a test fails. Use when adding tests to a dbt
+  model or deciding what a failing test means.
+---
+
+# Testing dbt models
+...</pre><div class="cap">Описание отвечает на два вопроса: <b>что умеет</b> навык и <b>когда его применять</b>. Фраза «Use when adding tests to a dbt model» и заставляет Claude подгрузить навык на ваш запрос «Add tests...».</div></div>
+    <div class="tablewrap"><table>
+      <tr><th>Место</th><th>Область</th></tr>
+      <tr><td><code>.claude\skills\&lt;имя&gt;\SKILL.md</code> в проекте</td><td>только этот проект; обычно коммитится вместе с кодом</td></tr>
+      <tr><td><code>~\.claude\skills\</code> в домашней папке</td><td>все ваши проекты, лично ваш</td></tr>
+      <tr><td>внутри плагина</td><td>там, где включён плагин</td></tr>
+    </table></div>
+    <ul>
+      <li><b>Подхват.</b> Список навыков читается при запуске сессии, поэтому после установки навыка перезапускайте Claude Code.</li>
+      <li><b>Постепенное раскрытие.</b> В контексте сначала только имя и описание; полный текст загружается, когда навык подходит.</li>
+      <li><b>Хорошее описание</b> конкретно (не «помогает с кодом»), называет ситуации применения и не пересекается с соседними навыками.</li>
+      <li><b>Навык ≠ команда ≠ подагент.</b> Навык — знание о том, как делать. Слэш-команда — быстрый запуск шаблона запроса. Подагент — отдельный помощник со своим контекстом.</li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>8. Плагины и маркетплейсы</summary><div class="inner">
+    <p>Плагин — пакет, который может включать навыки, команды, подагентов, хуки и подключения к внешним сервисам. Плагины ставят из маркетплейсов (каталогов). Accelerator поставляется как плагин <code>accelerator</code>.</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>claude plugin list (настоящий вывод на вашей машине)</span></div><pre>Installed plugins:
+
+  ❯ accelerator@accelerator-installation
+    Version: 0.18.0
+    Scope: user
+    Status: ✔ enabled</pre><div class="cap">«Scope: user» значит, что плагин доступен во всех ваших проектах. Поэтому для веб-проекта его заново ставить не нужно.</div></div>
+    <p>Команда <code>claude plugin list</code> — быстрый способ проверить, что плагин установлен и включён, если навык не появляется в меню.</p>
+  </div></details>
+
+  <details class="qa"><summary>9. Память и настройки: CLAUDE.md, settings.json (для справки)</summary><div class="inner">
+    <ul>
+      <li><b>CLAUDE.md</b> — текстовый файл с правилами и описанием проекта, который Claude читает в начале сессии. Бывает проектный (в корне, коммитится) и личный (в домашней папке). Так «передают» агенту то, что он должен знать всегда: команды сборки, соглашения, запреты. В учебном проекте файла нет.</li>
+      <li><b>settings.json</b> — настройки: разрешённые команды, переменные, хуки. Бывают личные, проектные (<code>.claude/settings.json</code>) и локальные.</li>
+      <li><b>Хуки</b> — команды, которые Claude Code запускает автоматически в определённые моменты (например, после правки файла). <b>Подагенты</b> — помощники с отдельным контекстом для частных задач. <b>MCP</b> — стандарт подключения внешних сервисов и данных к агенту.</li>
+    </ul>
+    <p>Для упражнений ничего из этого не нужно. Но в рабочих проектах именно CLAUDE.md и навыки делают агента предсказуемым.</p>
+  </div></details>
+
+  <details class="qa"><summary>10. Как формулировать запросы агенту</summary><div class="inner">
+    <p>Хороший запрос содержит: <b>цель</b>, <b>контекст</b> (где работаем), <b>ограничения</b> (чего не делать), <b>критерий готовности</b> и просьбу <b>проверить</b>. Чем слабее у агента ориентиры в проекте, тем подробнее запрос.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Слабый запрос</th><th>Сильнее</th></tr>
+      <tr><td>«Сделай тесты»</td><td>«Добавь тесты dbt к моделям в <code>models/schema.yml</code> по правилам проекта. Не используй пакеты, которых нет в проекте. Запусти <code>dbt parse</code> и покажи результат»</td></tr>
+      <tr><td>«Почини ошибку»</td><td>«<code>dbt test</code> падает на <code>relationships</code>. Покажи строки, из-за которых падает, и объясни причину. Ничего не правь, пока я не решу»</td></tr>
+      <tr><td>«Всё проверь»</td><td>«Проверь, что в <code>schema.yml</code> нет <code>unique</code> на внешних ключах и что список <code>accepted_values</code> совпадает с <code>ORDER-STATUSES.md</code>»</td></tr>
+    </table></div>
+    <div class="note"><b>Но в упражнении 02 запрос нарочно короткий:</b> <code>Add tests to models/schema.yml</code>. Цель — проверить, подхватит ли агент навык сам. В работе, наоборот, помогают подробные запросы. Это не противоречие: упражнение измеряет установку навыка, а не качество промпта.</div>
+    <ul>
+      <li>Просите агента <b>объяснять</b> выбор: «почему этот тест здесь?».</li>
+      <li>Задавайте <b>границы</b>: «не меняй сиды», «не добавляй зависимости».</li>
+      <li>Работайте <b>маленькими шагами</b>: одна задача, проверка, следующая.</li>
+      <li>Если ответ вас не устроил, <b>уточните запрос</b>, а не повторяйте тот же.</li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>11. Как проверять работу агента (чеклист ревью)</summary><div class="inner">
+    <ol>
+      <li><b>Откройте дифф</b> и прочитайте каждое изменение. Лишние правки в других файлах — повод насторожиться.</li>
+      <li><b>Сравните с эталоном</b>, полученным не от агента: навык, документ, справочник.</li>
+      <li><b>Запустите</b> то, что проверяет результат (<code>dbt parse</code>, <code>dbt test</code>). Не принимайте «я запустил, всё прошло» на веру.</li>
+      <li><b>Проверьте неочевидное:</b> агент не подогнал решение под зелёное, не ослабил тест, не добавил зависимость.</li>
+      <li><b>Назовите, что не проверили.</b> Честная граница лучше уверенного «всё хорошо».</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Типичное поведение агента</th><th>Как поймать</th></tr>
+      <tr><td>Сообщает «готово», не запустив проверку</td><td>запустите сами</td></tr>
+      <tr><td>Берёт допустимые значения из текущих данных</td><td>сверьте со справочником</td></tr>
+      <tr><td>Добавляет зависимость, которой нет в проекте</td><td>проверьте <code>packages.yml</code> и импорты</td></tr>
+      <tr><td>Подгоняет тест или данные под зелёный результат</td><td>спросите «что было причиной красного?»</td></tr>
+      <tr><td>Меняет больше, чем просили</td><td>смотрите список изменённых файлов</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>12. Типичные проблемы Claude Code и решения</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Проблема</th><th>Что делать</th></tr>
+      <tr><td><code>claude</code> не находится</td><td>новое окно терминала; проверьте установку</td></tr>
+      <tr><td>«Not logged in»</td><td>запустите <code>claude</code> и пройдите вход, либо <code>/login</code></td></tr>
+      <tr><td>Навыка нет в меню <code>/</code></td><td>перезапустите Claude Code; <code>claude plugin list</code>; убедитесь, что установлен именно <code>install-accelerator.ps1</code></td></tr>
+      <tr><td>Агент не называет навык</td><td>запустите в папке проекта; повторите запрос; для плагина используйте явную команду</td></tr>
+      <tr><td>Агент «забыл» договорённости</td><td>контекст заполнился или сессия новая: <code>/compact</code> или повторите ключевое; важное запишите в файл</td></tr>
+      <tr><td>Упёрлись в лимит использования</td><td>подождите сброса; планируйте запуск агента заранее</td></tr>
+      <tr><td>Агент делает не то</td><td>Esc, уточните задачу, при необходимости <code>/clear</code></td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>13. Глоссарий по Claude</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Термин</th><th>Значение</th></tr>
+      <tr><td>LLM</td><td>большая языковая модель, предсказывает продолжение текста</td></tr>
+      <tr><td>Токен</td><td>единица текста для модели</td></tr>
+      <tr><td>Контекст</td><td>всё, что модель видит сейчас</td></tr>
+      <tr><td>Агент</td><td>модель + инструменты + цикл действий</td></tr>
+      <tr><td>Навык (skill)</td><td>инструкция в <code>SKILL.md</code>, подгружаемая по необходимости</td></tr>
+      <tr><td>Плагин</td><td>пакет навыков, команд, хуков и т. п.</td></tr>
+      <tr><td>CLAUDE.md</td><td>файл постоянных правил проекта</td></tr>
+      <tr><td>MCP</td><td>стандарт подключения внешних сервисов к агенту</td></tr>
+      <tr><td>Подагент</td><td>вспомогательный агент с отдельным контекстом</td></tr>
+      <tr><td>Hallucination (галлюцинация)</td><td>уверенный, но неверный или выдуманный ответ</td></tr>
+      <tr><td>Prompt injection</td><td>попытка подсунуть модели «команду» через данные</td></tr>
+    </table></div>
+  </div></details>
+</section>
+
 <section class="sec" id="sec-ai">
   <h2>Теория ИИ, которую вы применяете</h2>
   <p>Каждый пункт ниже объяснён коротко и сразу привязан к месту в проекте. Раскрывайте по очереди.</p>
@@ -379,6 +703,228 @@ table.log input,table.log textarea{min-width:120px} table.log textarea{min-heigh
     <p>Три заметки в конце упражнения — единственный отзыв о качестве навыка. Заметка «что сделали иначе, чем в навыке» не может быть пустой: навык не истина, а договорённость, которую можно улучшать. Для оформления отзывов в самом Accelerator есть команда <code>accelerator feedback</code>.</p>
   </div></details>
 </section>
+<section class="sec" id="sec-exth">
+  <h2>Теория по упражнениям</h2>
+  <p class="lede">Для каждого упражнения: какие понятия за ним стоят, как они связаны и как их применить. Читайте перед соответствующим этапом или когда не получается объяснить результат.</p>
+
+  <h3>Установка и упражнение 01: как Accelerator выбирает навыки</h3>
+
+  <details class="qa" open><summary>1. Идея Accelerator: каталог, профиль, установка</summary><div class="inner">
+    <p>Есть общий <b>каталог</b> навыков (репозиторий на GitHub, закреплён тегом <code>v1.3.0</code>). В вашем проекте лежит <b>профиль</b> (<code>profile.json</code>): факты о проекте и ваши ответы. Команда <code>install</code> сопоставляет профиль с каталогом и копирует нужные навыки, а <b>реестр</b> (<code>registry.json</code>) записывает, что и почему установлено.</p>
+    <figure class="fig">
+<svg viewBox="0 0 800 220" role="img" aria-label="Жизненный цикл профиля">
+  <defs><marker id="ae1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="no" x="10" y="20" width="150" height="62" rx="9"/><text class="h" x="22" y="46">1. scan</text><text class="mono dim" x="22" y="66">код, читает файлы</text>
+  <rect class="ng" x="190" y="20" width="170" height="62" rx="9"/><text class="h" x="202" y="46">draft.json</text><text class="mono dim" x="202" y="66">3 поля unanswered</text>
+  <rect class="nw" x="390" y="20" width="190" height="62" rx="9"/><text class="h" x="402" y="46">2. анкета</text><text class="mono dim" x="402" y="66">человек + агент</text>
+  <rect class="na" x="610" y="20" width="180" height="62" rx="9"/><text class="h" x="622" y="46">profile.json</text><text class="mono dim" x="622" y="66">коммитится, ревьюится</text>
+  <rect class="no" x="610" y="130" width="180" height="62" rx="9"/><text class="h" x="622" y="156">3. install</text><text class="mono dim" x="622" y="176">код, без вопросов</text>
+  <rect class="nb" x="390" y="130" width="190" height="62" rx="9"/><text class="h" x="402" y="156">registry.json</text><text class="mono dim" x="402" y="176">что и почему</text>
+  <rect class="nv" x="190" y="130" width="170" height="62" rx="9"/><text class="h" x="202" y="156">.claude\skills\</text><text class="mono dim" x="202" y="176">SKILL.md навыков</text>
+  <path class="ar" d="M160 51H188" marker-end="url(#ae1)"/><path class="ar" d="M360 51H388" marker-end="url(#ae1)"/><path class="ar" d="M580 51H608" marker-end="url(#ae1)"/>
+  <path class="ar" d="M700 82V128" marker-end="url(#ae1)"/><path class="ar" d="M610 161H582" marker-end="url(#ae1)"/><path class="ar" d="M390 161H362" marker-end="url(#ae1)"/>
+  <text class="dim" x="10" y="214">Зелёные блоки детерминированы: тот же вход даёт тот же результат. Жёлтый зависит от людей и модели.</text>
+</svg>
+      <figcaption>Рис. E1. Цикл: scan → черновик → анкета → профиль → install → реестр и навыки.</figcaption>
+    </figure>
+    <p><b>Почему профиль коммитят.</b> Он фиксирует решения человека. Коллега клонирует репозиторий и получает тот же набор командой <code>accelerator install</code>, без анкеты. CI делает то же самое. Личные выборы (scope <code>user</code>) лежат отдельно, в <code>profile.user.json</code>, и не коммитятся.</p>
+  </div></details>
+
+  <details class="qa"><summary>2. Фильтр и выбор: воронка отбора</summary><div class="inner">
+    <figure class="fig">
+<svg viewBox="0 0 800 190" role="img" aria-label="Воронка отбора навыков">
+  <defs><marker id="ae2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="ng" x="10" y="20" width="150" height="70" rx="9"/><text class="h" x="22" y="46">Каталог</text><text class="mono dim" x="22" y="68">все навыки</text>
+  <rect class="nb" x="190" y="20" width="170" height="70" rx="9"/><text class="h" x="202" y="46">Фильтр applies_to</text><text class="mono dim" x="202" y="68">совпало со стеком?</text>
+  <rect class="nv" x="390" y="20" width="170" height="70" rx="9"/><text class="h" x="402" y="46">Темы (topics)</text><text class="mono dim" x="402" y="68">пересеклись с intents?</text>
+  <rect class="nw" x="590" y="20" width="200" height="70" rx="9"/><text class="h" x="602" y="46">Карточки в анкете</text><text class="mono dim" x="602" y="68">то, что вам предложат</text>
+  <rect class="na" x="590" y="110" width="200" height="70" rx="9"/><text class="h" x="602" y="136">Ваш выбор</text><text class="mono dim" x="602" y="158">selected_artifacts</text>
+  <rect class="no" x="390" y="110" width="170" height="70" rx="9"/><text class="h" x="402" y="136">install</text><text class="mono dim" x="402" y="158">ставится выбранное</text>
+  <path class="ar" d="M160 55H188" marker-end="url(#ae2)"/><path class="ar" d="M360 55H388" marker-end="url(#ae2)"/><path class="ar" d="M560 55H588" marker-end="url(#ae2)"/>
+  <path class="ar" d="M690 90V108" marker-end="url(#ae2)"/><path class="ar" d="M590 145H562" marker-end="url(#ae2)"/>
+</svg>
+      <figcaption>Рис. E2. Фильтр отсекает неподходящее, вы выбираете из оставшегося, ставится только выбранное.</figcaption>
+    </figure>
+    <div class="note"><b>Правило отбора (BR-03.01 упражнения 03).</b> Навык проходит <b>фильтр</b>, если <b>каждое</b> измерение, которое он заявил в <code>applies_to</code>, пересекается с профилем. Измерения соединяются «И», значения внутри измерения — «ИЛИ». Больше измерений значит уже аудитория, а не шире. Пустое <code>{}</code> подходит всем.</div>
+    <div class="tablewrap"><table>
+      <tr><th>Поле навыка</th><th>Что значит</th></tr>
+      <tr><td><code>applies_to</code></td><td>условия стека. Измерения: <code>languages</code>, <code>frameworks</code>, <code>layout</code>, <code>agents</code></td></tr>
+      <tr><td><code>topics</code></td><td>для каких задач (testing, debugging, data-quality ...). Совпадение с вашими <code>intents</code> открывает карточку</td></tr>
+      <tr><td><code>strength</code></td><td><code>on-demand</code> (ставится по выбору) или <code>always</code> (ставится само)</td></tr>
+      <tr><td><code>scope</code></td><td><code>project</code> или <code>user</code></td></tr>
+      <tr><td><code>presentation</code></td><td>имя, краткое описание и преимущества для карточки</td></tr>
+    </table></div>
+    <p><b>Словарь значений в каталоге v1.3.0</b> (всё в нижнем регистре, сравнение чувствительно к регистру):</p>
+    <div class="tablewrap"><table>
+      <tr><th>Измерение</th><th>Значения</th></tr>
+      <tr><td>languages</td><td>typescript, javascript, python, csharp, go, sql</td></tr>
+      <tr><td>frameworks</td><td>nestjs, react, django, aspnet, airflow, dbt, duckdb, spark, trino, snowflake, databricks, docker, terraform, terragrunt, dataform, bigquery</td></tr>
+      <tr><td>layout</td><td>monorepo, single</td></tr>
+      <tr><td>agents</td><td>claude-code, codex, cursor</td></tr>
+      <tr><td>topics</td><td>code-review, testing, documentation, refactoring, orchestration, data-modeling, data-quality, ingestion, performance, debugging, writing, development-process, security, containerization, infrastructure, database-administration</td></tr>
+    </table></div>
+    <p><b>Пример на вашем проекте.</b> Профиль: <code>languages: [python, sql]</code>, <code>frameworks: [dbt]</code>. <code>DBT-MODEL-TESTING</code> заявляет <code>frameworks: [dbt]</code> → совпало. <code>AIRFLOW-DAG-STRUCTURE</code> заявляет <code>frameworks: [airflow]</code> → не совпало, карточки не будет. <code>DATA-INCIDENT-TRACING</code> заявляет <code>{}</code> → прошёл фильтр, а темы <code>debugging</code> и <code>data-quality</code> пересекаются с вашей <code>data-quality</code> → карточка показана.</p>
+  </div></details>
+
+  <details class="qa"><summary>3. Тихие отказы: почему «успешный install» ничего не доказывает</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Ситуация</th><th>Результат</th></tr>
+      <tr><td>id нет в каталоге</td><td>ошибка (громко)</td></tr>
+      <tr><td>навык другой области (user) в проектном списке</td><td>ошибка (громко)</td></tr>
+      <tr><td>id есть, но не совпал <code>applies_to</code></td><td><b>тишина</b>: навык отброшен, install сообщает об успехе</td></tr>
+    </table></div>
+    <p>Причина простая: если бы установщик падал на каждом неподходящем навыке, нельзя было бы использовать один профиль для разных наборов. Но за это приходится платить вниманием: <b>после install всегда читайте реестр</b> и сверяйте с ожиданием. Именно это упражнение и тренирует.</p>
+    <p><b>Обратная сторона (упражнение 03).</b> Если автор навыка заявил лишнее измерение (например, <code>layout: monorepo</code>), его навык молча не доедет до проекта с <code>layout: single</code>, хотя валидатор каталога доволен.</p>
+  </div></details>
+
+  <details class="qa"><summary>4. Детерминизм, версии и воспроизводимость</summary><div class="inner">
+    <ul>
+      <li><b>Закреплённый тег.</b> <code>refs/tags/v1.3.0</code> неизменяем: любой, кто его использует, получит те же файлы. Значение <code>latest</code> «плывёт»: сегодня одно, через месяц другое.</li>
+      <li><b>Семантические версии.</b> Номера вида <code>MAJOR.MINOR.PATCH</code> (0.18.0, 1.3.0). MAJOR меняется при несовместимых изменениях, MINOR при новых возможностях, PATCH при исправлениях.</li>
+      <li><b>Контрольные суммы (sha256).</b> Отпечаток файла. Если изменить хоть байт, отпечаток другой. Установщик сверяет архив с <code>sha256.json</code>, а реестр хранит отпечатки навыков, чтобы <code>update</code> замечал ваши правки.</li>
+      <li><b>Почему install без ИИ.</b> Установка должна быть предсказуемой и проверяемой в CI. Всё «умное» (анкета) вынесено на человека и записано в профиль.</li>
+      <li><b>Частичное клонирование (partial clone).</b> Git скачивает только нужные объекты, а не весь репозиторий. Для этого нужен свежий Git (2.45.1+).</li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>5. Что делают остальные команды: update, uninstall, feedback</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Команда</th><th>Что делает</th></tr>
+      <tr><td><code>accelerator update</code></td><td>повторно применяет план; не затирает файлы, которые вы правили (проверка по sha256); <code>-Force</code> перезапишет</td></tr>
+      <tr><td><code>accelerator uninstall</code></td><td>удаляет то, что записано в реестрах</td></tr>
+      <tr><td><code>accelerator feedback</code></td><td>оформляет отзыв о навыке или о выборе навыков в виде issue</td></tr>
+      <tr><td><code>-OnDropped remove|keep|fail</code></td><td>что делать с навыками, которых профиль больше не выбирает (по умолчанию удалять)</td></tr>
+    </table></div>
+  </div></details>
+
+  <h3>Упражнение 02: тесты данных и работа с агентом</h3>
+
+  <details class="qa" open><summary>6. Качество данных и тесты dbt: какое свойство что проверяет</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Свойство данных</th><th>Вопрос</th><th>Тест dbt</th><th>В проекте</th></tr>
+      <tr><td>Уникальность</td><td>нет ли дублей?</td><td><code>unique</code></td><td><code>order_id</code>, <code>customer_id</code> клиентов</td></tr>
+      <tr><td>Полнота</td><td>нет ли пропусков в обязательном?</td><td><code>not_null</code></td><td>ключи, <code>email</code>, <code>amount_cents</code></td></tr>
+      <tr><td>Допустимость значений</td><td>входит ли значение в разрешённый список?</td><td><code>accepted_values</code></td><td><code>status</code> (дефект <code>refunded</code>)</td></tr>
+      <tr><td>Ссылочная целостность</td><td>есть ли родительская запись?</td><td><code>relationships</code></td><td><code>customer_id</code> заказа (дефект <code>C999</code>)</td></tr>
+      <tr><td>Согласованность итогов</td><td>сходится ли итог с источником?</td><td>(в проекте нет; нужен отдельный тест сверки)</td><td>ловушка с инкрементальной моделью</td></tr>
+      <tr><td>Своевременность</td><td>свежие ли данные?</td><td>проверка свежести источника (freshness)</td><td>не используется</td></tr>
+    </table></div>
+    <p><b>Тест — это запрос, который ищет плохие строки.</b> Ноль строк — тест прошёл. Тест не «доказывает», что данные верны: он лишь не нашёл того, что ищет. Поэтому покрытие выбирают по ролям столбцов, а не «на всё подряд».</p>
+    <p><b>Зерно (grain).</b> Что означает одна строка таблицы. У <code>stg_orders</code> — один заказ, у <code>fct_daily_orders</code> — один день. Пара <code>unique</code> + <code>not_null</code> на ключе — это исполняемая запись зерна. Если зерно нарушено (например, дубли после join), все суммы вранье.</p>
+  </div></details>
+
+  <details class="qa"><summary>7. Красный тест: данные или тест? Схема решения</summary><div class="inner">
+    <figure class="fig">
+<svg viewBox="0 0 800 270" role="img" aria-label="Схема решения при упавшем тесте">
+  <defs><marker id="ae3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="nr" x="10" y="10" width="170" height="52" rx="9"/><text class="h" x="22" y="34">Тест упал</text><text class="mono dim" x="22" y="52">dbt test: FAIL</text>
+  <rect class="n" x="220" y="10" width="190" height="52" rx="9"/><text class="h" x="232" y="34">Посмотреть строки</text><text class="mono dim" x="232" y="52">dbt show --limit 20</text>
+  <rect class="nw" x="450" y="10" width="200" height="52" rx="9"/><text class="h" x="462" y="34">Утверждение теста</text><text class="mono dim" x="462" y="52">верно для бизнеса?</text>
+  <rect class="na" x="450" y="110" width="150" height="52" rx="9"/><text class="h" x="462" y="134">ДА</text><text class="mono dim" x="462" y="152">виноваты данные</text>
+  <rect class="nb" x="640" y="110" width="150" height="52" rx="9"/><text class="h" x="652" y="134">НЕТ</text><text class="mono dim" x="652" y="152">виноват тест</text>
+  <rect class="no" x="450" y="200" width="150" height="62" rx="9"/><text class="h" x="462" y="224">Источник/владелец</text><text class="mono dim" x="462" y="244">исправить или</text><text class="mono dim" x="462" y="256">вынести на разбор</text>
+  <rect class="no" x="640" y="200" width="150" height="62" rx="9"/><text class="h" x="652" y="224">Поправить тест</text><text class="mono dim" x="652" y="244">причину записать</text><text class="mono dim" x="652" y="256">в YAML</text>
+  <rect class="n" x="220" y="200" width="190" height="62" rx="9"/><text class="h" x="232" y="224">Потом dbt seed /</text><text class="h" x="232" y="242">build --full-refresh</text><text class="mono dim" x="232" y="258">dbt test: зелёный</text>
+  <path class="ar" d="M180 36H218" marker-end="url(#ae3)"/><path class="ar" d="M410 36H448" marker-end="url(#ae3)"/>
+  <path class="ar" d="M510 62V108" marker-end="url(#ae3)"/><path class="ar" d="M620 62L690 108" marker-end="url(#ae3)"/>
+  <path class="ar" d="M525 162V198" marker-end="url(#ae3)"/><path class="ar" d="M715 162V198" marker-end="url(#ae3)"/>
+  <path class="ar" d="M450 231H412" marker-end="url(#ae3)"/>
+  <path class="ar" d="M640 231H602" stroke-dasharray="4 3"/>
+  <text class="dim" x="10" y="100">Нельзя: ослабить тест,</text><text class="dim" x="10" y="118">чтобы «позеленело»,</text><text class="dim" x="10" y="136">или спрятать в warn.</text>
+</svg>
+      <figcaption>Рис. E3. Порядок рассуждения: строки → утверждение теста → кто виноват → исправление там, где проблема → повторный запуск.</figcaption>
+    </figure>
+    <div class="tablewrap"><table>
+      <tr><th>Падение</th><th>Утверждение теста</th><th>Верно?</th><th>Вывод</th></tr>
+      <tr><td><code>relationships</code>: C999</td><td>у каждого заказа есть клиент</td><td>да</td><td>данные: заказ-сирота; клиента не придумываем</td></tr>
+      <tr><td><code>accepted_values</code>: refunded</td><td>статус из согласованного списка</td><td>да, список согласован владельцем</td><td>данные до подтверждения; расширять только после ответа владельца</td></tr>
+      <tr><td>гипотетический <code>unique</code> на <code>stg_orders.customer_id</code></td><td>у каждого клиента один заказ</td><td>нет</td><td>тест неверен; убрать</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>8. Инкрементальные модели и ловушка устаревшего итога</summary><div class="inner">
+    <p>Обычная таблица пересоздаётся при каждом запуске. <b>Инкрементальная</b> добавляет и обновляет только новые данные, поэтому быстрее для больших источников. Вот как это сделано в <code>fct_daily_orders</code>:</p>
+    <ul>
+      <li><code>unique_key='order_date'</code> — по этому ключу dbt заменяет уже существующие строки (иначе были бы дубли).</li>
+      <li><code>{% if is_incremental() %}</code> — блок срабатывает только при <b>повторном</b> запуске (когда таблица уже есть).</li>
+      <li><code>where ordered_at &gt;= (select max(order_date) from {{ this }})</code> — пересчитывать только последний день и позже.</li>
+    </ul>
+    <p><b>Следствие.</b> Если в источнике изменились или удалены данные за более ранний день, итог за этот день сам не пересчитается: в таблице остаётся прежняя строка, а тесты (на ключи и пустоты) этого не заметят. Лечение: <code>dbt build --full-refresh</code> пересоздаёт таблицу с нуля. В работе это решают регулярным пересчётом окна, «пересчётом назад» или тестом сверки итога с источником.</p>
+    <div class="term"><div class="bar"><i></i><i></i><i></i><span>итог после обычного dbt build и после --full-refresh (настоящий вывод эталона)</span></div><pre>после обычного dbt build        после dbt build --full-refresh
+2024-02-01   2   174.5          2024-02-01   2   174.5
+2024-02-02   2   309.0          2024-02-02   2   309.0
+2024-02-03   2   249.0   &lt;- устарело        (дня 2024-02-03 нет)
+2024-02-04   1    32.0          2024-02-04   1    32.0</pre><div class="cap">Левая колонка: тесты зелёные, а день 2024-02-03 показывает заказы, которых в данных больше нет.</div></div>
+  </div></details>
+
+  <details class="qa"><summary>9. Окружение Python: venv, pip, версии, адаптеры</summary><div class="inner">
+    <ul>
+      <li><b>Виртуальное окружение</b> изолирует пакеты проекта. Создаётся <code>py -3.11 -m venv .venv</code>, включается <code>.venv\Scripts\Activate.ps1</code>.</li>
+      <li><b>pip и зависимости.</b> pip подбирает версии так, чтобы все требования команды были выполнены сразу. Поэтому адаптер ставят в той же команде: иначе второй запуск пересчитает зависимости без учёта первых и заменит dbt-core.</li>
+      <li><b>Pin (==).</b> Точная версия: у всех один и тот же dbt.</li>
+      <li><b>Адаптер.</b> dbt сам по себе не знает базу. Адаптер (dbt-duckdb) переводит команды dbt в диалект конкретной базы. В <code>requirements.txt</code> есть <code>dbt-snowflake</code> (проект «живёт» на Snowflake), а локально тесты идут на DuckDB: так удаётся проверять логику без доступа к Snowflake.</li>
+      <li><b>DuckDB</b> — встроенная аналитическая база в одном файле (<code>orders.duckdb</code>).</li>
+      <li><b>Почему адаптер не в requirements.txt:</b> сканер увидел бы <code>duckdb</code> и изменил профиль; а упражнение 01 построено на профиле без него.</li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>10. Применить навык и проверить агента: суть упражнения</summary><div class="inner">
+    <ol>
+      <li><b>Эталон до агента.</b> Вы читаете навык заранее: потом у вас будет независимая точка опоры.</li>
+      <li><b>Короткий запрос.</b> Проверяется, что навык установлен правильно и подхватывается.</li>
+      <li><b>Ревью по правилам навыка.</b> Для каждого теста вы называете оправдывающее правило.</li>
+      <li><b>Запуск.</b> Красное — находка. Зелёное при плохих данных — признак, что тесты не покрывают дефекты.</li>
+      <li><b>Рассуждение о причинах.</b> Решение записано до правки.</li>
+      <li><b>Обратная связь.</b> Три заметки улучшают навык для следующих людей.</li>
+    </ol>
+    <p>Подробности про агентов и ревью — в разделе «Теория по Claude» (пункты 3, 10, 11) и в разделе «Теория ИИ» ниже.</p>
+  </div></details>
+
+  <h3>Упражнение 03: как устроено расширение каталога (по желанию)</h3>
+
+  <details class="qa"><summary>11. Анатомия артефакта и четыре места id</summary><div class="inner">
+    <div class="tree">artifacts\DBT-SEED-CONVENTIONS\            <span class="c">← 1) имя папки = id</span>
+├─ SKILL.md                                  <span class="c">← frontmatter: name (lower-kebab), description</span>
+└─ metadata.json                             <span class="c">← 2) "id", 3) "source_path", strength, applies_to, topics</span>
+index.json  →  { "id": "DBT-SEED-CONVENTIONS", ... }   <span class="c">← 4) запись в индексе (главная)</span></div>
+    <p>Один id встречается в четырёх местах: имя папки, <code>id</code> и <code>source_path</code> в <code>metadata.json</code>, запись в <code>index.json</code>. <b>Все четыре должны совпадать, а проверяет это не валидатор</b>: он читает только индекс.</p>
+    <p><b>Три решения автора</b> (BR-03.02/03): <code>strength</code> — «разумно ли иметь навык тому, кто о нём не знает?» Если «только когда делает X», это <code>on-demand</code>, а X — тема. <code>applies_to</code> — только то, без чего навык был бы <b>неверным</b>, а не просто «часто так бывает». <code>topics</code> — только те темы, которым навык действительно служит.</p>
+  </div></details>
+
+  <details class="qa"><summary>12. Валидатор, ошибки собранные и брошенные, IsValid</summary><div class="inner">
+    <ul>
+      <li>Валидатор <b>собирает</b> ошибки содержимого, чтобы за один запуск показать все проблемы (поэтому два дефекта сразу видны в одном запуске).</li>
+      <li>Он <b>бросает</b> исключение на трёх вещах: индекс не найден, неверный JSON, пустой файл. Это сломанный вызов, а не плохой контент.</li>
+      <li>Следствие: лишняя запятая в JSON скрывает все остальные ошибки: разбор падает раньше проверки.</li>
+      <li>Результат читают по <code>IsValid</code>, а не по коду выхода: скрипт возвращает объект и не ставит ненулевой код сам. Обёртка, смотрящая на <code>$LASTEXITCODE</code>, объявит сломанный каталог исправным.</li>
+      <li>Сравнение везде чувствительно к регистру: <code>DBT</code> не равно <code>dbt</code>, <code>Frameworks</code> не измерение.</li>
+      <li>Неизвестное измерение в установщике <b>бросает</b> исключение, а не возвращает «не подошло»: иначе навык бы молча пропадал.</li>
+    </ul>
+    <div class="tablewrap"><table>
+      <tr><th>Намеренная порча записи</th><th>Сообщение (суть)</th></tr>
+      <tr><td><code>"frameworks": ["DBT"]</code></td><td>значение вне словаря каталога</td></tr>
+      <tr><td><code>"Frameworks": ["dbt"]</code></td><td>неизвестное измерение</td></tr>
+      <tr><td><code>"topics": []</code> у on-demand</td><td>ни один профиль не сможет его выбрать</td></tr>
+      <tr><td>нет <code>applies_to</code></td><td>обязательное поле; для «всем» пишут <code>{}</code></td></tr>
+      <tr><td><code>"applies_to": "dbt"</code></td><td>должен быть объект, а не строка</td></tr>
+      <tr><td><code>"fixture": true</code></td><td>разрешён только артефактам AS-SPIKE-*</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>13. Шесть «тихих» дефектов, которые CI пропускает</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>#</th><th>Дефект</th><th>Что проскальзывает</th></tr>
+      <tr><td>1</td><td><code>metadata.json</code> говорит <code>always</code>, индекс <code>on-demand</code></td><td>при установке побеждает индекс; файл в папке «врёт»</td></tr>
+      <tr><td>2</td><td><code>source_path</code> указывает на несуществующую папку</td><td>пустая выгрузка при установке</td></tr>
+      <tr><td>3</td><td>папка <code>dbt-seed-conventions</code>, а в индексе <code>DBT-SEED-CONVENTIONS</code></td><td>клонирование успешно; на нечувствительной к регистру файловой системе файл тихо теряется</td></tr>
+      <tr><td>4</td><td><code>SKILL.md</code> пустой или отсутствует</td><td>не читается, не линтится, наличие не требуется</td></tr>
+      <tr><td>5</td><td><code>SKILL.md</code> ссылается на файл вне папки артефакта</td><td>контракт поддерева нарушен; артефакт приезжает неполным</td></tr>
+      <tr><td>6</td><td>добавлено двадцать лишних <code>always</code></td><td>валидатор их не считает; потолка в 15 на профиль нет</td></tr>
+    </table></div>
+    <p><b>Общий признак:</b> ничего не падает, установка «успешна», а содержимое неверно или пропало. Валидатор проверяет только то, что <i>говорит индекс</i>; пять из шести — расхождения между индексом и диском, а папку артефакта он не открывает. Поэтому «зелёный CI» не равен «артефакт верный»: нужен ревьюер с этим списком. Особенно опасны на Windows пункты 3 (регистр) и 5 (зарезервированные имена и точки в путях).</p>
+  </div></details>
+</section>
+
 <section class="sec" id="sec-dbt">
   <h2>Теория dbt на примере проекта</h2>
   <p>dbt (data build tool) превращает SQL-запросы <code>select</code> в таблицы и представления в хранилище и проверяет результат тестами. Хранилище здесь — DuckDB, один файл <code>orders.duckdb</code>.</p>
@@ -488,6 +1034,335 @@ group by 1</pre><div class="cap">Ключ <code>unique_key='order_date'</code> �
   <h3>Слои проекта</h3>
   <p>Навык <code>DBT-LAYER-BOUNDARIES</code> описывает, что где лежит. Здесь два слоя: <b>staging</b> (чистая копия источника с приведёнными типами, ничего больше) и <b>marts</b> (бизнес-итоги). Тесты на ключи ставят в staging, итоговые показатели проверяют в marts.</p>
 </section>
+<section class="sec" id="sec-files">
+  <h2>Подробный разбор файлов проекта</h2>
+  <p class="lede">Каждый файл проекта: его настоящее содержимое и построчное объяснение. Так вы будете понимать, что именно лежит у вас на диске, что можно править, а что нет, и откуда берётся каждое значение.</p>
+
+  <details class="qa" open><summary>Карта: что создаёт какая команда</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Команда</th><th>Что появляется</th><th>Коммитить?</th></tr>
+      <tr><td>копирование <code>fixture</code></td><td><code>dbt_project.yml</code>, <code>requirements.txt</code>, <code>models\</code></td><td>да</td></tr>
+      <tr><td><code>accelerator scan</code></td><td><code>.accelerator\profile.draft.json</code>, <code>catalog-topics.json</code></td><td>нет (служебные)</td></tr>
+      <tr><td>анкета (<code>accelerator-setup</code>)</td><td><code>.accelerator\profile.json</code>, <code>profile.user.json</code></td><td><code>profile.json</code> да, <code>profile.user.json</code> нет</td></tr>
+      <tr><td><code>accelerator install</code></td><td><code>.claude\skills\&lt;ID&gt;\</code>, <code>registry.json</code>, <code>registry.user.json</code></td><td><code>.claude/skills</code> и <code>registry.json</code> да, <code>registry.user.json</code> нет</td></tr>
+      <tr><td><code>py -3.11 -m venv .venv</code></td><td><code>.venv\</code></td><td>нет</td></tr>
+      <tr><td>создание <code>profiles.yml</code></td><td><code>profiles.yml</code></td><td>в учебном проекте да (в рабочем не коммитят: там пароли)</td></tr>
+      <tr><td><code>dbt seed / build</code></td><td><code>orders.duckdb</code>, <code>target\</code>, <code>logs\</code>, <code>dbt_packages\</code></td><td>нет</td></tr>
+    </table></div>
+    <div class="note warn">Что коммитить из <code>.accelerator</code>, в документах сказано только про профиль и личный overlay. Что черновик и <code>catalog-topics.json</code> служебные и не нужны в репозитории, я заключила сама; уточните у куратора.</div>
+  </div></details>
+
+  <details class="qa"><summary>dbt_project.yml: паспорт проекта</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>dbt_project.yml (настоящий файл)</span></div><pre>name: 'orders_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'orders_analytics'
+
+model-paths: ["models"]
+target-path: "target"
+
+models:
+  orders_analytics:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table</pre></div>
+    <div class="tablewrap"><table>
+      <tr><th>Строка</th><th>Что значит</th></tr>
+      <tr><td><code>name</code></td><td>имя проекта; под ним в <code>models:</code> задаются настройки</td></tr>
+      <tr><td><code>config-version: 2</code></td><td>формат файла настроек dbt</td></tr>
+      <tr><td><code>profile</code></td><td>имя записи в <code>profiles.yml</code> с параметрами подключения. Если не совпадает, будет «Could not find profile»</td></tr>
+      <tr><td><code>model-paths</code></td><td>где искать модели</td></tr>
+      <tr><td><code>target-path</code></td><td>куда dbt кладёт результаты работы (скомпилированный SQL, манифест)</td></tr>
+      <tr><td><code>models → staging → +materialized: view</code></td><td>все модели из <code>models/staging</code> создаются как представления. Знак <code>+</code> значит «настройка, применяется к вложенным моделям»</td></tr>
+      <tr><td><code>marts → +materialized: table</code></td><td>модели из <code>models/marts</code> по умолчанию таблицы; <code>fct_daily_orders</code> переопределяет на incremental в самом файле модели</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>profiles.yml: как dbt подключается к базе</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>profiles.yml (настоящий файл)</span></div><pre>orders_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: orders.duckdb</pre></div>
+    <ul>
+      <li><code>orders_analytics</code> — имя профиля (то же, что <code>profile:</code> в проекте).</li>
+      <li><code>target: dev</code> — какое из подключений использовать по умолчанию. В реальных проектах бывают <code>dev</code>, <code>prod</code>.</li>
+      <li><code>outputs → dev</code> — параметры подключения: <code>type</code> выбирает адаптер, <code>path</code> — файл базы DuckDB относительно папки, откуда запущен dbt.</li>
+      <li>Здесь нет паролей. Для Snowflake и других баз в этом файле лежат учётные данные, поэтому <b>в рабочих проектах profiles.yml не коммитят</b>.</li>
+    </ul>
+  </div></details>
+
+  <details class="qa"><summary>requirements.txt: зависимости и «лицо» проекта для сканера</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>requirements.txt (настоящий файл)</span></div><pre># The file that makes this project legible to `accelerator scan`.
+# dbt-core is what puts `dbt` in the profile's frameworks; its presence
+# alongside any Python manifest is also what sets the language to python.
+#
+# Installing this file alone does NOT give you a runnable project: it pins the
+# warehouse adapter this project is scanned as using, not the one Epic-02 runs
+# against locally. The local test adapter is deliberately absent here, because
+# naming it would change the scanned profile and, downstream, what Epic-01
+# installs. Install it alongside this file instead - see the setup step in
+# docs/onboarding/epic-02-apply-a-skill.md for the exact command and version.
+dbt-core==1.7.9
+dbt-snowflake==1.7.2
+pytest==8.1.1</pre></div>
+    <p><b>Перевод комментария.</b> Этот файл делает проект «читаемым» для <code>accelerator scan</code>: наличие <code>dbt-core</code> добавляет <code>dbt</code> во фреймворки, а наличие любого Python-манифеста определяет язык python. Установка одного этого файла не даёт рабочего проекта: он закрепляет хранилище, под которое проект сканируется (Snowflake), а не локальный адаптер для упражнения 02. Локальный адаптер из файла убран нарочно: его упоминание изменило бы профиль и, следовательно, установленные навыки в упражнении 01.</p>
+    <p>Строки <code>==</code> фиксируют точные версии. <code>pytest</code> попал в профиль как <code>test_runner</code>.</p>
+  </div></details>
+
+  <details class="qa"><summary>stg_orders.sql и stg_customers.sql: слой staging</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>models/staging/stg_orders.sql (после замены source на ref)</span></div><pre>-- Staging: one row per order, types cast, nothing else.
+with source as (
+
+    select * from <span class="t-pr">{{ ref('raw_orders') }}</span>
+
+)
+
+select
+    id::varchar           as order_id,
+    customer_id::varchar  as customer_id,
+    ordered_at::timestamp as ordered_at,
+    status::varchar       as status,
+    amount_cents::int     as amount_cents
+from source</pre></div>
+    <div class="tablewrap"><table>
+      <tr><th>Часть</th><th>Что делает</th></tr>
+      <tr><td>комментарий вверху</td><td>контракт слоя: «одна строка на заказ, приведены типы, больше ничего». Staging не фильтрует и не считает</td></tr>
+      <tr><td><code>with source as (...)</code></td><td>CTE: временное имя для подзапроса</td></tr>
+      <tr><td><code>{{ ref('raw_orders') }}</code></td><td>Jinja-вызов. dbt подставит <code>"orders"."main"."raw_orders"</code> и запишет зависимость</td></tr>
+      <tr><td><code>id::varchar as order_id</code></td><td>приведение типа (<code>::</code>) и переименование. Так сырое имя <code>id</code> становится понятным <code>order_id</code></td></tr>
+      <tr><td><code>ordered_at::timestamp</code></td><td>строку из CSV превращает во время</td></tr>
+      <tr><td><code>amount_cents::int</code></td><td>сумма в центах как целое</td></tr>
+    </table></div>
+    <p><code>stg_customers.sql</code> устроен так же: <code>id → customer_id</code>, <code>email</code>, <code>created_at</code>. Обратите внимание: в заказах поле называется <code>customer_id</code>, а в клиентах оно же будет <code>customer_id</code> — это и позволяет сделать <code>relationships</code>.</p>
+    <p><b>Во что это превращается в базе</b> (настоящий скомпилированный SQL):</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>target\run\...\stg_orders.sql (что реально выполнил dbt)</span></div><pre>create view "orders"."main"."stg_orders__dbt_tmp" as (
+    -- Staging: one row per order, types cast, nothing else.
+with source as (
+    select * from "orders"."main"."raw_orders"
+)
+select
+    id::varchar           as order_id,
+    ...
+from source
+);</pre><div class="cap">dbt сначала создаёт временное представление <code>..._dbt_tmp</code> и затем подменяет им прежнее. Это обычный приём dbt для замены объекта.</div></div>
+  </div></details>
+
+  <details class="qa"><summary>fct_daily_orders.sql: инкрементальная витрина</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>models/marts/fct_daily_orders.sql (настоящий файл)</span></div><pre>-- Mart: daily order totals. Incremental because the source table is
+-- append-only and a full refresh gets slower every day.
+<span class="t-warn">{{ config(materialized='incremental', unique_key='order_date') }}</span>
+
+select
+    date_trunc('day', ordered_at) as order_date,
+    count(*)                      as order_count,
+    sum(amount_cents) / 100.0     as order_total
+from <span class="t-pr">{{ ref('stg_orders') }}</span>
+<span class="t-warn">{% if is_incremental() %}</span>
+where ordered_at &gt;= (select max(order_date) from {{ this }})
+<span class="t-warn">{% endif %}</span>
+group by 1</pre></div>
+    <div class="tablewrap"><table>
+      <tr><th>Часть</th><th>Что делает</th></tr>
+      <tr><td><code>config(...)</code></td><td>переопределяет материализацию на incremental и задаёт ключ <code>order_date</code></td></tr>
+      <tr><td><code>date_trunc('day', ordered_at)</code></td><td>обрезает время до дня: «зерно» таблицы — день</td></tr>
+      <tr><td><code>count(*)</code>, <code>sum(...)/100.0</code></td><td>число заказов и сумма в единицах валюты (центы делятся на 100)</td></tr>
+      <tr><td><code>is_incremental()</code></td><td>истина при повторном запуске, когда таблица уже существует и запуск без <code>--full-refresh</code></td></tr>
+      <tr><td><code>{{ this }}</code></td><td>сама эта таблица</td></tr>
+      <tr><td><code>group by 1</code></td><td>группировка по первому столбцу списка (по дню)</td></tr>
+    </table></div>
+    <p><b>Важное наблюдение.</b> Дефектные заказы тоже попадают в итог: сумма за 2024-02-03 включает и <code>O1005</code>, и <code>O1006</code>. Пока нет тестов, сборка этого не замечает.</p>
+  </div></details>
+
+  <details class="qa"><summary>schema.yml: описание моделей и тесты (исходный и эталонный)</summary><div class="inner">
+    <p><b>Исходный (в комплекте)</b>: блок <code>sources</code> и тесты только на ключи.</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>fixture\models\schema.yml (исходный)</span></div><pre>version: 2
+
+sources:
+  - name: shop
+    tables:
+      - name: raw_orders
+      - name: raw_customers
+
+models:
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+
+  - name: fct_daily_orders
+    columns:
+      - name: order_date
+        tests: [unique, not_null]</pre></div>
+    <div class="tablewrap"><table>
+      <tr><th>Часть</th><th>Что значит</th></tr>
+      <tr><td><code>version: 2</code></td><td>версия формата YAML для dbt</td></tr>
+      <tr><td><code>sources</code></td><td>описание внешних таблиц. После перехода на сиды блок удаляют</td></tr>
+      <tr><td><code>models → name</code></td><td>к какой модели относятся описания</td></tr>
+      <tr><td><code>columns → name</code></td><td>столбец модели</td></tr>
+      <tr><td><code>tests: [unique, not_null]</code></td><td>короткая запись списка тестов. Для тестов с параметрами используют развёрнутую запись (см. <code>relationships</code>)</td></tr>
+    </table></div>
+    <p>Тест с параметрами в развёрнутой записи (как в эталоне):</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>фрагмент эталонного schema.yml</span></div><pre>      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['pending', 'shipped', 'completed', 'cancelled']</pre></div>
+    <p>Полный эталонный файл — в разделе G.</p>
+  </div></details>
+
+  <details class="qa"><summary>Что на самом деле выполняет dbt: SQL ваших тестов</summary><div class="inner">
+    <p>Каждый тест превращается в обычный запрос. Файлы лежат в <code>target\compiled\...\models\schema.yml\</code>. Откройте их: это лучший способ понять тест. Вот настоящие запросы:</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>unique_stg_orders_order_id.sql</span></div><pre>select
+    order_id as unique_field,
+    count(*) as n_records
+from "orders"."main"."stg_orders"
+where order_id is not null
+group by order_id
+having count(*) &gt; 1</pre><div class="cap">Ищет значения, встречающиеся больше одного раза. Нет строк = нет дублей.</div></div>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>not_null_stg_orders_order_id.sql</span></div><pre>select order_id
+from "orders"."main"."stg_orders"
+where order_id is null</pre><div class="cap">Ищет пустые значения.</div></div>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>accepted_values_stg_orders_status__...sql</span></div><pre>with all_values as (
+    select status as value_field, count(*) as n_records
+    from "orders"."main"."stg_orders"
+    group by status
+)
+select *
+from all_values
+where value_field not in (
+    'pending','shipped','completed','cancelled'
+)</pre><div class="cap">Группирует статусы и показывает те, которых нет в списке. Сейчас вернёт одну строку: <code>refunded</code>.</div></div>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>relationships_stg_orders_customer_id__...sql</span></div><pre>with child as (
+    select customer_id as from_field
+    from "orders"."main"."stg_orders"
+    where customer_id is not null
+),
+parent as (
+    select customer_id as to_field
+    from "orders"."main"."stg_customers"
+)
+select from_field
+from child
+left join parent
+    on child.from_field = parent.to_field
+where parent.to_field is null</pre><div class="cap">Берёт клиентов из заказов и ищет, у каких нет пары среди клиентов. Вернёт <code>C999</code>.</div></div>
+    <p><b>Что из этого следует.</b> (1) <code>relationships</code> игнорирует пустые <code>customer_id</code> (<code>where ... is not null</code>): за пустые значения отвечает отдельный <code>not_null</code>, поэтому внешнему ключу нужны оба. (2) «FAIL 1» означает, что запрос вернул одну строку. (3) Тест можно запустить руками, вставив его SQL в <code>dbt show</code>.</p>
+  </div></details>
+
+  <details class="qa"><summary>Как читать вывод dbt построчно</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>фрагмент настоящего dbt test (эталон) с пояснениями</span></div><pre>07:57:10  Found 3 models, 2 seeds, 14 tests, 0 sources, ...        <span class="t-dim">← что dbt нашёл в проекте</span>
+07:57:10  Concurrency: 1 threads (target='dev')                    <span class="t-dim">← в один поток, подключение dev</span>
+07:57:10  1 of 14 START test accepted_values_stg_orders_status__...   <span class="t-dim">← начало теста № 1 из 14</span>
+07:57:10  1 of 14 <span class="t-bad">FAIL 1</span> accepted_values_stg_orders_status__...    <span class="t-dim">← нашлась 1 плохая строка</span>
+07:57:10  2 of 14 <span class="t-ok">PASS</span> not_null_fct_daily_orders_order_count    <span class="t-dim">← нет плохих строк</span>
+...
+07:57:11  Finished running 14 tests in 0 hours 0 minutes and 1.63 seconds
+07:57:11  <span class="t-bad">Completed with 2 errors and 0 warnings:</span>              <span class="t-dim">← итог: 2 ошибки, 0 предупреждений</span>
+07:57:11  Failure in test accepted_values_... (models\schema.yml)  <span class="t-dim">← какой тест и в каком файле</span>
+07:57:11    Got 1 result, configured to fail if != 0               <span class="t-dim">← «получена 1 строка, а ждали 0»</span>
+07:57:11    compiled Code at target\compiled\...\accepted_...sql   <span class="t-dim">← SQL теста можно открыть</span>
+07:57:11  Done. PASS=12 WARN=0 ERROR=2 SKIP=0 TOTAL=14            <span class="t-dim">← общий счёт</span></pre></div>
+    <div class="tablewrap"><table>
+      <tr><th>Слово</th><th>Значение</th></tr>
+      <tr><td>PASS</td><td>тест не нашёл плохих строк</td></tr>
+      <tr><td>FAIL N</td><td>нашёл N плохих строк (тест красный)</td></tr>
+      <tr><td>WARN</td><td>тест упал, но настроен как <code>severity: warn</code>; сборку не останавливает</td></tr>
+      <tr><td>ERROR</td><td>ошибка выполнения или упавший тест с severity error</td></tr>
+      <tr><td>SKIP</td><td>пропущено, потому что зависимость упала (в <code>dbt build</code>)</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>Ваши файлы Accelerator: поле за полем</summary><div class="inner">
+    <h4>profile.json</h4>
+    <div class="tablewrap"><table>
+      <tr><th>Поле</th><th>Значение у вас</th><th>Откуда</th></tr>
+      <tr><td><code>schema_version</code></td><td><code>"1"</code></td><td>формат файла</td></tr>
+      <tr><td><code>toolset_ref</code></td><td><code>refs/tags/v1.3.0</code></td><td>версия каталога, зафиксирована</td></tr>
+      <tr><td><code>stack.languages</code></td><td>python, sql</td><td>скан (подтверждено)</td></tr>
+      <tr><td><code>stack.frameworks</code></td><td>dbt</td><td>скан (подтверждено)</td></tr>
+      <tr><td><code>stack.test_runner</code></td><td>pytest</td><td>скан (из requirements)</td></tr>
+      <tr><td><code>stack.package_manager</code></td><td>null</td><td>скан не нашёл</td></tr>
+      <tr><td><code>shape.layout</code></td><td>single</td><td>скан</td></tr>
+      <tr><td><code>shape.ci</code></td><td>null</td><td>скан не нашёл CI</td></tr>
+      <tr><td><code>agents</code></td><td>claude-code</td><td>анкета</td></tr>
+      <tr><td><code>intents</code></td><td>data-quality, testing</td><td>анкета</td></tr>
+      <tr><td><code>provenance</code></td><td>откуда каждое поле</td><td>scanned / confirmed / answered</td></tr>
+      <tr><td><code>selected_artifacts</code></td><td>три id</td><td>анкета (ваш выбор)</td></tr>
+    </table></div>
+    <h4>registry.json</h4>
+    <p>Для каждого установленного навыка: <code>id</code>, <code>version</code>, <code>source_path</code> (папка в каталоге), <code>reason</code> (<code>strength</code> и <code>selected_artifact</code>), <code>target</code> (<code>claude-code</code> → <code>.claude/skills</code>), <code>files</code> (имена файлов и sha256).</p>
+    <h4>profile.user.json и registry.user.json</h4>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>.accelerator\profile.user.json и registry.user.json (настоящие)</span></div><pre>{ "schema_version": "1", "toolset_ref": "refs/tags/v1.3.0", "selected_artifacts": [] }
+{ "schema_version": "1", "toolset_ref": "v1.3.0", "installed": [] }</pre><div class="cap">Личный слой. Пустой, потому что вы не выбрали личных навыков. Не коммитится.</div></div>
+    <h4>catalog-topics.json (служебный)</h4>
+    <p>Копия «меню» каталога для анкеты: версия, словарь допустимых значений и 40 выбираемых артефактов с их фильтрами. Вот настоящая запись навыка, который вы выбрали:</p>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>запись DBT-MODEL-TESTING в catalog-topics.json</span></div><pre>{
+  "id": "DBT-MODEL-TESTING",
+  "scope": "project",
+  "topics": ["testing", "data-quality"],
+  "applies_to": { "frameworks": ["dbt"] },
+  "presentation": {
+    "name": "Pick dbt schema tests for each column role",
+    "summary": "Picks dbt schema tests that catch real defects for each column role.",
+    "benefits": [
+      "Chooses tests by what the column is, not by habit",
+      "Covers keys, relationships and accepted values where they matter",
+      "Gives a procedure for what to do when a test fails"
+    ]
+  }
+}</pre><div class="cap">Это то, что вы видели на карточке в анкете: <code>name</code> и <code>benefits</code>. Фильтр читает <code>applies_to</code> и <code>topics</code>.</div></div>
+  </div></details>
+
+  <details class="qa"><summary>Навык изнутри: metadata.json и структура SKILL.md</summary><div class="inner">
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>.claude\skills\DBT-MODEL-TESTING\metadata.json (настоящий)</span></div><pre>{
+  "id": "DBT-MODEL-TESTING",
+  "version": "0.1.1",
+  "source_path": "artifacts/DBT-MODEL-TESTING",
+  "applies_to": { "frameworks": ["dbt"] },
+  "strength": "on-demand",
+  "topics": ["testing", "data-quality"],
+  "scope": "project",
+  "requires": {
+    "tools": ["dbt Core CLI with the project's warehouse adapter"],
+    "access": ["Warehouse credentials in profiles.yml for a target the agent may build into"]
+  },
+  "presentation": { ... как на карточке ... }
+}</pre><div class="cap">Поле <code>requires</code> прямо говорит, что нужно навыку: установленный dbt и доступ к базе из <code>profiles.yml</code>, в которую агенту разрешено собирать.</div></div>
+    <p><b>Структура SKILL.md</b> (настоящие заголовки). Это и есть «оглавление» вашего ревью:</p>
+    <div class="tablewrap"><table>
+      <tr><th>Раздел навыка</th><th>О чём</th></tr>
+      <tr><td>Match the project before adding anything</td><td>сначала посмотреть тестовый YAML и <code>packages.yml</code>, не ломать сборку недоступными макросами</td></tr>
+      <tr><td>Test by column role</td><td>таблица «роль → тест»; <code>unique</code>+<code>not_null</code> на ключе, <code>accepted_values</code> подтверждает владелец данных</td></tr>
+      <tr><td>Run them</td><td><code>dbt test --select model</code>, а <code>+model</code> проверяет и предков</td></tr>
+      <tr><td>When a test fails, the test is probably right</td><td>упавший тест — находка; таблица «падение → причина → ответ»; сначала запросить строки</td></tr>
+      <tr><td>Severity</td><td><code>warn</code> для реальных, но не блокирующих условий; не для хранения упавших тестов</td></tr>
+      <tr><td>Anti-patterns</td><td>семь пунктов — готовый чеклист ревью</td></tr>
+    </table></div>
+  </div></details>
+
+  <details class="qa"><summary>Что лежит в target\ и logs\ после запусков</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Путь</th><th>Что это</th></tr>
+      <tr><td><code>target\compiled\...</code></td><td>SQL моделей и тестов после подстановки Jinja (то, что можно запускать руками)</td></tr>
+      <tr><td><code>target\run\...</code></td><td>SQL, который dbt реально выполнил (с <code>create view / create table</code>)</td></tr>
+      <tr><td><code>target\manifest.json</code></td><td>описание всего проекта: узлы, зависимости, тесты</td></tr>
+      <tr><td><code>target\run_results.json</code></td><td>итоги последнего запуска: время, статусы</td></tr>
+      <tr><td><code>logs\dbt.log</code></td><td>подробный журнал; открывайте, когда непонятна ошибка</td></tr>
+      <tr><td><code>orders.duckdb</code></td><td>сама база с таблицами <code>raw_*</code>, представлениями <code>stg_*</code> и таблицей <code>fct_daily_orders</code></td></tr>
+    </table></div>
+    <p>Все эти пути пересоздаются командами dbt, поэтому их безопасно удалить и в git не добавляют.</p>
+  </div></details>
+</section>
+
 <section class="sec" id="sec-tech">
   <h2>Техническая часть: окружение</h2>
   <div class="tablewrap"><table>
@@ -587,6 +1462,54 @@ Done. PASS=9 WARN=0 ERROR=0 SKIP=0 TOTAL=9</pre><div class="cap">Время в �
   <details><summary>Почему профиль <code>profile.json</code> коммитят и ревьюят, а не пересоздают сканером?</summary><div>Сканер не знает всего: например, что проект работает на Snowflake. Недостающие ответы даёт человек, и они фиксируются в профиле. Иначе при каждом запуске набор навыков мог бы тихо меняться.</div></details>
 
   </section>
+<section class="sec" id="sec-faq">
+  <h2>Вопросы для защиты и интервью: с образцами ответов</h2>
+  <p class="lede">Список вопросов, которые логично задать по этому заданию (я составила его по упражнениям, настоящий список у куратора). Сначала ответьте сами вслух, потом раскройте образец. Образец — это опора, а не текст для заучивания: говорите своими словами и ссылайтесь на то, что видели у себя.</p>
+
+  <h3>Установка и среда</h3>
+  <details class="qa"><summary>Почему Accelerator требует PowerShell 7, а не встроенный 5.1?</summary><div class="inner"><p>Модуль Accelerator написан под PowerShell 7. Встроенного 5.1 хватает, чтобы <i>установить</i> пакет, но команда не запустится. Установщик проверяет <code>pwsh</code> заранее, чтобы ошибка была при установке, а не при первом использовании.</p></div></details>
+  <details class="qa"><summary>Чем <code>install-accelerator.ps1</code> отличается от <code>install.ps1</code>?</summary><div class="inner"><p><code>install-accelerator.ps1</code> ставит и команду <code>accelerator</code>, и навык <code>accelerator-setup</code> для Claude Code. <code>install.ps1</code> и <code>install.sh</code> ставят только команду. Без навыка не запустить анкету.</p></div></details>
+  <details class="qa"><summary>Почему после установки нужно открыть новое окно и перезапустить Claude Code?</summary><div class="inner"><p>Команда находится через PATH, а открытые окна получили его копию при запуске. Claude Code читает список навыков при старте сессии, поэтому открытая сессия новый навык не видит.</p></div></details>
+  <details class="qa"><summary>Почему Python именно 3.11?</summary><div class="inner"><p>dbt 1.7 поддерживает Python 3.8–3.11 (в документах упражнения: 3.9–3.11) и не работает на 3.12 и новее. Закрепление версий пакетов это не исправляет. Поэтому окружение создают через <code>py -3.11</code>.</p></div></details>
+  <details class="qa"><summary>Зачем проверять доступ к GitHub командой <code>git ls-remote</code>?</summary><div class="inner"><p>Каталог навыков скачивается с GitHub. Блокировка прокси проявляется как «неверный тег», и разобраться трудно. Отдельная проверка показывает, что проблема в сети, а не в Accelerator.</p></div></details>
+
+  <h3>Упражнение 01</h3>
+  <details class="qa"><summary>Опишите цепочку scan → анкета → install и что в ней делает человек.</summary><div class="inner"><p><code>scan</code> — код: читает файлы проекта и пишет черновик. Анкета — навык и человек: подтверждает то, чего скан не знает (агент, темы, какие навыки выбрать), и записывает <code>profile.json</code>. <code>install</code> — код: читает профиль и копирует выбранные навыки, ничего не спрашивая и не используя ИИ. Поэтому при одном профиле набор навыков всегда одинаков.</p></div></details>
+  <details class="qa"><summary>Почему черновик нельзя установить?</summary><div class="inner"><p>В нём три поля <code>unanswered</code>: <code>agents</code>, <code>intents</code>, <code>selected_artifacts</code>. <code>install</code> читает только <code>profile.json</code>. Без ответов человека установка могла бы тихо менять набор навыков.</p></div></details>
+  <details class="qa"><summary>Что скан нашёл и откуда?</summary><div class="inner"><p>Python — из <code>requirements.txt</code>; SQL — из файлов моделей; dbt — из <code>dbt-core</code> в requirements и из <code>dbt_project.yml</code> (два сигнала). <code>pytest</code> как test_runner — из requirements. Snowflake скан не засчитал, хотя в requirements есть <code>dbt-snowflake</code>.</p></div></details>
+  <details class="qa"><summary>Чем «навык прошёл фильтр» отличается от «навык выбран»?</summary><div class="inner"><p>Фильтр отсекает неподходящее: <code>applies_to</code> должен совпасть со стеком, темы пересечься с вашими. Прошедшие фильтр показываются карточками. Выбор — ваше решение из этих карточек. Ставится только выбранное.</p></div></details>
+  <details class="qa"><summary>Почему <code>AIRFLOW-DAG-STRUCTURE</code> не было среди карточек?</summary><div class="inner"><p>Он заявляет <code>frameworks: [airflow]</code>, а в профиле только <code>dbt</code>. Условия <code>applies_to</code> соединяются «И»: одно несовпавшее отфильтровывает навык.</p></div></details>
+  <details class="qa"><summary>Почему <code>DATA-INCIDENT-TRACING</code> с пустым <code>applies_to</code> предложили?</summary><div class="inner"><p>Пустое условие подходит любому стеку, а его темы <code>debugging</code> и <code>data-quality</code> пересекаются с вашей <code>data-quality</code>. Поэтому он прошёл и фильтр, и тему.</p></div></details>
+  <details class="qa"><summary>Что сделал бы <code>always</code>-навык и есть ли такой в каталоге?</summary><div class="inner"><p>Он ставится автоматически в любой подходящий проект без выбора. По тестам упражнения 03 в каталоге v1.3.0 один такой: <code>DOCKER-DATA-LOSS-CONFIRMATION</code>. Ему нужен Docker в профиле, у вас его нет.</p></div></details>
+  <details class="qa"><summary>Какой способ ошибиться с <code>selected_artifacts</code> не даёт ни ошибки, ни предупреждения?</summary><div class="inner"><p>Назвать существующий навык, чьё <code>applies_to</code> не совпало с профилем: он молча отбрасывается, а установка пишет об успехе. Несуществующий id и навык области <code>user</code> в проектном списке дают ошибку. Поэтому после install читают реестр.</p></div></details>
+  <details class="qa"><summary>Почему профиль коммитят и ревьюят, а не пересоздают сканером?</summary><div class="inner"><p>Сканер видит только файлы и не знает, например, что проект работает на Snowflake. Недостающее решает человек, и это фиксируется в профиле. Тогда коллеги и CI получают тот же набор командой <code>install</code>.</p></div></details>
+
+  <h3>Упражнение 02: dbt и тесты</h3>
+  <details class="qa"><summary>Почему <code>unique</code> и <code>not_null</code> ставят на первичный ключ вместе?</summary><div class="inner"><p>Вместе они выражают зерно модели: одна строка — одна сущность, ключ всегда есть. <code>unique</code> без <code>not_null</code> пропускает пустые значения, а <code>not_null</code> без <code>unique</code> пропускает дубли. Ещё они ловят размножение строк после join.</p></div></details>
+  <details class="qa"><summary>Почему на <code>stg_orders.customer_id</code> нельзя ставить <code>unique</code>?</summary><div class="inner"><p>Это внешний ключ: у одного клиента может быть много заказов, и такой тест падал бы на нормальных данных. Для внешнего ключа нужны <code>not_null</code> и <code>relationships</code>.</p></div></details>
+  <details class="qa"><summary>Откуда должен браться список для <code>accepted_values</code>?</summary><div class="inner"><p>От владельца данных, из согласованного справочника (<code>ORDER-STATUSES.md</code>), а не из сегодняшних значений. Навык формулирует: сегодняшние строки показывают, что есть, а не что разрешено. Если взять список из таблицы, в него попадёт <code>refunded</code> и тест перестанет что-либо ловить.</p></div></details>
+  <details class="qa"><summary>Тест упал. Как вы решаете, виноваты данные или тест?</summary><div class="inner"><p>Сначала смотрю строки (<code>dbt show --limit 20</code>). Затем спрашиваю: верно ли утверждение теста для бизнеса? Если верно (каждому заказу нужен клиент), виноваты данные, и я исправляю источник или выношу строку на разбор владельцу. Если утверждение неверно (например, <code>unique</code> на внешнем ключе), виноват тест, и я правлю его с причиной в YAML. Причину записываю до правки.</p></div></details>
+  <details class="qa"><summary>Что произошло с <code>refunded</code> и как вы поступили?</summary><div class="inner"><p>Тест <code>accepted_values</code> упал на заказе <code>O1006</code>. Возврат может быть законным статусом, но справочник согласован с владельцем данных и его не содержит, подтверждения у меня нет. Расширить список — значит превратить сигнал в тишину. Поэтому я вынесла строку на разбор (карантин) и задала владельцу вопрос. Если владелец подтвердит, обновлю справочник и тест, а строку верну.</p></div></details>
+  <details class="qa"><summary>Почему нельзя поставить <code>severity: warn</code>, чтобы сборка проходила?</summary><div class="inner"><p><code>warn</code> годится для реальных, но не блокирующих условий. Как способ хранить настоящее падение он вреден: предупреждение, которое срабатывает на каждом запуске, перестают читать, и тест становится хуже отсутствующего: шумит и создаёт видимость покрытия.</p></div></details>
+  <details class="qa"><summary>Почему тесты <code>dbt_utils</code> недоступны и как об этом узнать заранее?</summary><div class="inner"><p>В проекте нет <code>packages.yml</code>. Проверка: <code>Test-Path packages.yml</code> или <code>cat packages.yml</code> до написания тестов. «Трудным путём»: ошибка про отсутствующий макрос, в которой названа не ваша строка, а макрос.</p></div></details>
+  <details class="qa"><summary>Почему после правки сидов итог по дню остался старым при зелёных тестах?</summary><div class="inner"><p><code>fct_daily_orders</code> инкрементальная: при повторном запуске пересчитывает только последний день и позже. Старые строки остаются. Тесты проверяют ключи и пустоты, а не соответствие итога данным. Нужен <code>dbt build --full-refresh</code>.</p></div></details>
+  <details class="qa"><summary>Почему нельзя добавлять <code>dbt-duckdb</code> в <code>requirements.txt</code>?</summary><div class="inner"><p>Сканер узнаёт <code>duckdb</code> и изменил бы профиль, а с ним и то, что установило упражнение 01. Адаптер ставят отдельно, но в той же команде pip, чтобы не заменить dbt-core.</p></div></details>
+  <details class="qa"><summary>Почему адаптер ставят той же командой pip, что и requirements?</summary><div class="inner"><p>pip решает зависимости для всей команды сразу. Вторая отдельная команда заменила бы dbt-core версией, несовместимой с <code>dbt-snowflake</code>, напечатала ошибку и всё равно завершилась бы успешно. Ломается всё на следующей команде dbt.</p></div></details>
+
+  <h3>ИИ и Claude</h3>
+  <details class="qa"><summary>Что такое навык и чем он отличается от промпта?</summary><div class="inner"><p>Навык — файл <code>SKILL.md</code> (с именем и описанием в начале), который агент подгружает, когда задача подходит. Промпт — разовая просьба. Навык переиспользуется между задачами и людьми и хранится вместе с проектом.</p></div></details>
+  <details class="qa"><summary>Почему нельзя вставлять правила навыка в запрос агенту?</summary><div class="inner"><p>Тогда проверялся бы мой запрос, а не установка навыка. Если правила в промпте, нельзя понять, подхватил ли агент навык из <code>.claude/skills</code>.</p></div></details>
+  <details class="qa"><summary>Почему итогу агента нельзя доверять без проверки?</summary><div class="inner"><p>Итог — пересказ собственной работы агента. Модель может уверенно сообщить «готово» и ошибиться или не запустить проверку. Реальный результат — дифф и вывод команд, которые я запускаю сама. Проверяю по независимому эталону: навыку и справочнику.</p></div></details>
+  <details class="qa"><summary>Что такое контекст и почему он важен?</summary><div class="inner"><p>Контекст — всё, что модель видит в данный момент: запрос, прочитанные файлы, загруженные навыки, результаты команд. Он ограничен, и между сессиями ничего не сохраняется. Поэтому постоянные знания кладут в файлы проекта (навыки, CLAUDE.md), а навыки загружают по требованию.</p></div></details>
+  <details class="qa"><summary>Что может пойти не так, когда агент пишет тесты?</summary><div class="inner"><p>Список значений из данных (с <code>refunded</code>), <code>unique</code> на внешнем ключе, макрос из отсутствующего пакета, <code>severity: warn</code> «для безопасности», тесты на всё подряд при пропуске нужных столбцов, заявление «проверено» без запуска. Каждый пункт я сверяю с правилами навыка.</p></div></details>
+  <details class="qa"><summary>Какие правила безопасности вы соблюдаете при работе с агентом?</summary><div class="inner"><p>Запускаю в папке проекта. Читаю дифф перед разрешением записи. Не вставляю в запрос пароли и ключи. Не включаю режим без вопросов. Считаю текст из файлов данными, а не командами. Запуск тестов и итоговую проверку делаю сама.</p></div></details>
+
+  <h3>Рефлексия</h3>
+  <details class="qa"><summary>Что навык подсказал вам такого, чего вы бы не сделали сами?</summary><div class="inner"><p>Пример ответа: «Допустимые значения подтверждает владелец данных, а не сегодняшние строки. Без этого я бы взяла список из таблицы, и <code>refunded</code> прошёл бы незамеченным. Ещё: сначала проверить <code>packages.yml</code>». Подставьте своё и назовите конкретную строку навыка.</p></div></details>
+  <details class="qa"><summary>Что вы сделали иначе, чем в навыке, и почему?</summary><div class="inner"><p>Пример: «Навык допускает расширять тест, если категория законна. Я не расширяла: подтверждения нет, поэтому строки в карантине. И в навыке нет про инкрементальные модели: мне потребовался <code>--full-refresh</code>». Ответ «ничего» не годится.</p></div></details>
+  <details class="qa"><summary>Что бы вы улучшили в навыке или в упражнении?</summary><div class="inner"><p>Идеи: добавить в навык раздел про инкрементальные модели и пересчёт после правки данных; добавить пример проверки сверки итога с источником; уточнить, как поступать, когда владельца данных спросить нельзя. Любое замечание, подкреплённое вашим опытом, ценно: это и есть обратная связь о качестве навыка.</p></div></details>
+</section>
+
 
 <section class="sec" id="qa">
   <h2>Ответы и решения</h2>
@@ -713,7 +1636,7 @@ ENV.forEach(function(e){envg.insertAdjacentHTML('beforeend','<div><label class="
 
 var nav=document.getElementById('navlist');
 function navLink(href,text){var li=document.createElement('li');li.innerHTML='<a href="'+href+'">'+esc(text)+'</a>';nav.appendChild(li)}
-navLink('#how','Старт');navLink('#sum','Сводка');navLink('#sec-map','Обзор');navLink('#sec-ai','Теория ИИ');navLink('#sec-dbt','Теория dbt');navLink('#sec-tech','Техчасть');
+navLink('#how','Старт');navLink('#sum','Сводка');navLink('#sec-map','Обзор');navLink('#sec-task','Разбор задания');navLink('#sec-claude','Теория: Claude');navLink('#sec-ai','Теория: ИИ');navLink('#sec-exth','Теория: упражнения');navLink('#sec-dbt','Теория: dbt');navLink('#sec-files','Файлы проекта');navLink('#sec-tech','Техчасть');
 var root=document.getElementById('phases');
 DATA.phases.forEach(function(ph){
   var lbl=ph.id+' · '+ph.title.replace(/^[A-G]\.\s*/,'').split(':')[0];navLink('#ph-'+ph.id,lbl);
@@ -728,7 +1651,7 @@ DATA.phases.forEach(function(ph){
   sec.appendChild(holder);root.appendChild(sec);
   ph.steps.forEach(function(s){s._ph=ph.id;if(ph.id!=='G')allSteps.push(s);holder.appendChild(renderStep(s,ph.id!=='G'))});
 });
-navLink('#sec-sim','Тренажёр');navLink('#sec-quiz','Самопроверка');navLink('#qa','Ответы');navLink('#issues','Проблемы');navLink('#ref','Справочник');navLink('#final','Итог');
+navLink('#sec-sim','Тренажёр');navLink('#sec-quiz','Самопроверка');navLink('#sec-faq','Вопросы защиты');navLink('#qa','Ответы');navLink('#issues','Проблемы');navLink('#ref','Справочник');navLink('#final','Итог');
 var go=document.getElementById('gopen');
 if(go)go.addEventListener('click',function(){document.getElementById('steps-G').hidden=false;document.getElementById('glock').hidden=true});
 
