@@ -1,0 +1,814 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><title>Разбор проекта orders-analytics</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+/* Layout: липкая навигация по разделам, одна колонка до 860px, схемы и терминалы на всю ширину колонки. */
+:root{
+  --bg:#f5f7f6; --surface:#ffffff; --fg:#17201d; --muted:#586661; --line:#d6ddd9;
+  --accent:#0d6a5b; --accent-soft:#d9eee8; --code-bg:#e9eeec;
+  --ok:#1b7a3d; --ok-soft:#d9f0e0; --warn:#955700; --warn-soft:#fbebcf; --bad:#a32e28; --bad-soft:#f7dad7;
+  --blue:#2457a6; --blue-soft:#dce7f8; --violet:#6a3fa0; --violet-soft:#e9def5;
+  --term-bg:#0e1412; --term-fg:#d5dfda; --term-dim:#7d8c86; --term-ok:#6fd194; --term-bad:#ff8f86; --term-warn:#e8b25a; --term-bar:#1a2320;
+  --display:'IBM Plex Serif',Georgia,serif; --body:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101615; --surface:#182120; --fg:#e4eae7; --muted:#9aa8a2; --line:#2b3733;
+  --accent:#5cc7b0; --accent-soft:#1b3b34; --code-bg:#222c29;
+  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d;
+  --blue:#8fb4ee; --blue-soft:#1d2d4a; --violet:#c2a1ee; --violet-soft:#33264a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101615; --surface:#182120; --fg:#e4eae7; --muted:#9aa8a2; --line:#2b3733;
+  --accent:#5cc7b0; --accent-soft:#1b3b34; --code-bg:#222c29;
+  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d;
+  --blue:#8fb4ee; --blue-soft:#1d2d4a; --violet:#c2a1ee; --violet-soft:#33264a; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--body);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:0 max(16px,env(safe-area-inset-left,0px))}
+nav ul{list-style:none;margin:0 auto;padding:8px 0;display:flex;gap:6px;overflow-x:auto;max-width:860px;scrollbar-width:thin}
+nav a{display:block;white-space:nowrap;text-decoration:none;color:var(--muted);font:500 .85rem var(--body);padding:6px 11px;border-radius:99px}
+nav a:hover{background:var(--accent-soft);color:var(--accent)} nav a.on{background:var(--accent);color:var(--bg)}
+nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+header{padding-block:36px 8px}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:2.1rem;font-weight:600} h2{font-size:1.5rem;font-weight:600} h3{font-size:1.12rem;font-weight:600;margin-top:26px} h4{font-size:1rem;font-weight:600;margin-top:18px}
+section{padding-block:36px 8px;border-top:1px solid var(--line);margin-top:28px}
+p{margin:.6em 0} .lede{color:var(--muted);font-size:1.08rem;max-width:64ch}
+a{color:var(--accent)}
+code{font:.87em var(--mono);background:var(--code-bg);padding:.1em .36em;border-radius:4px}
+ul,ol{padding-left:1.25em} li{margin:4px 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:520px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font:500 .74rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.95rem}
+.note.warn{border-color:var(--warn);background:var(--warn-soft)} .note.bad{border-color:var(--bad);background:var(--bad-soft)}
+.badge{display:inline-block;font:500 .72rem var(--mono);padding:2px 8px;border-radius:99px;white-space:nowrap;vertical-align:middle}
+.b-ps{background:var(--blue-soft);color:var(--blue)} .b-chat{background:var(--violet-soft);color:var(--violet)} .b-file{background:var(--warn-soft);color:var(--warn)} .b-ok{background:var(--ok-soft);color:var(--ok)} .b-bad{background:var(--bad-soft);color:var(--bad)}
+.fig{margin:16px 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto}
+.fig svg{display:block;width:100%;height:auto;min-width:560px}
+.fig figcaption{font-size:.85rem;color:var(--muted);margin-top:8px}
+svg text{font-family:var(--body);fill:var(--fg);font-size:13px} svg .mono{font-family:var(--mono);font-size:11.5px} svg .dim{fill:var(--muted)} svg .h{font-weight:600;font-size:13.5px}
+svg .n{fill:var(--surface);stroke:var(--line);stroke-width:1.4} svg .na{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+svg .nb{fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.4} svg .nv{fill:var(--violet-soft);stroke:var(--violet);stroke-width:1.4}
+svg .nw{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.4} svg .ng{fill:var(--code-bg);stroke:var(--muted);stroke-width:1.4}
+svg .no{fill:var(--ok-soft);stroke:var(--ok);stroke-width:1.4} svg .nr{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.4}
+svg .ar{stroke:var(--muted);stroke-width:1.6;fill:none} svg .arh{fill:var(--muted)}
+.term{border-radius:10px;overflow:hidden;margin:14px 0;border:1px solid #26332f;background:var(--term-bg)}
+.term .bar{background:var(--term-bar);color:var(--term-dim);font:500 .74rem var(--mono);padding:7px 12px;display:flex;gap:8px;align-items:center}
+.term .bar i{width:9px;height:9px;border-radius:50%;background:#3a4944;display:inline-block}
+.term .bar span{margin-left:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.term pre{margin:0;padding:12px 14px;color:var(--term-fg);font:.8rem/1.55 var(--mono);overflow-x:auto;white-space:pre}
+.term .cap{background:var(--term-bar);color:var(--term-dim);font-size:.78rem;padding:7px 12px;border-top:1px solid #26332f}
+.t-ok{color:var(--term-ok)} .t-bad{color:var(--term-bad)} .t-warn{color:var(--term-warn)} .t-dim{color:var(--term-dim)} .t-pr{color:#7fb7ff}
+.cmd{position:relative;margin:10px 0}
+.cmd pre{margin:0;background:var(--code-bg);padding:12px 90px 12px 14px;border-radius:8px;overflow-x:auto;font:.85rem/1.55 var(--mono)}
+.cmd button{position:absolute;right:8px;top:8px}
+button,.btn{font:500 .8rem var(--body);background:var(--accent);color:var(--bg);border:0;border-radius:6px;padding:6px 11px;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;margin:8px 0}
+summary{cursor:pointer;padding:10px 14px;font-weight:500} details>div{padding:0 14px 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.card h4{margin-top:0}
+.step{display:grid;grid-template-columns:44px 1fr;gap:12px;margin:18px 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.step .num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--bg);display:grid;place-items:center;font:600 .95rem var(--mono)}
+.step .body{min-width:0}
+.step h3{margin-top:2px}
+.row{display:grid;grid-template-columns:110px 1fr;gap:8px;margin:8px 0;align-items:start}
+.row b{font:500 .74rem var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.check input{margin-top:6px;width:18px;height:18px;accent-color:var(--accent)}
+.progress{height:8px;background:var(--code-bg);border-radius:99px;overflow:hidden;margin:8px 0}
+.progress>div{height:100%;background:var(--accent);width:0;transition:width .3s}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+.sim{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.sim label{display:flex;gap:8px;align-items:flex-start;margin:5px 0;font-size:.92rem}
+.sim label input{margin-top:5px;accent-color:var(--accent)}
+.sim .grp{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.sim .grp h4{margin:0 0 4px;font-size:.92rem;font-family:var(--mono);font-weight:500}
+tr.hit td{background:var(--bad-soft)} tr.hitw td{background:var(--warn-soft)}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum span{font:500 .85rem var(--mono);padding:4px 10px;border-radius:6px}
+textarea{width:100%;min-height:84px;font:.9rem/1.5 var(--body);background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;resize:vertical}
+.tree{font:.82rem/1.6 var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;white-space:pre}
+.tree .c{color:var(--muted)} .tree .y{color:var(--accent);font-weight:500} .tree .r{color:var(--bad)}
+footer{padding-block:40px 70px;color:var(--muted);font-size:.88rem}
+@media (max-width:560px){h1{font-size:1.65rem}.row{grid-template-columns:1fr}.step{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+<header>
+  <p><span class="badge b-ok">учебный проект</span> <span class="badge b-chat">Accelerator 0.18.0</span> <span class="badge b-ps">dbt 1.7.9 + DuckDB</span></p>
+  <h1>Разбор проекта orders-analytics</h1>
+  <p class="lede">Что в проекте лежит, что в нём нужно сделать, какую теорию про ИИ и dbt вы применяете на каждом шаге, что вводить, где вводить и что смотреть. Внизу есть симулятор тестов и самопроверка.</p>
+  <div class="note"><b>О картинках.</b> Терминальные окна на странице показывают настоящий вывод: из вашего терминала (сборка, установка) и из отдельной копии проекта, где я запускал команды (список моделей, запросы, пример <code>dbt test</code>). Это не снимки экрана, а вывод в рамке терминала. Ваши файлы при этом не менялись.</div>
+</header>
+
+<nav aria-label="Разделы"><ul id="navlist">
+  <li><a href="#sec-map">Карта</a></li><li><a href="#sec-plan">План</a></li><li><a href="#sec-ai">Теория ИИ</a></li><li><a href="#sec-dbt">Теория dbt</a></li><li><a href="#sec-tech">Техчасть</a></li><li><a href="#sec-steps">Инструкция</a></li><li><a href="#sec-sim">Симулятор</a></li><li><a href="#sec-quiz">Самопроверка</a></li><li><a href="#sec-ref">Шпаргалка</a></li>
+</ul></nav>
+
+<!-- ===================== КАРТА ===================== -->
+<section id="sec-map">
+  <h2>Что здесь происходит</h2>
+  <p>Проект учебный и состоит из двух частей, которые связаны друг с другом.</p>
+  <div class="grid">
+    <div class="card"><h4>Часть 1. Данные</h4><p>Маленький dbt-проект: 4 клиента, 7 заказов, три модели, база DuckDB в одном файле. В данных спрятаны два дефекта.</p></div>
+    <div class="card"><h4>Часть 2. ИИ-помощник</h4><p>Accelerator ставит в проект навыки, то есть инструкции для Claude Code. Вы учитесь выдавать задачу агенту и проверять его работу по навыку.</p></div>
+  </div>
+  <figure class="fig">
+<svg viewBox="0 0 780 372" role="img" aria-label="Схема проекта: каталог навыков, Accelerator, навыки, агент, dbt-проект, DuckDB и вы">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="ng" x="14" y="16" width="190" height="62" rx="9"/><text class="h" x="28" y="42">Каталог навыков</text><text class="mono dim" x="28" y="62">GitHub · тег v1.3.0</text>
+  <rect class="nv" x="296" y="16" width="200" height="62" rx="9"/><text class="h" x="310" y="42">Accelerator</text><text class="mono dim" x="310" y="62">scan → профиль → install</text>
+  <rect class="nw" x="586" y="16" width="180" height="62" rx="9"/><text class="h" x="600" y="42">Навыки</text><text class="mono dim" x="600" y="62">.claude/skills/*/SKILL.md</text>
+  <path class="ar" d="M204 47H294" marker-end="url(#ah)"/><path class="ar" d="M496 47H584" marker-end="url(#ah)"/>
+  <rect class="na" x="296" y="148" width="200" height="74" rx="9"/><text class="h" x="310" y="176">Claude Code</text><text class="dim" x="310" y="196">агент: читает файлы,</text><text class="dim" x="310" y="212">пишет код, запускает команды</text>
+  <rect class="n" x="14" y="160" width="150" height="50" rx="9"/><text class="h" x="28" y="190">Вы</text>
+  <path class="ar" d="M164 175H294" marker-end="url(#ah)"/><text class="mono dim" x="170" y="168">задача</text>
+  <path class="ar" d="M296 197H166" marker-end="url(#ah)"/><text class="mono dim" x="188" y="214">дифф</text>
+  <path class="ar" d="M676 78V120H430V146" marker-end="url(#ah)"/><text class="mono dim" x="520" y="112">агент читает навык</text>
+  <rect class="nb" x="586" y="148" width="180" height="74" rx="9"/><text class="h" x="600" y="176">dbt-проект</text><text class="mono dim" x="600" y="196">models/ · seeds/</text><text class="mono dim" x="600" y="212">schema.yml</text>
+  <path class="ar" d="M496 185H584" marker-end="url(#ah)"/><text class="mono dim" x="500" y="176">правит</text>
+  <rect class="n" x="296" y="288" width="200" height="62" rx="9"/><text class="h" x="310" y="314">PowerShell + .venv</text><text class="mono dim" x="310" y="334">dbt seed / build / test</text>
+  <path class="ar" d="M90 210V318H294" marker-end="url(#ah)"/><text class="mono dim" x="100" y="304">вы запускаете</text>
+  <rect class="ng" x="586" y="288" width="180" height="62" rx="9"/><text class="h" x="600" y="314">DuckDB</text><text class="mono dim" x="600" y="334">orders.duckdb</text>
+  <path class="ar" d="M496 319H584" marker-end="url(#ah)"/>
+  <path class="ar" d="M676 222V286" marker-end="url(#ah)"/>
+</svg>
+    <figcaption>Рис. 1. Слева направо: каталог → Accelerator → навыки → агент. Агент правит dbt-проект, а запускает и проверяет всё вы в PowerShell.</figcaption>
+  </figure>
+  <h3>Где что лежит</h3>
+<div class="tree"><span class="y">E:\orders-analytics\</span>
+├─ <span class="y">models\</span>
+│  ├─ staging\stg_orders.sql, stg_customers.sql   <span class="c">← очищенные копии сидов (view)</span>
+│  ├─ marts\fct_daily_orders.sql                  <span class="c">← итог по дням (incremental)</span>
+│  └─ <span class="y">schema.yml</span>                                   <span class="c">← сюда пишутся тесты. ГЛАВНЫЙ ФАЙЛ УПРАЖНЕНИЯ</span>
+├─ seeds\raw_customers.csv, raw_orders.csv        <span class="c">← исходные данные с двумя дефектами</span>
+├─ <span class="y">ORDER-STATUSES.md</span>                              <span class="c">← согласованные статусы заказа (источник правды)</span>
+├─ <span class="y">.claude\skills\</span>
+│  ├─ <span class="y">DBT-MODEL-TESTING\SKILL.md</span>                  <span class="c">← прочитать ДО агента</span>
+│  ├─ DBT-LAYER-BOUNDARIES\SKILL.md
+│  └─ PYTEST-DATA-PIPELINES\SKILL.md
+├─ .accelerator\profile.json, registry.json        <span class="c">← что выбрано и что установлено</span>
+├─ dbt_project.yml, profiles.yml, requirements.txt <span class="c">← настройки dbt и окружения</span>
+├─ _steps\step3.ps1                                <span class="c">← скрипт шага 2 (сиды + сборка)</span>
+├─ docs\                                           <span class="c">← контекст, диалог, артефакты</span>
+└─ <span class="r">.venv\ target\ logs\ orders.duckdb</span>                <span class="c">← генерируется, в git не входит</span></div>
+</section>
+
+<!-- ===================== ПЛАН ===================== -->
+<section id="sec-plan">
+  <h2>План: что сделано и что осталось</h2>
+  <div class="progress" aria-hidden="true"><div id="pbar"></div></div>
+  <p id="ptext" class="lede" style="margin-top:2px"></p>
+  <p style="font-size:.9rem;color:var(--muted)">Отмечайте пункты сами: галочки запоминаются в этом браузере.</p>
+  <div id="checklist"></div>
+  <div class="note warn"><b>Нумерация.</b> В разговоре «шаг 4» и «шаг 5» — это шаги 3 и 4 в тексте упражнения 02. На этой странице используется нумерация документа.</div>
+</section>
+
+<!-- ===================== ТЕОРИЯ ИИ ===================== -->
+<section id="sec-ai">
+  <h2>Теория ИИ, которую вы применяете</h2>
+  <p>Каждый пункт ниже объяснён коротко и сразу привязан к месту в проекте. Раскрывайте по очереди.</p>
+
+  <details open><summary>1. Агент — это модель, которая умеет действовать</summary><div>
+    <p>Обычный чат-ассистент отвечает текстом. <b>Агент</b> (Claude Code) — это та же языковая модель, но с инструментами: он читает и пишет файлы, запускает команды и повторяет цикл «посмотрел → решил → сделал → проверил результат», пока задача не решена.</p>
+    <p><b>В проекте:</b> когда вы отправите <code>Add tests to models/schema.yml</code>, агент сам откроет <code>schema.yml</code>, найдёт навык, прочитает модели и перепишет файл. Вы не диктуете ему шаги.</p>
+  </div></details>
+
+  <details><summary>2. Контекст: агент знает только то, что «видит»</summary><div>
+    <p>У модели нет памяти о вашем проекте. Всё, что она учитывает, лежит в <b>контексте</b>: ваша задача, прочитанные файлы, загруженные навыки, результаты команд. Контекст ограничен по размеру, поэтому в него нельзя положить всё сразу.</p>
+    <p><b>В проекте:</b> агент не знает, что статус <code>refunded</code> не согласован, пока не прочитал <code>ORDER-STATUSES.md</code> или не получил это указание. Навык велит подтверждать допустимые значения у владельца данных. Это и проверяется на ревью.</p>
+  </div></details>
+
+  <details><summary>3. Навык (skill): инструкция, которая подгружается по необходимости</summary><div>
+    <p>Навык — это папка с файлом <code>SKILL.md</code>. В начале файла короткое описание (имя и «когда применять»). Агент держит в контексте только эти описания, а полный текст подгружает, когда задача подходит. Это экономит контекст и называется постепенным раскрытием.</p>
+    <figure class="fig">
+<svg viewBox="0 0 760 210" role="img" aria-label="Как загружается навык">
+  <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="n" x="14" y="14" width="732" height="38" rx="8"/><text class="h" x="28" y="38">Контекст агента</text>
+  <rect class="nw" x="14" y="72" width="232" height="104" rx="9"/><text class="h" x="28" y="98">Всегда в контексте</text><text class="dim" x="28" y="120">имя + описание каждого навыка</text><text class="mono" x="28" y="142">dbt-model-testing:</text><text class="mono dim" x="28" y="160">«Choosing dbt schema tests…»</text>
+  <path class="ar" d="M246 124H298" marker-end="url(#ah2)"/><text class="mono dim" x="250" y="116">задача</text><text class="mono dim" x="250" y="144">подходит?</text>
+  <rect class="na" x="298" y="72" width="232" height="104" rx="9"/><text class="h" x="312" y="98">Загружается по запросу</text><text class="dim" x="312" y="120">весь текст SKILL.md:</text><text class="dim" x="312" y="140">роли столбцов, анти-паттерны,</text><text class="dim" x="312" y="158">что делать при падении</text>
+  <path class="ar" d="M530 124H582" marker-end="url(#ah2)"/>
+  <rect class="n" x="582" y="72" width="164" height="104" rx="9"/><text class="h" x="596" y="98">Файлы рядом</text><text class="dim" x="596" y="120">ссылки на другие навыки</text><text class="dim" x="596" y="140">читаются, только если</text><text class="dim" x="596" y="158">понадобятся</text>
+</svg>
+      <figcaption>Рис. 2. Постепенное раскрытие: сначала описание, потом текст, потом связанные файлы.</figcaption>
+    </figure>
+    <p><b>В проекте:</b> навык <code>DBT-MODEL-TESTING</code> лежит в <code>.claude/skills/</code>. Признак того, что он сработал: агент <b>называет навык</b> до начала работы. Нет такой строки — навык не подхватился, и дальше агент действует по общим знаниям.</p>
+  </div></details>
+
+  <details><summary>4. Промпт, навык и правила проекта — это разные вещи</summary><div>
+    <div class="tablewrap"><table>
+      <tr><th>Что</th><th>Срок жизни</th><th>Пример здесь</th></tr>
+      <tr><td>Промпт</td><td>одна задача</td><td><code>Add tests to models/schema.yml</code></td></tr>
+      <tr><td>Навык</td><td>постоянно, переиспользуется</td><td><code>DBT-MODEL-TESTING</code></td></tr>
+      <tr><td>Правила проекта (например, файл <code>CLAUDE.md</code>)</td><td>постоянно, для одного проекта</td><td>в этом учебном проекте не заведены</td></tr>
+    </table></div>
+    <p><b>Почему упражнение запрещает вставлять правила навыка в промпт.</b> Если вы перечислите правила, агент выполнит их по вашему тексту, и вы не узнаете, сработал ли сам навык. Короткий промпт проверяет именно установку.</p>
+  </div></details>
+
+  <details><summary>5. Что детерминировано, а что нет</summary><div>
+    <figure class="fig">
+<svg viewBox="0 0 760 170" role="img" aria-label="Детерминированные и недетерминированные шаги">
+  <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="no" x="14" y="30" width="170" height="64" rx="9"/><text class="h" x="28" y="56">scan</text><text class="mono dim" x="28" y="76">код, один результат</text>
+  <rect class="nw" x="224" y="30" width="170" height="64" rx="9"/><text class="h" x="238" y="56">анкета</text><text class="mono dim" x="238" y="76">ИИ + вы, может отличаться</text>
+  <rect class="no" x="434" y="30" width="150" height="64" rx="9"/><text class="h" x="448" y="56">install</text><text class="mono dim" x="448" y="76">код, один результат</text>
+  <rect class="nw" x="624" y="30" width="122" height="64" rx="9"/><text class="h" x="638" y="56">тесты</text><text class="mono dim" x="638" y="76">пишет агент</text>
+  <path class="ar" d="M184 62H222" marker-end="url(#ah3)"/><path class="ar" d="M394 62H432" marker-end="url(#ah3)"/><path class="ar" d="M584 62H622" marker-end="url(#ah3)"/>
+  <text class="dim" x="14" y="130">Зелёные блоки всегда дают одно и то же при одном и том же входе. Жёлтые зависят от модели, поэтому их результат надо проверять.</text>
+  <text class="dim" x="14" y="152">Поэтому профиль коммитят и ревьюят: он фиксирует недетерминированную часть, и дальше install воспроизводим.</text>
+</svg>
+      <figcaption>Рис. 3. Где в цепочке нужен человек.</figcaption>
+    </figure>
+    <p><b>В проекте:</b> одну и ту же <code>profile.json</code> <code>accelerator install</code> всегда превратит в те же три навыка. А тесты агент может написать чуть иначе при каждом запуске, поэтому их читают глазами.</p>
+  </div></details>
+
+  <details><summary>6. Ошибки ИИ и почему самоотчёт агента не проверка</summary><div>
+    <p>Модель может уверенно сделать то, что выглядит правильно и таковым не является. Типичные случаи для этого упражнения:</p>
+    <ul>
+      <li>взять список для <code>accepted_values</code> из сегодняшних данных (там будет и <code>refunded</code>);</li>
+      <li>написать <code>unique</code> на внешний ключ <code>customer_id</code> (у клиента может быть много заказов);</li>
+      <li>добавить тест из пакета <code>dbt_utils</code>, которого в проекте нет;</li>
+      <li>сказать «всё проверено», не запустив <code>dbt test</code>.</li>
+    </ul>
+    <p>Фраза «готово, тесты добавлены» — это рассказ о работе, а не её результат. Проверяют дифф файла, <code>dbt parse</code> и <code>dbt test</code>.</p>
+  </div></details>
+
+  <details><summary>7. Ревью против независимого эталона</summary><div>
+    <p>Проверять можно, только имея эталон, который вы получили <b>не от проверяемого</b>. Здесь их два: текст навыка и <code>ORDER-STATUSES.md</code>. Поэтому навык читают до агента: после его работы вы будете смотреть на результат уже «глазами агента».</p>
+    <figure class="fig">
+<svg viewBox="0 0 760 196" role="img" aria-label="Цикл ревью">
+  <defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <rect class="n" x="10" y="20" width="118" height="56" rx="9"/><text class="h" x="22" y="44">1. Читаете</text><text class="mono dim" x="22" y="62">навык</text>
+  <rect class="nv" x="150" y="20" width="118" height="56" rx="9"/><text class="h" x="162" y="44">2. Фраза</text><text class="mono dim" x="162" y="62">агенту</text>
+  <rect class="nw" x="290" y="20" width="118" height="56" rx="9"/><text class="h" x="302" y="44">3. Агент</text><text class="mono dim" x="302" y="62">пишет тесты</text>
+  <rect class="na" x="430" y="20" width="148" height="56" rx="9"/><text class="h" x="442" y="44">4. Ревью диффа</text><text class="mono dim" x="442" y="62">по навыку</text>
+  <rect class="nb" x="600" y="20" width="148" height="56" rx="9"/><text class="h" x="612" y="44">5. dbt parse</text><text class="mono dim" x="612" y="62">YAML корректен?</text>
+  <rect class="nr" x="600" y="116" width="148" height="56" rx="9"/><text class="h" x="612" y="140">6. dbt test</text><text class="mono dim" x="612" y="158">красное = находка</text>
+  <rect class="nw" x="400" y="116" width="170" height="56" rx="9"/><text class="h" x="412" y="140">7. Данные или тест?</text><text class="mono dim" x="412" y="158">смотрите строки</text>
+  <rect class="no" x="200" y="116" width="170" height="56" rx="9"/><text class="h" x="212" y="140">8. Правка + зелёный</text><text class="mono dim" x="212" y="158">причина в YAML</text>
+  <rect class="n" x="10" y="116" width="160" height="56" rx="9"/><text class="h" x="22" y="140">9. Три заметки</text><text class="mono dim" x="22" y="158">для сертификатора</text>
+  <path class="ar" d="M128 48H148" marker-end="url(#ah4)"/><path class="ar" d="M268 48H288" marker-end="url(#ah4)"/><path class="ar" d="M408 48H428" marker-end="url(#ah4)"/><path class="ar" d="M578 48H598" marker-end="url(#ah4)"/>
+  <path class="ar" d="M674 76V114" marker-end="url(#ah4)"/><path class="ar" d="M600 144H572" marker-end="url(#ah4)"/><path class="ar" d="M400 144H372" marker-end="url(#ah4)"/><path class="ar" d="M200 144H172" marker-end="url(#ah4)"/>
+</svg>
+      <figcaption>Рис. 4. Весь цикл упражнения 02 от навыка до заметок.</figcaption>
+    </figure>
+  </div></details>
+
+  <details><summary>8. Упавший тест — это находка, а не помеха</summary><div>
+    <p>Когда агенту или человеку важно «чтобы стало зелёным», появляется соблазн подогнать тест под данные: расширить список значений, добавить <code>coalesce</code>, поставить <code>severity: warn</code>. Тогда тест молчит, а плохие данные остаются в таблице. Навык прямо называет это анти-паттерном.</p>
+    <p><b>В проекте:</b> красные <code>relationships</code> (заказ <code>O1005</code>) и <code>accepted_values</code> (заказ <code>O1006</code>) — это настоящие находки. Попробуйте «починить» их в симуляторе ниже и увидите, что при этом исчезает.</p>
+  </div></details>
+
+  <details><summary>9. Человек в контуре и границы доверия</summary><div>
+    <ul>
+      <li><b>Выбор навыков — решение человека.</b> Фильтр сужает список карточек, но выбираете вы. Если назвать существующий навык, который не подходит под стек, <code>install</code> молча его отбросит: это единственная ошибка выбора без сообщения.</li>
+      <li><b>Данные — не команды.</b> Текст внутри файлов (например, комментарий в CSV) не должен менять поведение агента. Источники правды: ваше сообщение, навык, <code>ORDER-STATUSES.md</code>.</li>
+      <li><b>Допустимые значения подтверждает владелец данных.</b> Сегодняшние строки показывают, что есть, а не что разрешено.</li>
+    </ul>
+  </div></details>
+
+  <details><summary>10. Обратная связь по навыку</summary><div>
+    <p>Три заметки в конце упражнения — единственный отзыв о качестве навыка. Заметка «что сделали иначе, чем в навыке» не может быть пустой: навык не истина, а договорённость, которую можно улучшать. Для оформления отзывов в самом Accelerator есть команда <code>accelerator feedback</code>.</p>
+  </div></details>
+</section>
+
+<!-- ===================== ТЕОРИЯ DBT ===================== -->
+<section id="sec-dbt">
+  <h2>Теория dbt на примере проекта</h2>
+  <p>dbt (data build tool) превращает SQL-запросы <code>select</code> в таблицы и представления в хранилище и проверяет результат тестами. Хранилище здесь — DuckDB, один файл <code>orders.duckdb</code>.</p>
+
+  <h3>Модели и связи между ними</h3>
+  <figure class="fig">
+<svg viewBox="0 0 780 290" role="img" aria-label="Граф зависимостей моделей dbt">
+  <defs><marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arh"/></marker></defs>
+  <text class="mono dim" x="20" y="22">seeds (CSV)</text><text class="mono dim" x="300" y="22">staging (view)</text><text class="mono dim" x="590" y="22">marts (incremental)</text>
+  <rect class="ng" x="14" y="40" width="190" height="64" rx="9"/><text class="h" x="28" y="66">raw_customers</text><text class="mono dim" x="28" y="86">4 строки</text>
+  <rect class="ng" x="14" y="168" width="190" height="64" rx="9"/><text class="h" x="28" y="194">raw_orders</text><text class="mono dim" x="28" y="214">7 строк</text>
+  <rect class="nb" x="296" y="40" width="200" height="64" rx="9"/><text class="h" x="310" y="66">stg_customers</text><text class="mono dim" x="310" y="86">customer_id, email</text>
+  <rect class="nb" x="296" y="168" width="200" height="64" rx="9"/><text class="h" x="310" y="194">stg_orders</text><text class="mono dim" x="310" y="214">order_id, customer_id, status…</text>
+  <rect class="na" x="588" y="168" width="180" height="64" rx="9"/><text class="h" x="602" y="194">fct_daily_orders</text><text class="mono dim" x="602" y="214">по дням: count, total</text>
+  <path class="ar" d="M204 72H294" marker-end="url(#ah5)"/><path class="ar" d="M204 200H294" marker-end="url(#ah5)"/><path class="ar" d="M496 200H586" marker-end="url(#ah5)"/>
+  <path class="ar" stroke-dasharray="5 4" d="M396 168V106" marker-end="url(#ah5)"/>
+  <text class="mono dim" x="404" y="140">relationships (тест)</text>
+  <text class="dim" x="20" y="262">Сплошная стрелка: ref(). Пунктир: проверка, что каждый customer_id из заказов существует среди клиентов.</text>
+  <text class="dim" x="20" y="280">dbt сам строит этот граф по вызовам ref() и запускает модели в нужном порядке.</text>
+</svg>
+    <figcaption>Рис. 5. Граф зависимостей проекта (DAG). Настоящий список узлов: <code>dbt ls</code> ниже.</figcaption>
+  </figure>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>(.venv) PS E:\orders-analytics&gt; dbt ls</span></div><pre data-col>orders_analytics.marts.fct_daily_orders
+orders_analytics.staging.stg_customers
+orders_analytics.staging.stg_orders
+orders_analytics.raw_customers
+orders_analytics.raw_orders
+orders_analytics.not_null_fct_daily_orders_order_date
+orders_analytics.not_null_stg_orders_order_id
+orders_analytics.unique_fct_daily_orders_order_date
+orders_analytics.unique_stg_orders_order_id</pre><div class="cap">Настоящий вывод. 3 модели, 2 сида и 4 существующих теста; новые тесты появятся после шага 4.</div></div>
+
+  <h3>Из чего состоит модель</h3>
+  <div class="grid">
+    <div class="card"><h4>Сид (seed)</h4><p>CSV-файл в <code>seeds/</code>, который <code>dbt seed</code> загружает в базу как таблицу. Подходит для небольших справочников и учебных данных. Не источник: к сиду обращаются через <code>ref()</code>, а не <code>source()</code>. Поэтому <code>step3.ps1</code> заменил <code>source</code> на <code>ref</code>.</p></div>
+    <div class="card"><h4>Модель</h4><p>Файл <code>.sql</code> с одним <code>select</code>. dbt оборачивает его в <code>create view</code> или <code>create table</code>. Слово <code>{{ ref('имя') }}</code> подставляет имя таблицы и записывает зависимость.</p></div>
+    <div class="card"><h4>Материализация</h4><p><code>view</code> — запрос хранится как представление; <code>table</code> — результат записан; <code>incremental</code> — таблица, куда при каждом запуске добавляются только новые строки. В <code>dbt_project.yml</code>: staging = view, marts = table, а <code>fct_daily_orders</code> переопределяет на incremental.</p></div>
+    <div class="card"><h4>Тест</h4><p>Запрос, который ищет «плохие» строки. Тест проходит, если строк найдено 0. Один найденный дефект — один красный тест.</p></div>
+  </div>
+
+  <h4>Код проекта с пометками</h4>
+<div class="term"><div class="bar"><i></i><i></i><i></i><span>models/marts/fct_daily_orders.sql</span></div><pre><span class="t-dim">-- Mart: daily order totals. Incremental because the source table is
+-- append-only and a full refresh gets slower every day.</span>
+<span class="t-warn">{{ config(materialized='incremental', unique_key='order_date') }}</span>   <span class="t-dim">← таблица, дописывается; ключ = день</span>
+
+select
+    date_trunc('day', ordered_at) as order_date,
+    count(*)                      as order_count,
+    sum(amount_cents) / 100.0     as order_total
+from <span class="t-pr">{{ ref('stg_orders') }}</span>                                <span class="t-dim">← зависимость от stg_orders</span>
+<span class="t-warn">{% if is_incremental() %}</span>                                       <span class="t-dim">← только при повторных запусках</span>
+where ordered_at &gt;= (select max(order_date) from {{ this }})
+{% endif %}
+group by 1</pre><div class="cap">Ключ <code>unique_key='order_date'</code> объясняет, зачем тест <code>unique</code> на <code>order_date</code>: он проверяет зерно (grain) этой таблицы, один день = одна строка.</div></div>
+
+  <h3>Тесты: четыре встроенных</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Тест</th><th>Что проверяет</th><th>Находит у нас</th></tr>
+    <tr><td><code>unique</code></td><td>в столбце нет повторов</td><td>размножение строк после join</td></tr>
+    <tr><td><code>not_null</code></td><td>нет пустых значений</td><td>—</td></tr>
+    <tr><td><code>accepted_values</code></td><td>значение входит в разрешённый список</td><td><b>O1006: refunded</b></td></tr>
+    <tr><td><code>relationships</code></td><td>каждому значению нашлась запись в родительской таблице</td><td><b>O1005: C999</b></td></tr>
+  </table></div>
+  <p>Остальные тесты (например, <code>expression_is_true</code>) живут в пакетах <code>dbt_utils</code> и <code>dbt_expectations</code>. В проекте нет <code>packages.yml</code>, поэтому они недоступны. Попытка их использовать даёт ошибку про отсутствующий макрос.</p>
+
+  <h3>Роль столбца → тест</h3>
+  <p>Это главная таблица навыка. Ниже она применена к настоящим столбцам проекта.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Модель</th><th>Столбец</th><th>Роль</th><th>Что поставить</th></tr>
+    <tr><td>stg_customers</td><td><code>customer_id</code></td><td>первичный ключ</td><td><code>unique</code> + <code>not_null</code></td></tr>
+    <tr><td>stg_customers</td><td><code>email</code></td><td>обязательное поле</td><td><code>not_null</code></td></tr>
+    <tr><td>stg_orders</td><td><code>order_id</code></td><td>первичный ключ</td><td><code>unique</code> + <code>not_null</code> (уже есть)</td></tr>
+    <tr><td>stg_orders</td><td><code>customer_id</code></td><td>внешний ключ</td><td><code>not_null</code> + <code>relationships</code> → stg_customers. <b>Не</b> <code>unique</code></td></tr>
+    <tr><td>stg_orders</td><td><code>status</code></td><td>категория</td><td><code>accepted_values</code> из <code>ORDER-STATUSES.md</code></td></tr>
+    <tr><td>fct_daily_orders</td><td><code>order_date</code></td><td>ключ зерна</td><td><code>unique</code> + <code>not_null</code> (уже есть)</td></tr>
+    <tr><td>fct_daily_orders</td><td><code>order_count</code>, <code>order_total</code></td><td>обязательные показатели</td><td><code>not_null</code></td></tr>
+  </table></div>
+  <div class="note warn"><b>Дополнительное мнение.</b> Это мой разбор по таблице из навыка, а не готовый ответ. Вы можете решить, что <code>amount_cents</code> или <code>ordered_at</code> тоже обязательны: главное, объяснить решение правилом навыка. Назвать столбец без теста и объяснить почему — часть упражнения.</div>
+
+  <h3>Запуск: run, test, build</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Команда</th><th>Что делает</th></tr>
+    <tr><td><code>dbt seed</code></td><td>загружает CSV из <code>seeds/</code> в базу</td></tr>
+    <tr><td><code>dbt run</code></td><td>строит модели</td></tr>
+    <tr><td><code>dbt test</code></td><td>запускает все тесты</td></tr>
+    <tr><td><code>dbt build</code></td><td>всё вместе по графу: сиды, модели, тесты. Если тест упал, зависящие от него модели пропускаются</td></tr>
+    <tr><td><code>dbt parse</code></td><td>только разбирает проект и YAML, база не нужна. Быстрая проверка синтаксиса <code>schema.yml</code></td></tr>
+    <tr><td><code>dbt show --inline "…"</code></td><td>выполняет запрос и печатает первые 5 строк. Так смотрят строки, из-за которых упал тест</td></tr>
+    <tr><td><code>dbt debug</code></td><td>проверяет профиль, соединение и версии</td></tr>
+  </table></div>
+
+  <h4>Настоящие данные, которые видит dbt</h4>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>dbt show --inline "select order_id, customer_id, status, amount_cents from {{ ref('stg_orders') }} order by order_id"</span></div><pre data-col>| order_id | customer_id | status    | amount_cents |
+| -------- | ----------- | --------- | ------------ |
+| O1001    | C001        | completed |        12900 |
+| O1002    | C002        | completed |         4550 |
+| O1003    | C001        | pending   |         7800 |
+| O1004    | C003        | shipped   |        23100 |
+| O1005    | C999        | completed |         9900 |</pre><div class="cap">dbt show по умолчанию печатает 5 строк, поэтому O1006 и O1007 не видны. Чтобы увидеть все, добавьте в запрос <code>limit 20</code> или флаг <code>--limit 20</code>. O1005 (клиент C999) виден сразу.</div></div>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>dbt show --inline "select * from {{ ref('fct_daily_orders') }} order by order_date"</span></div><pre>|          order_date | order_count | order_total |
+| ------------------- | ----------- | ----------- |
+| 2024-02-01 00:00:00 |           2 |       174.5 |
+| 2024-02-02 00:00:00 |           2 |       309.0 |
+| 2024-02-03 00:00:00 |           2 |       249.0 |
+| 2024-02-04 00:00:00 |           1 |        32.0 |</pre><div class="cap">Итоги по дням. Заказы с дефектами тоже попали в сумму: сборка не замечает плохих данных, пока нет тестов.</div></div>
+
+  <h3>Слои проекта</h3>
+  <p>Навык <code>DBT-LAYER-BOUNDARIES</code> описывает, что где лежит. Здесь два слоя: <b>staging</b> (чистая копия источника с приведёнными типами, ничего больше) и <b>marts</b> (бизнес-итоги). Тесты на ключи ставят в staging, итоговые показатели проверяют в marts.</p>
+</section>
+
+<!-- ===================== ТЕХЧАСТЬ ===================== -->
+<section id="sec-tech">
+  <h2>Техническая часть: окружение</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Что</th><th>Зачем</th><th>Состояние</th></tr>
+    <tr><td>PowerShell 7 (<code>pwsh</code>)</td><td>Accelerator запускается только в нём</td><td><span class="badge b-ok">7.6.9</span></td></tr>
+    <tr><td>Git 2.45.1+</td><td>скачивание каталога навыков</td><td><span class="badge b-ok">2.55.0</span></td></tr>
+    <tr><td>Python 3.11 (<code>py -3.11</code>)</td><td>dbt 1.7 не работает на 3.12 и новее</td><td><span class="badge b-ok">3.11.9</span></td></tr>
+    <tr><td>Виртуальное окружение <code>.venv</code></td><td>изолирует пакеты проекта</td><td><span class="badge b-ok">создано</span></td></tr>
+    <tr><td>dbt-core 1.7.9 + dbt-duckdb 1.7.5</td><td>сам dbt и адаптер к DuckDB</td><td><span class="badge b-ok">pip check чисто</span></td></tr>
+    <tr><td>Claude Code 2.1.206</td><td>агент, который читает навыки</td><td><span class="badge b-ok">есть</span></td></tr>
+  </table></div>
+  <div class="note warn"><b>Почему adapters ставят одной командой.</b> <code>dbt-snowflake</code> требует dbt-core 1.7.x, а новые версии <code>dbt-duckdb</code> тянут dbt-core 1.8+. Вторая команда <code>pip</code> молча заменит dbt-core и выдаст ошибку позже: <code>No module named 'dbt.adapters.factory'</code>. Лечение одно: удалить <code>.venv</code> и поставить заново одной командой.</div>
+  <h3>Окна и где в них что вводится</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Где</th><th>Признак</th><th>Что вводить</th></tr>
+    <tr><td><span class="badge b-ps">PowerShell 7 + .venv</span></td><td>в строке приглашения <code>(.venv) PS E:\orders-analytics&gt;</code></td><td>все команды <code>dbt …</code>, <code>pip …</code>, <code>accelerator …</code></td></tr>
+    <tr><td><span class="badge b-chat">Чат с Claude</span></td><td>поле ввода внизу окна приложения</td><td>только фраза для агента и вопросы</td></tr>
+    <tr><td><span class="badge b-file">Блокнот / редактор</span></td><td>окно с текстом файла</td><td>чтение <code>SKILL.md</code>; правка <code>schema.yml</code> руками</td></tr>
+  </table></div>
+  <p><b>Важно:</b> <code>dbt</code> нужно запускать из папки <code>E:\orders-analytics</code>, потому что там лежит <code>profiles.yml</code>. Иначе будет <code>Could not find profile named 'orders_analytics'</code>. Если в строке приглашения нет <code>(.venv)</code>, окружение не активно: выполните <code>.venv\Scripts\Activate.ps1</code>.</p>
+
+  <h3>Что делала установка (вывод вашего терминала)</h3>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>PS E:\orders-analytics&gt; accelerator install</span></div><pre data-col>Installed 3 project artifact(s) and 0 user artifact(s) from v1.3.0
+  DBT-LAYER-BOUNDARIES 0.1.1 [claude-code] - explicitly selected for the project
+  DBT-MODEL-TESTING 0.1.1 [claude-code] - explicitly selected for the project
+  PYTEST-DATA-PIPELINES 0.1.1 [claude-code] - explicitly selected for the project
+Registry written to E:\orders-analytics\.accelerator\registry.json
+Local user registry written to E:\orders-analytics\.accelerator\registry.user.json</pre><div class="cap">«explicitly selected» значит: навык поставлен, потому что его id выбрали вручную, а не потому, что он автоматический (<code>always</code>).</div></div>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>.accelerator\registry.json (фрагмент)</span></div><pre>{
+  "id": "DBT-MODEL-TESTING",
+  "version": "0.1.1",
+  "reason": { "strength": "on-demand", "selected_artifact": "DBT-MODEL-TESTING" },
+  "target": "claude-code",
+  "files": { "SKILL.md": "sha256:3b0abe45…", "metadata.json": "sha256:2186a883…" }
+}</pre><div class="cap">Контрольные суммы (sha256) нужны, чтобы <code>accelerator update</code> видел, правили ли вы файлы навыка вручную.</div></div>
+
+  <h3>Что делает скрипт шага 2 (вывод вашего терминала)</h3>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>(.venv) PS E:\orders-analytics&gt; .\_steps\step3.ps1 → dbt build</span></div><pre data-col>1 of 9 OK loaded seed file main.raw_customers ............ [INSERT 4]
+2 of 9 OK loaded seed file main.raw_orders ............... [INSERT 7]
+3 of 9 OK created sql view model main.stg_customers
+4 of 9 OK created sql view model main.stg_orders
+5 of 9 PASS not_null_stg_orders_order_id
+6 of 9 PASS unique_stg_orders_order_id
+7 of 9 OK created sql incremental model main.fct_daily_orders
+8 of 9 PASS not_null_fct_daily_orders_order_date
+9 of 9 PASS unique_fct_daily_orders_order_date
+
+Done. PASS=9 WARN=0 ERROR=0 SKIP=0 TOTAL=9</pre><div class="cap">Время в журнале и пути сокращены. Зелёное здесь только потому, что тестов на дефекты ещё нет.</div></div>
+
+  <h3>Типичные ошибки</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Сообщение</th><th>Причина</th><th>Что делать</th></tr>
+    <tr><td><code>Could not find profile named 'orders_analytics'</code></td><td>не та папка</td><td><code>cd E:\orders-analytics</code></td></tr>
+    <tr><td><code>No module named 'dbt.adapters.factory'</code></td><td>адаптер поставлен второй командой</td><td>удалить <code>.venv</code>, повторить установку одной командой</td></tr>
+    <tr><td>ошибка про отсутствующий макрос</td><td>в YAML попал тест из <code>dbt_utils</code></td><td>убрать тест, пакета нет</td></tr>
+    <tr><td><code>Compilation Error</code> / <code>YAML</code> при <code>dbt parse</code></td><td>ошибка отступов в <code>schema.yml</code></td><td>проверить пробелы (не табы) и двоеточия</td></tr>
+    <tr><td><code>found 0 columns</code> при чтении CSV</td><td>в файле смешаны LF и CRLF</td><td>использовать один тип переводов строк</td></tr>
+    <tr><td>скрипты не запускаются</td><td>политика выполнения</td><td><code>Set-ExecutionPolicy -Scope Process Bypass -Force</code></td></tr>
+  </table></div>
+</section>
+
+<!-- ===================== ИНСТРУКЦИЯ ===================== -->
+<section id="sec-steps">
+  <h2>Инструкция: что вводить, где вводить, что смотреть</h2>
+  <p>Вы на шаге 3 упражнения 02. Дальше четыре шага. Шаг 0 напоминает, как проверить, что всё готово.</p>
+
+  <div class="step"><div class="num">0</div><div class="body">
+    <h3>Проверка перед началом</h3>
+    <div class="row"><b>Где</b><span><span class="badge b-ps">PowerShell 7 + .venv</span></span></div>
+    <div class="row"><b>Ввести</b><div><div class="cmd"><pre>cd E:\orders-analytics
+.venv\Scripts\Activate.ps1
+dbt debug</pre><button type="button" class="copybtn">Копировать</button></div></div></div>
+    <div class="row"><b>Смотреть</b><span>в конце <code>All checks passed!</code>, в строке приглашения есть <code>(.venv)</code>.</span></div>
+  </div></div>
+
+  <div class="step"><div class="num">3</div><div class="body">
+    <h3>Прочитать навык до агента</h3>
+    <div class="row"><b>Где</b><span><span class="badge b-file">Блокнот</span> (или любой редактор)</span></div>
+    <div class="row"><b>Ввести</b><div><div class="cmd"><pre>notepad E:\orders-analytics\.claude\skills\DBT-MODEL-TESTING\SKILL.md</pre><button type="button" class="copybtn">Копировать</button></div></div></div>
+    <div class="row"><b>Смотреть</b><div>
+      <ul><li>раздел <b>«Test by column role»</b>: таблица «роль → тест»;</li><li>раздел <b>«Anti-patterns»</b> в конце;</li><li>фразу про «today's rows show you what exists, not what is allowed».</li></ul></div></div>
+    <div class="row"><b>Записать</b><span>правило выбора тестов и два анти-паттерна. Поле для записи ниже, в разделе самопроверки.</span></div>
+    <div class="row"><b>Заодно</b><div>Проверьте, что в проекте нет <code>packages.yml</code>:
+      <div class="cmd"><pre>Test-Path E:\orders-analytics\packages.yml</pre><button type="button" class="copybtn">Копировать</button></div>
+      Ответ <code>False</code> значит, что тестов <code>dbt_utils</code> здесь нет и быть не должно.</div></div>
+  </div></div>
+
+  <div class="step"><div class="num">4</div><div class="body">
+    <h3>Фраза агенту и ревью</h3>
+    <div class="row"><b>Где</b><span><span class="badge b-chat">Чат с Claude</span> (не PowerShell)</span></div>
+    <div class="row"><b>Ввести</b><div>ровно эту фразу, ничего не добавляя:
+      <div class="cmd"><pre>Add tests to models/schema.yml</pre><button type="button" class="copybtn">Копировать</button></div></div></div>
+    <div class="row"><b>Смотреть</b><div>откройте <code>models\schema.yml</code> (в приложении: вкладка с диффом, либо в редакторе) и пройдите по <b>каждому</b> тесту с вопросом «какое правило навыка его оправдывает?».</div></div>
+    <div class="row"><b>Чек-лист</b><div>
+      <label class="check"><input type="checkbox" class="rv" data-k="r1"><span><code>stg_customers</code>: <code>unique</code> и <code>not_null</code> на <code>customer_id</code></span></label>
+      <label class="check"><input type="checkbox" class="rv" data-k="r2"><span><code>stg_orders.customer_id</code>: <code>relationships</code> на <code>stg_customers</code>, и нет <code>unique</code></span></label>
+      <label class="check"><input type="checkbox" class="rv" data-k="r3"><span><code>stg_orders.status</code>: <code>accepted_values</code> = 4 статуса из <code>ORDER-STATUSES.md</code>, без <code>refunded</code></span></label>
+      <label class="check"><input type="checkbox" class="rv" data-k="r4"><span><code>fct_daily_orders</code>: покрытие шире одного <code>order_date</code></span></label>
+      <label class="check"><input type="checkbox" class="rv" data-k="r5"><span>нет тестов из <code>dbt_utils</code> и <code>dbt_expectations</code></span></label>
+      <label class="check"><input type="checkbox" class="rv" data-k="r6"><span>агент назвал навык до работы</span></label>
+      <label class="check"><input type="checkbox" class="rv" data-k="r7"><span>назван один столбец без теста и причина, почему так верно</span></label>
+    </div></div>
+    <div class="row"><b>Проверка YAML</b><div>
+      <span class="badge b-ps">PowerShell 7 + .venv</span>
+      <div class="cmd"><pre>dbt parse</pre><button type="button" class="copybtn">Копировать</button></div>
+      Без ошибок значит, что YAML разобран. Это не значит, что тесты правильные: это проверка синтаксиса.</div></div>
+    <div class="note"><b>Что может пойти не так у агента.</b> Список значений из сегодняшних данных (включая <code>refunded</code>), <code>unique</code> на внешний ключ, макрос из <code>dbt_utils</code>. Если нашли такое, исправьте руками или попросите агента. Если ничего не нашли, будьте готовы сказать, что именно проверяли.</div>
+  </div></div>
+
+  <div class="step"><div class="num">5</div><div class="body">
+    <h3>Запустить тесты и разобрать красное</h3>
+    <div class="row"><b>Где</b><span><span class="badge b-ps">PowerShell 7 + .venv</span></span></div>
+    <div class="row"><b>Ввести</b><div>
+      <div class="cmd"><pre>dbt test</pre><button type="button" class="copybtn">Копировать</button></div>
+      Затем посмотрите строки за каждым падением:
+      <div class="cmd"><pre>dbt show --limit 20 --inline "select * from {{ ref('stg_orders') }} where customer_id not in (select customer_id from {{ ref('stg_customers') }})"
+dbt show --limit 20 --inline "select * from {{ ref('stg_orders') }} where status not in ('pending','shipped','completed','cancelled')"</pre><button type="button" class="copybtn">Копировать</button></div></div></div>
+    <div class="row"><b>Смотреть</b><span>сколько тестов упало и какие. Должно быть красное: если всё зелёное, тесты не покрывают дефекты.</span></div>
+    <p><b>Пример для сравнения.</b> Вот что получилось в отдельной копии проекта с эталонным набором из 14 тестов (это не ваш результат, ваш может отличаться):</p>
+    <div class="term"><div class="bar"><i></i><i></i><i></i><span>копия проекта · dbt test (эталонный набор из 14 тестов)</span></div><pre data-col>07:57:09  Running with dbt=1.7.9
+07:57:09  Registered adapter: duckdb=1.7.5
+07:57:10  Found 3 models, 2 seeds, 14 tests, 0 sources, 0 exposures, 0 metrics, 394 macros, 0 groups, 0 semantic models
+07:57:10  
+07:57:10  Concurrency: 1 threads (target='dev')
+07:57:10  
+07:57:10  1 of 14 START test accepted_values_stg_orders_status__pending__shipped__completed__cancelled  [RUN]
+07:57:10  1 of 14 FAIL 1 accepted_values_stg_orders_status__pending__shipped__completed__cancelled  [FAIL 1 in 0.10s]
+07:57:10  2 of 14 START test not_null_fct_daily_orders_order_count ....................... [RUN]
+07:57:10  2 of 14 PASS not_null_fct_daily_orders_order_count ............................. [PASS in 0.07s]
+07:57:10  3 of 14 START test not_null_fct_daily_orders_order_date ........................ [RUN]
+07:57:10  3 of 14 PASS not_null_fct_daily_orders_order_date .............................. [PASS in 0.08s]
+07:57:10  4 of 14 START test not_null_fct_daily_orders_order_total ....................... [RUN]
+07:57:10  4 of 14 PASS not_null_fct_daily_orders_order_total ............................. [PASS in 0.10s]
+07:57:10  5 of 14 START test not_null_stg_customers_customer_id .......................... [RUN]
+07:57:10  5 of 14 PASS not_null_stg_customers_customer_id ................................ [PASS in 0.09s]
+07:57:10  6 of 14 START test not_null_stg_customers_email ................................ [RUN]
+07:57:10  6 of 14 PASS not_null_stg_customers_email ...................................... [PASS in 0.10s]
+07:57:10  7 of 14 START test not_null_stg_orders_amount_cents ............................ [RUN]
+07:57:10  7 of 14 PASS not_null_stg_orders_amount_cents .................................. [PASS in 0.08s]
+07:57:10  8 of 14 START test not_null_stg_orders_customer_id ............................. [RUN]
+07:57:10  8 of 14 PASS not_null_stg_orders_customer_id ................................... [PASS in 0.07s]
+07:57:10  9 of 14 START test not_null_stg_orders_order_id ................................ [RUN]
+07:57:11  9 of 14 PASS not_null_stg_orders_order_id ...................................... [PASS in 0.08s]
+07:57:11  10 of 14 START test not_null_stg_orders_ordered_at ............................. [RUN]
+07:57:11  10 of 14 PASS not_null_stg_orders_ordered_at ................................... [PASS in 0.09s]
+07:57:11  11 of 14 START test relationships_stg_orders_customer_id__customer_id__ref_stg_customers_  [RUN]
+07:57:11  11 of 14 FAIL 1 relationships_stg_orders_customer_id__customer_id__ref_stg_customers_  [FAIL 1 in 0.11s]
+07:57:11  12 of 14 START test unique_fct_daily_orders_order_date ......................... [RUN]
+07:57:11  12 of 14 PASS unique_fct_daily_orders_order_date ............................... [PASS in 0.13s]
+07:57:11  13 of 14 START test unique_stg_customers_customer_id ........................... [RUN]
+07:57:11  13 of 14 PASS unique_stg_customers_customer_id ................................. [PASS in 0.12s]
+07:57:11  14 of 14 START test unique_stg_orders_order_id ................................. [RUN]
+07:57:11  14 of 14 PASS unique_stg_orders_order_id ....................................... [PASS in 0.09s]
+07:57:11  
+07:57:11  Finished running 14 tests in 0 hours 0 minutes and 1.63 seconds (1.63s).
+07:57:11  
+07:57:11  Completed with 2 errors and 0 warnings:
+07:57:11  
+07:57:11  Failure in test accepted_values_stg_orders_status__pending__shipped__completed__cancelled (models\schema.yml)
+07:57:11    Got 1 result, configured to fail if != 0
+07:57:11  
+07:57:11    compiled Code at target\compiled\orders_analytics\models\schema.yml\accepted_values_stg_orders_1f33e03615de531ea47640b5b0ef6f80.sql
+07:57:11  
+07:57:11  Failure in test relationships_stg_orders_customer_id__customer_id__ref_stg_customers_ (models\schema.yml)
+07:57:11    Got 1 result, configured to fail if != 0
+07:57:11  
+07:57:11    compiled Code at target\compiled\orders_analytics\models\schema.yml\relationships_stg_orders_96411fe0c89b49c3f4da955dfd358ba0.sql
+07:57:11  
+07:57:11  Done. PASS=12 WARN=0 ERROR=2 SKIP=0 TOTAL=14</pre><div class="cap">Настоящий вывод dbt, запущенный в копии. Падают ровно два теста: <code>relationships</code> (заказ O1005) и <code>accepted_values</code> (заказ O1006).</div></div>
+    <div class="row"><b>Решить</b><div>
+      Для <b>каждого</b> падения, до любой правки, запишите: что неверно, <b>данные</b> или <b>тест</b>, и почему.
+      <div class="tablewrap"><table>
+        <tr><th>Падение</th><th>Вопрос себе</th><th>Куда смотреть</th></tr>
+        <tr><td><code>relationships</code>: C999</td><td>заказ без клиента — это ошибка источника или нам не прислали клиента?</td><td><code>raw_customers.csv</code>, данные</td></tr>
+        <tr><td><code>accepted_values</code>: refunded</td><td>возвраты — легальный статус? Кто это решает?</td><td><code>ORDER-STATUSES.md</code>: «go to the source owner»</td></tr>
+      </table></div>
+      Если меняете тест, <b>причину пишите в YAML</b> комментарием. Если меняете данные, затем снова <code>dbt seed</code>. <b>Не</b> используйте <code>severity: warn</code>, чтобы спрятать настоящее падение.</div></div>
+    <div class="row"><b>Итог</b><span>после исправления <code>dbt test</code> снова зелёный, и вы можете объяснить, <i>почему</i>.</span></div>
+  </div></div>
+
+  <div class="step"><div class="num">6</div><div class="body">
+    <h3>Три заметки</h3>
+    <div class="row"><b>Где</b><span>в любом текстовом файле или в поле раздела «Самопроверка» ниже</span></div>
+    <ol>
+      <li><b>Что агент сделал не так</b> (или что вы проверили, если всё верно).</li>
+      <li><b>Одно, что навык подсказал</b> и что вы бы пропустили сами.</li>
+      <li><b>Одно, что вы сделали иначе, чем в навыке</b>, и почему. «Ничего» не годится.</li>
+    </ol>
+    <p>После шага 6 удобно сделать коммит: изменился <code>models\schema.yml</code> и, возможно, сиды.</p>
+  </div></div>
+
+  <h3>Упражнение 01, шаг 6: письменные ответы</h3>
+  <p>Они до сих пор не записаны. Ниже мои черновые ответы. Это вывод из правил отбора, не ответ сертификатора.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Вопрос</th><th>Черновой ответ</th></tr>
+    <tr><td><b>(a)</b> Почему <code>AIRFLOW-DAG-STRUCTURE</code> не было среди карточек?</td><td>Его <code>applies_to</code> требует фреймворк <code>airflow</code>, а в профиле только <code>dbt</code>. Одно несовпавшее условие отфильтровывает навык.</td></tr>
+    <tr><td><b>(b)</b> Почему <code>DATA-INCIDENT-TRACING</code> с <code>applies_to: {}</code> показали?</td><td>Пустое условие подходит любому стеку, а его темы <code>debugging</code> и <code>data-quality</code> пересекаются с выбранными вами.</td></tr>
+    <tr><td><b>(c)</b> Что сделал бы <code>always</code>-навык?</td><td>Ставился бы автоматически в любой подходящий проект без выбора. По тестам упражнения 03 в каталоге v1.3.0 один такой, <code>DOCKER-DATA-LOSS-CONFIRMATION</code>, ему нужен Docker, поэтому здесь он не встал.</td></tr>
+  </table></div>
+</section>
+
+<!-- ===================== СИМУЛЯТОР ===================== -->
+<section id="sec-sim">
+  <h2>Симулятор тестов</h2>
+  <p>Включайте тесты и смотрите, какие строки они поймают. Данные настоящие, из <code>seeds/</code>. Логика проверок упрощена, но результат совпадает с тем, что даст dbt. Попробуйте два «исправления»: добавить <code>refunded</code> в список и поставить <code>warn</code>. Заметьте, что дефект в данных остаётся.</p>
+  <div class="sim">
+    <div class="grp"><h4>stg_orders.order_id</h4>
+      <label><input type="checkbox" id="t_oid_u" checked> unique</label><label><input type="checkbox" id="t_oid_n" checked> not_null</label></div>
+    <div class="grp"><h4>stg_orders.customer_id</h4>
+      <label><input type="checkbox" id="t_cid_n" checked> not_null</label>
+      <label><input type="checkbox" id="t_cid_r"> relationships → stg_customers.customer_id</label>
+      <label><input type="checkbox" id="t_cid_u"> unique <span class="badge b-bad">анти-паттерн</span></label></div>
+    <div class="grp"><h4>stg_orders.status</h4>
+      <label><input type="checkbox" id="t_st_a"> accepted_values</label>
+      <label style="margin-left:24px"><input type="checkbox" id="t_st_c"> pending</label>
+      <label style="margin-left:24px"><input type="checkbox" id="t_st_p" checked disabled> pending, shipped, completed, cancelled (согласованные)</label>
+      <label style="margin-left:24px"><input type="checkbox" id="t_st_rf"> добавить refunded в список <span class="badge b-bad">анти-паттерн</span></label>
+      <label style="margin-left:24px"><input type="checkbox" id="t_st_w"> severity: warn <span class="badge b-bad">анти-паттерн</span></label></div>
+    <div class="grp"><h4>stg_customers</h4>
+      <label><input type="checkbox" id="t_cu_u" checked> customer_id: unique</label><label><input type="checkbox" id="t_cu_n" checked> customer_id: not_null</label><label><input type="checkbox" id="t_cu_e"> email: not_null</label></div>
+  </div>
+  <div id="simout" aria-live="polite"></div>
+  <div class="tablewrap"><table id="simtab">
+    <tr><th>order_id</th><th>customer_id</th><th>status</th><th>сумма, центы</th><th>что поймали</th></tr>
+  </table></div>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>как это выглядело бы в dbt test</span></div><pre id="simlog" data-col></pre></div>
+</section>
+
+<!-- ===================== САМОПРОВЕРКА ===================== -->
+<section id="sec-quiz">
+  <h2>Самопроверка</h2>
+  <p>Ответьте сами, потом раскройте. Это вопросы из упражнений, ответы собраны по тексту навыка и документов.</p>
+  <details><summary>Почему <code>unique</code> и <code>not_null</code> ставят на первичный ключ вместе?</summary><div>Вместе они выражают зерно модели: «одна строка = одна сущность и ключ всегда есть». <code>unique</code> без <code>not_null</code> пропускает пустые значения, <code>not_null</code> без <code>unique</code> пропускает дубли. Ещё они ловят размножение строк после join.</div></details>
+  <details><summary>Что навык советует делать при падении теста и почему расширять тест обычно неверно?</summary><div>Сначала посмотреть строки и выяснить причину. Расширить тест можно, если вы подтвердили, что новое значение легально. Просто убрать красное значит превратить сигнал в тишину и оставить плохие данные.</div></details>
+  <details><summary>Откуда должны браться значения для <code>accepted_values</code>?</summary><div>От владельца данных, то есть из согласованного справочника (<code>ORDER-STATUSES.md</code>), а не из сегодняшних строк. Сегодня в таблице есть и <code>refunded</code>, но оно не согласовано.</div></details>
+  <details><summary>Почему тесты <code>dbt_utils</code> недоступны и как узнать об этом заранее?</summary><div>В проекте нет <code>packages.yml</code>. Заранее: <code>cat packages.yml</code> или <code>Test-Path packages.yml</code> до написания тестов. «Трудным способом»: ошибка про отсутствующий макрос, в которой не названо, какой тест виноват.</div></details>
+  <details><summary>Чем «навык прошёл фильтр» отличается от «навык выбран»?</summary><div>Фильтр решает, какие карточки показать (совпали <code>applies_to</code> и темы). Выбор — это ваши отметки. Ставится только выбранное. Согласие с темой ничего не устанавливает.</div></details>
+  <details><summary>Какая ошибка с <code>selected_artifacts</code> не даёт ни ошибки, ни предупреждения?</summary><div>Указать существующий навык, чей <code>applies_to</code> не совпал с профилем: он молча отбрасывается, а установка пишет об успехе. Несуществующий id и навык другой области (<code>user</code> в проектном списке) дают ошибку.</div></details>
+  <details><summary>Почему агенту не нужно вставлять правила навыка в промпт?</summary><div>Тогда проверяется сам навык: подхватил ли его агент из <code>.claude/skills</code>. Если правила в промпте, нельзя понять, что сработало.</div></details>
+  <details><summary>Почему профиль <code>profile.json</code> коммитят и ревьюят, а не пересоздают сканером?</summary><div>Сканер не знает всего: например, что проект работает на Snowflake. Недостающие ответы даёт человек, и они фиксируются в профиле. Иначе при каждом запуске набор навыков мог бы тихо меняться.</div></details>
+
+  <h3>Мои записи</h3>
+  <p style="font-size:.9rem;color:var(--muted)">Поля сохраняются в этом браузере и никуда не отправляются.</p>
+  <label for="n0">Шаг 3: правило выбора тестов и два анти-паттерна</label><textarea id="n0" data-note="n0"></textarea>
+  <label for="n1">Заметка 1: что агент сделал не так / что я проверила</label><textarea id="n1" data-note="n1"></textarea>
+  <label for="n2">Заметка 2: что подсказал навык</label><textarea id="n2" data-note="n2"></textarea>
+  <label for="n3">Заметка 3: что я сделала иначе, чем в навыке, и почему</label><textarea id="n3" data-note="n3"></textarea>
+</section>
+
+<!-- ===================== ШПАРГАЛКА ===================== -->
+<section id="sec-ref">
+  <h2>Шпаргалка</h2>
+  <h3>Команды</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Задача</th><th>Команда</th></tr>
+    <tr><td>Активировать окружение</td><td><code>.venv\Scripts\Activate.ps1</code></td></tr>
+    <tr><td>Проверить dbt</td><td><code>dbt debug</code></td></tr>
+    <tr><td>Проверить синтаксис YAML</td><td><code>dbt parse</code></td></tr>
+    <tr><td>Список моделей и тестов</td><td><code>dbt ls</code></td></tr>
+    <tr><td>Запустить тесты</td><td><code>dbt test</code></td></tr>
+    <tr><td>Запустить один тест</td><td><code>dbt test --select stg_orders</code></td></tr>
+    <tr><td>Посмотреть строки</td><td><code>dbt show --limit 20 --inline "select …"</code></td></tr>
+    <tr><td>Сиды и сборка</td><td><code>dbt seed</code>, <code>dbt build</code></td></tr>
+    <tr><td>Версия Accelerator</td><td><code>accelerator --version</code></td></tr>
+    <tr><td>Что установлено</td><td><code>Get-Content .accelerator\registry.json</code></td></tr>
+  </table></div>
+  <h3>Словарь</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Термин</th><th>Значение</th></tr>
+    <tr><td>Артефакт</td><td>запись в каталоге, сейчас всегда навык</td></tr>
+    <tr><td>Навык (skill)</td><td>файл <code>SKILL.md</code> с инструкцией для агента</td></tr>
+    <tr><td>Профиль</td><td><code>.accelerator/profile.json</code>: факты о проекте и ваши ответы</td></tr>
+    <tr><td>Черновик</td><td><code>profile.draft.json</code>: результат <code>scan</code>, установить нельзя</td></tr>
+    <tr><td>Реестр</td><td><code>registry.json</code>: что установлено и почему</td></tr>
+    <tr><td><code>applies_to</code></td><td>условия стека у навыка; <code>{}</code> = подходит всем</td></tr>
+    <tr><td><code>on-demand</code> / <code>always</code></td><td>ставится по выбору / ставится сам</td></tr>
+    <tr><td>Зерно (grain)</td><td>что означает одна строка таблицы</td></tr>
+    <tr><td>DAG</td><td>граф зависимостей моделей</td></tr>
+    <tr><td>Материализация</td><td>как модель хранится: view, table, incremental</td></tr>
+    <tr><td>Адаптер</td><td>пакет, соединяющий dbt с базой (здесь <code>dbt-duckdb</code>)</td></tr>
+  </table></div>
+  <h3>Для другого проекта</h3>
+  <p>Инструкция и готовый промпт для настройки Accelerator в веб-проекте лежат в файле <code>_steps\accelerator-web-project-prompt.md</code> и на странице «Карта комплекта Accelerator». В каталоге v1.3.0 нет навыков под React или NestJS: веб-проекту подойдут универсальные навыки (ревью кода, планирование, отладка, документация).</p>
+</section>
+
+<footer>
+  <p>Страница собрана 14 ноября 2026 по файлам <code>E:\orders-analytics</code> и <code>E:\accelerator-kit</code>. Ответы к упражнению 01 и «эталонный» набор тестов в разделе шага 5 — мои, а не сертификатора. Упражнение 03 здесь не разбирается: оно необязательное, подробности в «Карте комплекта».</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  /* ---------- helpers ---------- */
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+  /* ---------- colourise terminal output ---------- */
+  document.querySelectorAll('pre[data-col]').forEach(function(p){
+    var h=esc(p.textContent);
+    h=h.replace(/(\bPASS\b|\bOK\b|Completed successfully)/g,'<span class="t-ok">$1</span>')
+       .replace(/(\bFAIL\b|\bERROR\b|\bFailure\b)/g,'<span class="t-bad">$1</span>')
+       .replace(/(\bWARN\b)/g,'<span class="t-warn">$1</span>')
+       .replace(/(\d\d:\d\d:\d\d)/g,'<span class="t-dim">$1</span>');
+    p.innerHTML=h;
+  });
+
+  /* ---------- copy buttons ---------- */
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var pre=b.parentNode.querySelector('pre'),t=pre.innerText.trim();
+      function ok(){b.textContent='Готово';setTimeout(function(){b.textContent='Копировать'},1500)}
+      function fb(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Выделено, Ctrl+C'}
+      try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else{fb()}}catch(e){fb()}
+    });
+  });
+
+  /* ---------- checklist ---------- */
+  var items=[
+    ['a1','Accelerator перенесён на E:, старая установка удалена',1],
+    ['a2','Упражнение 01: scan, профиль, install, три навыка',1],
+    ['a3','Упражнение 02, шаг 1: .venv, pip, dbt debug',1],
+    ['a4','Упражнение 02, шаг 2: сиды, dbt build зелёный',1],
+    ['a5','Проект отправлен на GitHub, docs добавлены',1],
+    ['b1','Шаг 3: прочитать SKILL.md, записать два пункта',0],
+    ['b2','Шаг 4: отправить фразу агенту, проверить дифф',0],
+    ['b3','Шаг 4: dbt parse без ошибок',0],
+    ['b4','Шаг 5: dbt test красный, причины записаны',0],
+    ['b5','Шаг 5: после исправления dbt test зелёный',0],
+    ['b6','Шаг 6: три заметки',0],
+    ['b7','Письменные ответы (a), (b), (c) к упражнению 01',0],
+    ['b8','Коммит: schema.yml с тестами',0]
+  ];
+  var box=document.getElementById('checklist'),state={};
+  try{state=JSON.parse(ls('oa-guide-v1')||'{}')||{}}catch(e){state={}}
+  function render(){
+    var done=0;
+    items.forEach(function(it){var v=(it[0] in state)?state[it[0]]:!!it[2];if(v)done++});
+    document.getElementById('pbar').style.width=Math.round(done/items.length*100)+'%';
+    document.getElementById('ptext').textContent='Выполнено '+done+' из '+items.length+'.';
+  }
+  items.forEach(function(it){
+    var l=document.createElement('label');l.className='check';
+    var c=document.createElement('input');c.type='checkbox';c.checked=(it[0] in state)?state[it[0]]:!!it[2];
+    c.addEventListener('change',function(){state[it[0]]=c.checked;ls('oa-guide-v1',JSON.stringify(state));render()});
+    var s=document.createElement('span');s.textContent=it[1];
+    l.appendChild(c);l.appendChild(s);box.appendChild(l);
+  });
+  render();
+  document.querySelectorAll('.rv').forEach(function(c){
+    var k='rv-'+c.dataset.k,v=ls(k);if(v==='1')c.checked=true;
+    c.addEventListener('change',function(){ls(k,c.checked?'1':'0')});
+  });
+  document.querySelectorAll('textarea[data-note]').forEach(function(t){
+    var k='note-'+t.dataset.note,v=ls(k);if(v)t.value=v;
+    t.addEventListener('input',function(){ls(k,t.value)});
+  });
+
+  /* ---------- nav scroll spy ---------- */
+  var links=[].slice.call(document.querySelectorAll('nav a')),secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  function spy(){var y=window.scrollY+120,cur=0;secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i});links.forEach(function(a,i){a.classList.toggle('on',i===cur)});}
+  window.addEventListener('scroll',spy,{passive:true});spy();
+
+  /* ---------- simulator ---------- */
+  var customers=['C001','C002','C003','C004'];
+  var emails=['ada@example.com','grace@example.com','alan@example.com','edsger@example.com'];
+  var orders=[
+    ['O1001','C001','completed',12900],['O1002','C002','completed',4550],['O1003','C001','pending',7800],
+    ['O1004','C003','shipped',23100],['O1005','C999','completed',9900],['O1006','C004','refunded',15000],['O1007','C002','pending',3200]];
+  function on(id){return document.getElementById(id).checked}
+  function sim(){
+    var hits={},logs=[],pass=0,fail=0,warn=0;
+    function add(i,msg,warnOnly){hits[i]=hits[i]||[];hits[i].push({m:msg,w:warnOnly})}
+    function res(name,bad,warnOnly){
+      if(bad.length===0){pass++;logs.push('PASS '+name);return}
+      if(warnOnly){warn++;logs.push('WARN '+bad.length+' '+name)}else{fail++;logs.push('FAIL '+bad.length+' '+name)}
+    }
+    var ids=orders.map(function(o){return o[0]});
+    if(on('t_oid_u')){var seen={},bad=[];orders.forEach(function(o,i){if(seen[o[0]])bad.push(i);seen[o[0]]=1});res('unique_stg_orders_order_id',bad)}
+    if(on('t_oid_n')){res('not_null_stg_orders_order_id',orders.filter(function(o){return !o[0]}))}
+    if(on('t_cid_n')){res('not_null_stg_orders_customer_id',orders.filter(function(o){return !o[1]}))}
+    if(on('t_cid_r')){var bad=[];orders.forEach(function(o,i){if(customers.indexOf(o[1])<0){bad.push(i);add(i,'relationships: клиента '+o[1]+' нет в stg_customers')}});res('relationships_stg_orders_customer_id__customer_id__ref_stg_customers_',bad)}
+    if(on('t_cid_u')){var cnt={},bad=[];orders.forEach(function(o){cnt[o[1]]=(cnt[o[1]]||0)+1});orders.forEach(function(o,i){if(cnt[o[1]]>1){bad.push(i);add(i,'unique: у клиента '+o[1]+' несколько заказов (это нормально, тест ложный)')}});res('unique_stg_orders_customer_id',bad)}
+    var allowed=['pending','shipped','completed','cancelled'];if(on('t_st_rf'))allowed.push('refunded');
+    if(on('t_st_a')){var w=on('t_st_w'),bad=[];orders.forEach(function(o,i){if(allowed.indexOf(o[2])<0){bad.push(i);add(i,'accepted_values: статус «'+o[2]+'» не в списке',w)}});res('accepted_values_stg_orders_status__'+allowed.join('__'),bad,w)}
+    if(on('t_cu_u'))res('unique_stg_customers_customer_id',[]);
+    if(on('t_cu_n'))res('not_null_stg_customers_customer_id',[]);
+    if(on('t_cu_e'))res('not_null_stg_customers_email',[]);
+    var rows=document.getElementById('simtab');
+    while(rows.rows.length>1)rows.deleteRow(1);
+    var defects=0;
+    orders.forEach(function(o,i){
+      var r=rows.insertRow(),h=hits[i];
+      r.insertCell().textContent=o[0];r.insertCell().textContent=o[1];r.insertCell().textContent=o[2];r.insertCell().textContent=o[3];
+      var c=r.insertCell();
+      if(h){var hw=h.every(function(x){return x.w});r.className=hw?'hitw':'hit';c.innerHTML=h.map(function(x){return esc(x.m)+(x.w?' (только предупреждение)':'')}).join('<br>')}
+      else c.textContent='—';
+    });
+    var real=[4,5]; // O1005 and O1006 are the real defects
+    var caught=real.filter(function(i){return hits[i]&&hits[i].some(function(x){return !x.w})}).length;
+    var missed=2-caught;
+    var out='<div class="sum"><span class="b-ok badge">PASS '+pass+'</span><span class="b-bad badge">FAIL '+fail+'</span><span class="b-file badge">WARN '+warn+'</span></div>';
+    if(caught===2)out+='<div class="note">Оба настоящих дефекта (O1005 и O1006) пойманы и дают красное. Это то, что нужно.</div>';
+    else if(missed===2&&(on('t_st_a')||on('t_cid_r')))out+='<div class="note warn">Тесты включены, но дефекты не ловятся как ошибки: красное исчезло, данные остались плохими. Так проявляются анти-паттерны «расширить список» и «понизить до warn».</div>';
+    else if(missed===2)out+='<div class="note warn">Ни один настоящий дефект не пойман. Включите <code>relationships</code> и <code>accepted_values</code>. Сейчас сборка зелёная, а данные плохие.</div>';
+    else out+='<div class="note warn">Поймано '+caught+' из 2 настоящих дефектов.</div>';
+    if(on('t_cid_u')&&hits[0])out+='<div class="note bad">Тест <code>unique</code> на внешнем ключе падает на нормальных данных: у клиента может быть много заказов. Навык явно говорит: для внешнего ключа нужны not_null и relationships.</div>';
+    document.getElementById('simout').innerHTML=out;
+    var log=logs.map(function(l,i){return (i+1)+' of '+logs.length+' '+l});
+    log.push('');log.push('Done. PASS='+pass+' WARN='+warn+' ERROR='+fail+' SKIP=0 TOTAL='+logs.length);
+    var lp=document.getElementById('simlog');lp.textContent=log.join('\n');
+    lp.innerHTML=esc(lp.textContent).replace(/\bPASS\b/g,'<span class="t-ok">PASS</span>').replace(/\bFAIL\b/g,'<span class="t-bad">FAIL</span>').replace(/\bWARN\b/g,'<span class="t-warn">WARN</span>').replace(/\bERROR\b/g,'<span class="t-bad">ERROR</span>');
+  }
+  document.querySelectorAll('.sim input').forEach(function(i){i.addEventListener('change',sim)});
+  var pe=document.getElementById('t_st_c');if(pe&&pe.parentNode)pe.parentNode.style.display='none';
+  sim();
+})();
+</script>
+</body></html>

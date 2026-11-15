@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Отчёт по проекту orders-analytics</title>
+<style>
+:root{
+  --bg:#f5f7f6; --surface:#ffffff; --fg:#17201d; --muted:#586661; --line:#d6ddd9;
+  --accent:#0d6a5b; --accent-soft:#d9eee8; --code-bg:#e9eeec;
+  --ok:#1b7a3d; --ok-soft:#d9f0e0; --warn:#955700; --warn-soft:#fbebcf; --bad:#a32e28; --bad-soft:#f7dad7;
+  --blue:#2457a6; --blue-soft:#dce7f8; --violet:#6a3fa0; --violet-soft:#e9def5;
+  --term-bg:#0e1412; --term-fg:#d5dfda; --term-dim:#7d8c86; --term-ok:#6fd194; --term-bad:#ff8f86; --term-warn:#e8b25a; --term-bar:#1a2320;
+  --display:'IBM Plex Serif',Georgia,serif; --body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101615; --surface:#182120; --fg:#e4eae7; --muted:#9aa8a2; --line:#2b3733;
+  --accent:#5cc7b0; --accent-soft:#1b3b34; --code-bg:#222c29;
+  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d;
+  --blue:#8fb4ee; --blue-soft:#1d2d4a; --violet:#c2a1ee; --violet-soft:#33264a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101615; --surface:#182120; --fg:#e4eae7; --muted:#9aa8a2; --line:#2b3733;
+  --accent:#5cc7b0; --accent-soft:#1b3b34; --code-bg:#222c29;
+  --ok:#6fd194; --ok-soft:#173424; --warn:#e8b25a; --warn-soft:#3a2d12; --bad:#f0948d; --bad-soft:#40201d;
+  --blue:#8fb4ee; --blue-soft:#1d2d4a; --violet:#c2a1ee; --violet-soft:#33264a; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:74px}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 var(--body);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:2.05rem;font-weight:600} h2{font-size:1.45rem;font-weight:600} h3{font-size:1.12rem;font-weight:600} h4{font-size:.95rem;font-weight:600;margin:14px 0 4px;font-family:var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+p{margin:.6em 0} .lede{color:var(--muted);font-size:1.06rem;max-width:66ch}
+a{color:var(--accent)}
+code{font:.87em var(--mono);background:var(--code-bg);padding:.1em .36em;border-radius:4px;overflow-wrap:anywhere}
+pre{font:.84rem/1.55 var(--mono);background:var(--code-bg);padding:12px 14px;border-radius:8px;overflow-x:auto;margin:8px 0}
+ul,ol{padding-left:1.25em} li{margin:4px 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:520px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font:500 .74rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.95rem}
+.note.warn{border-color:var(--warn);background:var(--warn-soft)} .note.bad{border-color:var(--bad);background:var(--bad-soft)}
+.badge{display:inline-block;font:500 .72rem var(--mono);padding:2px 8px;border-radius:99px;white-space:nowrap;vertical-align:middle}
+.b-ps{background:var(--blue-soft);color:var(--blue)} .b-chat{background:var(--violet-soft);color:var(--violet)} .b-file{background:var(--warn-soft);color:var(--warn)} .b-ok{background:var(--ok-soft);color:var(--ok)} .b-bad{background:var(--bad-soft);color:var(--bad)} .b-dim{background:var(--code-bg);color:var(--muted)}
+.term{border-radius:10px;overflow:hidden;margin:12px 0;border:1px solid #26332f;background:var(--term-bg)}
+.term .bar{background:var(--term-bar);color:var(--term-dim);font:500 .74rem var(--mono);padding:7px 12px;display:flex;gap:8px;align-items:center}
+.term .bar i{width:9px;height:9px;border-radius:50%;background:#3a4944;display:inline-block;flex:none}
+.term .bar span{margin-left:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.term pre{margin:0;padding:12px 14px;color:var(--term-fg);background:transparent;font:.8rem/1.55 var(--mono);overflow-x:auto;white-space:pre;border-radius:0}
+.term .cap{background:var(--term-bar);color:var(--term-dim);font-size:.8rem;padding:7px 12px;border-top:1px solid #26332f}
+.term .cap code{background:#26332f;color:#c8d6d0}
+.t-ok{color:var(--term-ok)} .t-bad{color:var(--term-bad)} .t-warn{color:var(--term-warn)} .t-dim{color:var(--term-dim)}
+.cmd{position:relative;margin:6px 0 12px}
+.cmd .lbl{font-size:.82rem;color:var(--muted);margin:8px 0 2px}
+.cmd pre{margin:0;padding:12px 84px 12px 14px}
+.cmd button{position:absolute;right:8px;bottom:8px}
+button,.btn{font:500 .82rem var(--body);background:var(--accent);color:var(--bg);border:0;border-radius:6px;padding:6px 12px;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+button.danger{background:var(--bad);color:#fff}
+button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.progress{height:9px;background:var(--code-bg);border-radius:99px;overflow:hidden;margin:8px 0}
+.progress>div{height:100%;background:var(--accent);width:0;transition:width .3s}
+.check{display:flex;gap:10px;align-items:flex-start;margin:5px 0}
+.check input{margin-top:6px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+@media (max-width:560px){h1{font-size:1.6rem}}
+
+/* Layout: шапка со сводкой, затем разделы-формы. Все поля сохраняются автоматически в браузере (IndexedDB). */
+body{padding-block:24px 80px}
+.wrap{max-width:980px}
+header{padding-block:10px}
+.bar2{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+section.sec{margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+label.f{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 3px}
+input[type=text],input[type=date],select,textarea{width:100%;font:.93rem/1.5 var(--body);background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+textarea{min-height:76px;resize:vertical} textarea.tall{min-height:130px}
+.stepbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}
+.stepbox>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:var(--bg)}
+.stepbox>summary::-webkit-details-marker{display:none}
+.stepbox .id{font:600 .85rem var(--mono);background:var(--accent);color:var(--bg);border-radius:6px;padding:2px 8px}
+.stepbox .tt{flex:1 1 220px;min-width:0;font-weight:500}
+.stepbox .inner{padding:4px 14px 14px}
+.pill{font:500 .74rem var(--mono);padding:2px 10px;border-radius:99px;background:var(--code-bg);color:var(--muted)}
+.pill.s2{background:var(--ok-soft);color:var(--ok)} .pill.s1{background:var(--warn-soft);color:var(--warn)} .pill.s3{background:var(--bad-soft);color:var(--bad)}
+.hint{font-size:.85rem;color:var(--muted);margin:2px 0 6px}
+.shots{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:.88rem;color:var(--muted);background:var(--bg);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.shot{width:200px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.shot img{display:block;width:100%;height:120px;object-fit:cover;cursor:zoom-in;background:var(--code-bg)}
+.shot input{border:0;border-top:1px solid var(--line);border-radius:0;font-size:.8rem;padding:5px 7px}
+.shot button{width:100%;border-radius:0;background:var(--bad-soft);color:var(--bad);padding:3px}
+.sumgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.sumgrid div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.sumgrid b{display:block;font:600 1.5rem var(--mono)}
+.sumgrid span{font-size:.78rem;color:var(--muted)}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+#lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:99px;font-size:.88rem;z-index:110;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+table.log input,table.log textarea{min-width:120px}
+table.log textarea{min-height:44px}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:5px 0}
+.chk input{margin-top:5px;width:18px;height:18px;accent-color:var(--accent)}
+@media print{.bar2,.drop,button,.noprint{display:none!important} .stepbox{break-inside:avoid} details.stepbox>summary{background:none} details:not([open])>*:not(summary){display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Отчёт по проекту orders-analytics</h1>
+  <p class="lede">Заполняйте по мере прохождения гайда. Всё сохраняется автоматически в этом браузере. Скриншоты вставляйте через Ctrl+V прямо в нужный шаг. В конце скачайте отчёт файлом и скопируйте статус для куратора.</p>
+  <p id="storewarn" class="note warn" hidden>Браузер не даёт сохранять данные на диске: записи пропадут при закрытии вкладки. Скачайте резервную копию (JSON) до закрытия или откройте файл в другом браузере.</p>
+</header>
+
+<div class="bar2 noprint">
+  <button type="button" id="bStatus">Скопировать статус для куратора</button>
+  <button type="button" class="ghost" id="bHtml">Скачать отчёт (HTML)</button>
+  <button type="button" class="ghost" id="bJson">Резервная копия (JSON)</button>
+  <label class="btn ghost" style="cursor:pointer">Загрузить копию<input type="file" id="fJson" accept="application/json,.json" hidden></label>
+  <button type="button" class="ghost" id="bPrint">Печать / PDF</button>
+</div>
+
+<section class="sec" id="sum">
+  <h2>1. Сводка</h2>
+  <div class="progress"><div id="pbar"></div></div>
+  <div class="sumgrid" id="sumgrid"></div>
+  <div id="sumtext" class="hint"></div>
+</section>
+
+<section class="sec" id="meta">
+  <h2>2. Реквизиты</h2>
+  <div class="grid2">
+    <div><label class="f" for="m_name">Имя и фамилия</label><input type="text" id="m_name" data-f="meta.name"></div>
+    <div><label class="f" for="m_cur">Куратор</label><input type="text" id="m_cur" data-f="meta.curator"></div>
+    <div><label class="f" for="m_start">Дата начала</label><input type="date" id="m_start" data-f="meta.start"></div>
+    <div><label class="f" for="m_proj">Папка проекта</label><input type="text" id="m_proj" data-f="meta.project" placeholder="E:\orders-analytics-mine"></div>
+    <div><label class="f" for="m_repo">Репозиторий (если есть)</label><input type="text" id="m_repo" data-f="meta.repo" placeholder="https://github.com/..."></div>
+    <div><label class="f" for="m_os">Система</label><input type="text" id="m_os" data-f="meta.os" placeholder="Windows 11"></div>
+  </div>
+</section>
+
+<section class="sec" id="env">
+  <h2>3. Среда: фактические версии</h2>
+  <p class="hint">Впишите то, что напечатали команды из шагов B и C. Ожидаемое указано в подсказке.</p>
+  <div class="grid2" id="envgrid"></div>
+</section>
+
+<section class="sec" id="steps">
+  <h2>4. Шаги</h2>
+  <p class="hint">Для каждого шага: статус, совпал ли результат с ожидаемым, что получилось на самом деле (вставьте вывод), заметки и скриншоты. Клик по скриншоту увеличивает его. Вставка из буфера работает, когда курсор стоит внутри нужного шага.</p>
+  <div id="stepsroot"></div>
+</section>
+
+<section class="sec" id="qa">
+  <h2>5. Ответы и решения</h2>
+  <p class="hint">Эти ответы читает куратор. Пишите своими словами, не копируйте эталон.</p>
+  <div id="qaroot"></div>
+</section>
+
+<section class="sec" id="issues">
+  <h2>6. Журнал проблем</h2>
+  <p class="hint">Что пошло не так, что вы сделали и кто помог. Это поможет куратору быстро понять ситуацию.</p>
+  <div class="tablewrap"><table class="log" id="logtab"><thead><tr><th>Дата</th><th>Шаг</th><th>Что произошло (текст ошибки)</th><th>Что сделала</th><th>Решено?</th><th></th></tr></thead><tbody id="logbody"></tbody></table></div>
+  <button type="button" class="ghost" id="addLog">Добавить строку</button>
+</section>
+
+<section class="sec" id="final">
+  <h2>7. Итог и отправка</h2>
+  <label class="f" for="fin_text">Итоговый комментарий куратору</label>
+  <textarea id="fin_text" class="tall" data-f="final.text"></textarea>
+  <label class="f" for="fin_help">Что нужно уточнить или где нужна помощь</label>
+  <textarea id="fin_help" data-f="final.help"></textarea>
+  <label class="f" for="statusout">Текст статуса (скопируйте и отправьте куратору)</label>
+  <textarea id="statusout" class="tall" readonly></textarea>
+  <div class="bar2 noprint" style="position:static;border:0">
+    <button type="button" id="bStatus2">Обновить и скопировать</button>
+    <button type="button" class="danger" id="bClear">Очистить весь отчёт</button>
+  </div>
+  <p class="hint">Куда отправлять: в переписку с куратором. Если куратор попросит заполнить форму (ссылка на скрипт Google Apps Script из его сообщения), используйте тот же текст.</p>
+</section>
+</div>
+<div id="lightbox" role="dialog" aria-label="Скриншот"><img alt=""></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+var DATA={"phases": [{"id": "A", "title": "A. Подготовка", "steps": [{"id": "A1", "title": "Подписка Claude и вход в аккаунт", "short": "Вы входите на claude.ai под своим рабочим аккаунтом и видите, что подписка активна.", "evidence": "Скриншот страницы плана (имя аккаунта можно закрыть).", "optional": false}, {"id": "A2", "title": "Скачать материалы с Google Drive", "short": "На диске лежит папка E:\\accelerator-kit с двумя подпапками installation и exercises и двумя файлами README.", "evidence": "Скриншот окна Проводника с папкой E:\\accelerator-kit или вывода команды.", "optional": false}, {"id": "A3", "title": "Открыть терминал и отличить PowerShell 5.1 от PowerShell 7", "short": "Вы видите строку приглашения PS ...> и умеете запускать pwsh.", "evidence": "Скриншот окна с выводом $PSVersionTable.PSVersion.", "optional": false}]}, {"id": "B", "title": "B. Установка инструментов", "steps": [{"id": "B1", "title": "PowerShell 7", "short": "pwsh --version печатает PowerShell 7.x.x.", "evidence": "Скриншот вывода pwsh --version.", "optional": false}, {"id": "B2", "title": "Git 2.45.1 или новее", "short": "git --version печатает версию не ниже 2.45.1.", "evidence": "Скриншот вывода git --version.", "optional": false}, {"id": "B3", "title": "Python 3.11 (именно 3.11)", "short": "py -3.11 --version печатает Python 3.11.x.", "evidence": "Скриншот вывода py -0p и py -3.11 --version.", "optional": false}, {"id": "B4", "title": "Claude Code и вход", "short": "claude --version печатает версию, а после запуска claude вы видите приглашение для ввода.", "evidence": "Скриншот вывода claude --version и первого экрана Claude Code.", "optional": false}, {"id": "B5", "title": "Доступ к GitHub с вашей сети", "short": "git ls-remote печатает длинный список хешей и имён.", "evidence": "Скриншот вывода (первые строки).", "optional": false}]}, {"id": "C", "title": "C. Установка Accelerator", "steps": [{"id": "C1", "title": "Запустить установщик", "short": "Скрипт завершается без красных ошибок и сообщает, куда установил команду.", "evidence": "Скриншот всего вывода установщика.", "optional": false}, {"id": "C2", "title": "Проверить команду accelerator в НОВОМ окне", "short": "accelerator --version печатает 0.18.0 и четыре строки с путями.", "evidence": "Скриншот обеих команд.", "optional": false}, {"id": "C3", "title": "Проверить навык в Claude Code", "short": "После ввода / в меню есть /accelerator:accelerator-setup.", "evidence": "Скриншот меню после ввода / с видимой командой.", "optional": false}, {"id": "C4", "title": "Чеклист готовности (раздел 6 руководства)", "short": "Все пункты чеклиста отмечены.", "evidence": "Можно приложить один общий скриншот итоговой проверки (по желанию).", "optional": false}]}, {"id": "D", "title": "D. Упражнение 01: профиль и установка навыков", "steps": [{"id": "D1", "title": "Скопировать учебный проект", "short": "В папке E:\\orders-analytics-mine лежат dbt_project.yml, requirements.txt и папка models.", "evidence": "Скриншот списка файлов.", "optional": false}, {"id": "D2", "title": "Предсказать результат скана (до запуска)", "short": "У вас записаны три предсказания.", "evidence": "Не нужны.", "optional": false}, {"id": "D3", "title": "Запустить scan", "short": "Скан печатает languages: python, sql; frameworks: dbt; layout: single и создаёт profile.draft.json.", "evidence": "Скриншот вывода scan и содержимого черновика.", "optional": false}, {"id": "D4", "title": "Сравнить с предсказаниями и объяснить", "short": "Вы можете сказать, из какого файла сканер взял каждый ответ.", "evidence": "Не нужны (запись в отчёте).", "optional": false}, {"id": "D5", "title": "Попробовать установить черновик (ожидаемая ошибка)", "short": "install отвечает: Profile not found ... Run the accelerator-setup skill.", "evidence": "Скриншот ошибки.", "optional": false}, {"id": "D6", "title": "Анкета: запустить навык accelerator-setup", "short": "Claude Code называет навык, спрашивает подтверждения и записывает .accelerator/profile.json.", "evidence": "Скриншоты: строка с названием навыка, экран выбора карточек, итоговый профиль.", "optional": false}, {"id": "D6b", "title": "Запасной вариант: собрать профиль вручную", "short": "Файл profile.json содержит агента, темы и три навыка; в provenance нет unanswered.", "evidence": "Скриншот вывода.", "optional": true}, {"id": "D7", "title": "Проверить profile.json", "short": "В профиле нет unanswered, есть agents, intents и три выбранных навыка.", "evidence": "Скриншот файла.", "optional": false}, {"id": "D8", "title": "Установить навыки и прочитать реестр", "short": "install пишет Installed 3 project artifact(s) и создаёт три папки в .claude\\skills.", "evidence": "Скриншот вывода install и списка папок.", "optional": false}, {"id": "D9", "title": "Ответить на три вопроса по реестру", "short": "У вас записаны ответы (a), (b), (c) своими словами.", "evidence": "Не нужны (текст в отчёте).", "optional": false}, {"id": "D10", "title": "Почему анкету заполняет человек (чтение)", "short": "Вы можете назвать три способа ошибиться с выбором навыка и сказать, какой молчит.", "evidence": "Не нужны.", "optional": false}, {"id": "D11", "title": "Необязательно: изменить одно поле и предсказать разницу", "short": "Вы предсказали число навыков до запуска и сравнили с реестром.", "evidence": "Скриншот реестра после каждого запуска.", "optional": true}, {"id": "D12", "title": "Самопроверка упражнения 01", "short": "Вы отвечаете на пять вопросов без подсказок.", "evidence": "Не нужны.", "optional": false}]}, {"id": "E", "title": "E. Упражнение 02: применить навык", "steps": [{"id": "E1", "title": "Создать виртуальное окружение", "short": "В проекте появилась папка .venv.", "evidence": "Скриншот вывода Test-Path.", "optional": false}, {"id": "E2", "title": "Активировать окружение", "short": "В начале строки приглашения появилось (.venv).", "evidence": "Скриншот приглашения с (.venv) и вывода версии.", "optional": false}, {"id": "E3", "title": "Установить dbt и адаптер ОДНОЙ командой", "short": "pip завершается строкой Successfully installed, а pip check пишет No broken requirements found.", "evidence": "Скриншот последних строк pip install и pip check.", "optional": false}, {"id": "E4", "title": "Создать profiles.yml и проверить соединение", "short": "dbt debug заканчивается строкой All checks passed!", "evidence": "Скриншот последних строк dbt debug.", "optional": false}, {"id": "E5", "title": "Скопировать данные и справочник статусов", "short": "В проекте появились папка seeds с двумя CSV и файл ORDER-STATUSES.md.", "evidence": "Скриншот списка seeds.", "optional": false}, {"id": "E6", "title": "Переключить модели со source() на ref()", "short": "В двух моделях staging стоит ref(), а блок sources удалён из schema.yml.", "evidence": "Скриншот результата Select-String и начала schema.yml.", "optional": false}, {"id": "E7", "title": "Загрузить данные и собрать проект", "short": "dbt seed загружает 4 и 7 строк, dbt build завершается PASS=9 WARN=0 ERROR=0.", "evidence": "Скриншот итоговых строк dbt seed и dbt build.", "optional": false}, {"id": "E8", "title": "Прочитать навык ДО агента и записать два пункта", "short": "У вас записаны правило выбора тестов и два анти-паттерна.", "evidence": "Запись двух пунктов в отчёте.", "optional": false}, {"id": "E9", "title": "Попросить агента добавить тесты", "short": "Агент называет навык, пишет тесты и меняет models/schema.yml.", "evidence": "Скриншоты: строка с названием навыка и дифф, который предложил агент.", "optional": false}, {"id": "E10", "title": "Проверить работу агента по списку", "short": "Каждый тест оправдан правилом навыка, анти-паттернов нет.", "evidence": "Скриншот диффа и список замечаний в отчёте.", "optional": false}, {"id": "E11", "title": "Проверить, что YAML разбирается", "short": "dbt parse завершается без ошибок.", "evidence": "Скриншот вывода.", "optional": false}, {"id": "E12", "title": "Запустить тесты: должно быть красное", "short": "dbt test заканчивается Completed with 2 errors и выделяет два упавших теста.", "evidence": "Скриншот всего вывода dbt test (красные строки видны).", "optional": false}, {"id": "E13", "title": "Посмотреть строки за каждым падением и решить: данные или тест", "short": "Вы записали для каждого падения, что неверно и почему, до любой правки.", "evidence": "Скриншоты выводов dbt show и ваши записи решений.", "optional": false}, {"id": "E14", "title": "Исправить там, где проблема, и добиться зелёного", "short": "dbt test зелёный (ERROR=0) и вы можете объяснить почему.", "evidence": "Скриншоты: dbt test зелёный и итоговая таблица fct_daily_orders.", "optional": false}, {"id": "E15", "title": "Написать три заметки", "short": "У вас три заметки по несколько предложений.", "evidence": "Тексты в отчёте.", "optional": false}, {"id": "E16", "title": "Самопроверка упражнения 02", "short": "Вы отвечаете на семь вопросов без подсказок.", "evidence": "Не нужны.", "optional": false}]}, {"id": "F", "title": "F. Завершение и отправка статусов", "steps": [{"id": "F1", "title": "Необязательно: упражнение 03", "short": "Вы решили, делаете ли упражнение 03.", "evidence": "Не нужны.", "optional": true}, {"id": "F2", "title": "Подготовиться к защите и интервью", "short": "У вас есть краткие ответы на вопросы самопроверки и список из трёх заметок.", "evidence": "Не нужны.", "optional": false}, {"id": "F3", "title": "Прислать статус куратору", "short": "Куратор получил короткий статус по шагам.", "evidence": "Скриншот отправленного сообщения.", "optional": false}]}]};
+var STATUS=['Не начат','В процессе','Готово','Проблема','Пропущен'];
+var MATCH=['—','Совпало','Частично','Не совпало'];
+var ENV=[['pwsh','PowerShell 7 (pwsh --version)','PowerShell 7.x.x'],['git','Git (git --version)','2.45.1 или новее'],['py311','Python (py -3.11 --version)','Python 3.11.x'],['claude','Claude Code (claude --version)','номер версии'],['plan','Подписка Claude','план активен'],['accel','Accelerator (accelerator --version)','0.18.0'],['dbt','dbt (dbt --version / dbt debug)','1.7.9, адаптер duckdb 1.7.5'],['net','Доступ к GitHub (git ls-remote)','список ссылок есть']];
+var QA=[
+ {t:'Упражнение 01: предсказание скана (запишите ДО запуска)',items:[['ex01.pred_lang','Какие языки найдёт скан?','area'],['ex01.pred_fw','Какие фреймворки?','area'],['ex01.pred_sf','Найдёт ли Snowflake? Почему?','area'],['ex01.actual','Что скан напечатал на самом деле и что совпало','area']]},
+ {t:'Упражнение 01: анкета и профиль',items:[['ex01.cards','Какие три карточки вы выбрали (по именам) и какие отклонили','area'],['ex01.profile','Что в вашем profile.json: agents, intents, selected_artifacts','area']]},
+ {t:'Упражнение 01, шаг 6: ответы по реестру',items:[['ex01.a','(a) Почему AIRFLOW-DAG-STRUCTURE не было среди восьми карточек?','area'],['ex01.b','(b) Почему DATA-INCIDENT-TRACING (applies_to: {}) всё же предложили?','area'],['ex01.c','(c) Что сделал бы always-навык иначе? Есть ли он в каталоге на этом теге?','area']]},
+ {t:'Упражнение 01: самопроверка',items:[['ex01.s1','Почему черновик нельзя установить и какие три поля этому мешают?','area'],['ex01.s2','Чем «навык прошёл фильтр» отличается от «навык выбран»?','area'],['ex01.s3','Почему скан никогда не угадывает intents?','area'],['ex01.s4','Назовите вещь, которую скан не знает, но которая меняет установку.','area'],['ex01.s5','Какой способ ошибиться с selected_artifacts не даёт ни ошибки, ни предупреждения?','area']]},
+ {t:'Упражнение 02, шаг 3: что я вынесла из навыка (до агента)',items:[['ex02.rule','Правило выбора тестов по роли столбца','area'],['ex02.anti','Два анти-паттерна из списка в конце навыка','area']]},
+ {t:'Упражнение 02, шаг 4: ревью работы агента',items:[['ex02.rv1','stg_customers: unique + not_null на customer_id','check'],['ex02.rv2','stg_orders.customer_id: relationships и нет unique','check'],['ex02.rv3','accepted_values: список взят из ORDER-STATUSES.md, а не из данных','check'],['ex02.rv4','fct_daily_orders: покрытие шире одного order_date','check'],['ex02.rv5','Нет тестов dbt_utils / dbt_expectations','check'],['ex02.rv6','Агент назвал навык до начала работы','check'],['ex02.found','Что агент сделал не так (или что именно я проверила, если всё верно)','area'],['ex02.untested','Один столбец без теста и почему так правильно','area']]},
+ {t:'Упражнение 02, шаг 5: красный dbt test',items:[['ex02.red','Сколько тестов упало и какие (скопируйте имена)','area'],['ex02.f1dec','relationships (C999): что неверно?','sel:Данные|Тест|Другое'],['ex02.f1why','Почему? Что вы посмотрели, чтобы решить?','area'],['ex02.f1fix','Что вы сделали (и где записана причина)','area'],['ex02.f2dec','accepted_values (refunded): что неверно?','sel:Данные|Тест|Другое'],['ex02.f2why','Почему? Что вы посмотрели, чтобы решить?','area'],['ex02.f2fix','Что вы сделали (и где записана причина)','area'],['ex02.green','Итог последнего dbt test (PASS/WARN/ERROR)','text'],['ex02.stale','Выполнили ли dbt build --full-refresh после правки данных? Что вы увидели?','area']]},
+ {t:'Упражнение 02, шаг 6: три заметки',items:[['ex02.n1','Заметка 1. Что агент сделал не так / что я проверила','area'],['ex02.n2','Заметка 2. Что навык подсказал, а я бы упустила','area'],['ex02.n3','Заметка 3. Что я сделала иначе, чем в навыке, и почему (не «ничего»)','area']]},
+ {t:'Упражнение 02: самопроверка',items:[['ex02.s1','Почему unique и not_null на первичный ключ вместе?','area'],['ex02.s2','Что навык велит делать при падении теста и почему расширять тест обычно неверно?','area'],['ex02.s3','Откуда значения accepted_values и что об этом говорит навык?','area'],['ex02.s4','Почему тесты dbt_utils здесь недоступны и как узнать об этом заранее?','area'],['ex02.s5','Что навык сказал вам такого, чего вы не знали?','area']]}
+];
+var STORE_OK=true,DB=null,mem={kv:{},img:{}},saveT=null,lastStep=null;
+
+/* ---------- storage ---------- */
+function openDB(){return new Promise(function(res){try{var r=indexedDB.open('oa-report-v1',1);r.onupgradeneeded=function(){var d=r.result;d.createObjectStore('kv');d.createObjectStore('img',{keyPath:'id'})};r.onsuccess=function(){DB=r.result;res(true)};r.onerror=function(){res(false)};r.onblocked=function(){res(false)}}catch(e){res(false)}})}
+function idbAll(store){return new Promise(function(res){try{var out={},tx=DB.transaction(store,'readonly'),s=tx.objectStore(store),c=s.openCursor();c.onsuccess=function(){var cur=c.result;if(cur){out[cur.key]=cur.value;cur.continue()}else res(out)};c.onerror=function(){res({})}}catch(e){res({})}})}
+function kvSet(k,v){mem.kv[k]=v;if(DB){try{DB.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}}
+function imgPut(o){mem.img[o.id]=o;if(DB){try{DB.transaction('img','readwrite').objectStore('img').put(o)}catch(e){}}}
+function imgDel(id){delete mem.img[id];if(DB){try{DB.transaction('img','readwrite').objectStore('img').delete(id)}catch(e){}}}
+function clearAll(){mem={kv:{},img:{}};if(DB){try{var tx=DB.transaction(['kv','img'],'readwrite');tx.objectStore('kv').clear();tx.objectStore('img').clear()}catch(e){}}}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('on');setTimeout(function(){e.classList.remove('on')},1800)}
+
+/* ---------- build UI ---------- */
+function field(k,label,type,hint){
+  var id='f_'+k.replace(/[^a-z0-9]/gi,'_');
+  var h='<label class="f" for="'+id+'">'+esc(label)+'</label>';
+  if(type==='area')return h+'<textarea id="'+id+'" data-f="'+k+'"></textarea>';
+  if(type==='text')return h+'<input type="text" id="'+id+'" data-f="'+k+'">';
+  if(type.indexOf('sel:')===0){var o=type.slice(4).split('|');return h+'<select id="'+id+'" data-f="'+k+'"><option value="">—</option>'+o.map(function(x){return '<option>'+esc(x)+'</option>'}).join('')+'</select>'}
+  return '';
+}
+var envg=document.getElementById('envgrid');
+ENV.forEach(function(e){envg.insertAdjacentHTML('beforeend','<div><label class="f" for="e_'+e[0]+'">'+esc(e[1])+'</label><input type="text" id="e_'+e[0]+'" data-f="env.'+e[0]+'" placeholder="ожидается: '+esc(e[2])+'"></div>')});
+
+var sr=document.getElementById('stepsroot'),allSteps=[];
+DATA.phases.forEach(function(ph){
+  var hd=document.createElement('h3');hd.style.margin='22px 0 4px';hd.textContent=ph.title;sr.appendChild(hd);
+  ph.steps.forEach(function(s){
+    allSteps.push(s);
+    var d=document.createElement('details');d.className='stepbox';d.dataset.id=s.id;
+    var ev=s.evidence&&s.evidence!=='Не нужны.'&&s.evidence!=='Не нужны (запись в отчёте).'?s.evidence:'';
+    d.innerHTML='<summary><span class="id">'+esc(s.id)+'</span><span class="tt">'+esc(s.title)+(s.optional?' <span class="pill">по желанию</span>':'')+'</span><span class="pill" data-pill="'+s.id+'">Не начат</span></summary><div class="inner">'+
+     '<p class="hint"><b>Ожидается:</b> '+esc(s.short||'')+'</p>'+
+     '<div class="grid2"><div><label class="f" for="s_'+s.id+'_st">Статус</label><select id="s_'+s.id+'_st" data-f="step.'+s.id+'.st">'+STATUS.map(function(x,i){return '<option value="'+i+'">'+x+'</option>'}).join('')+'</select></div>'+
+     '<div><label class="f" for="s_'+s.id+'_m">Результат совпал с ожидаемым?</label><select id="s_'+s.id+'_m" data-f="step.'+s.id+'.m">'+MATCH.map(function(x,i){return '<option value="'+i+'">'+x+'</option>'}).join('')+'</select></div></div>'+
+     '<label class="f" for="s_'+s.id+'_o">Что получилось на самом деле (вставьте вывод команды)</label><textarea id="s_'+s.id+'_o" data-f="step.'+s.id+'.o"></textarea>'+
+     '<label class="f" for="s_'+s.id+'_n">Заметки</label><textarea id="s_'+s.id+'_n" data-f="step.'+s.id+'.n"></textarea>'+
+     '<div class="drop" data-drop="'+s.id+'" tabindex="0"><span>Скриншоты: '+(ev?esc(ev):'по желанию')+'</span> <span>Вставьте Ctrl+V, перетащите файл или </span><label class="btn ghost" style="cursor:pointer">выберите<input type="file" accept="image/*" multiple hidden data-pick="'+s.id+'"></label></div>'+
+     '<div class="shots" data-shots="'+s.id+'"></div></div>';
+    sr.appendChild(d);
+  });
+});
+
+var qr=document.getElementById('qaroot');
+QA.forEach(function(g){
+  var h='<details class="stepbox"><summary><span class="tt">'+esc(g.t)+'</span></summary><div class="inner">';
+  g.items.forEach(function(it){
+    if(it[2]==='check'){h+='<label class="chk"><input type="checkbox" data-f="'+it[0]+'" data-type="check"><span>'+esc(it[1])+'</span></label>'}
+    else h+=field(it[0],it[1],it[2]);
+  });
+  h+='</div></details>';qr.insertAdjacentHTML('beforeend',h);
+});
+
+/* ---------- read/write fields ---------- */
+function bindFields(){
+  document.querySelectorAll('[data-f]').forEach(function(el){
+    if(el.dataset.bound)return;el.dataset.bound='1';
+    var k=el.dataset.f;
+    var ev=(el.tagName==='SELECT'||el.type==='checkbox')?'change':'input';
+    el.addEventListener(ev,function(){
+      var v=el.type==='checkbox'?(el.checked?'1':'0'):el.value;
+      kvSet(k,v);refresh();
+    });
+  });
+}
+function loadFields(){
+  document.querySelectorAll('[data-f]').forEach(function(el){
+    var v=mem.kv[el.dataset.f];
+    if(el.type==='checkbox')el.checked=(v==='1');
+    else if(v!=null)el.value=v;
+    else if(el.tagName==='SELECT')el.selectedIndex=0;
+    else if(el.type!=='checkbox')el.value='';
+  });
+}
+function gv(k){return mem.kv[k]||''}
+function stOf(id){var v=parseInt(gv('step.'+id+'.st'),10);return isNaN(v)?0:v}
+
+/* ---------- logs ---------- */
+function logRows(){var n=parseInt(gv('log.n'),10);return isNaN(n)?0:n}
+function renderLog(){
+  var b=document.getElementById('logbody');b.innerHTML='';
+  for(var i=0;i<logRows();i++){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><input type="date" data-f="log.'+i+'.d"></td><td><input type="text" data-f="log.'+i+'.s" style="min-width:60px"></td><td><textarea data-f="log.'+i+'.p"></textarea></td><td><textarea data-f="log.'+i+'.a"></textarea></td><td><select data-f="log.'+i+'.r"><option value="">—</option><option>Да</option><option>Нет</option></select></td><td><button type="button" class="ghost" data-del="'+i+'">Убрать</button></td>';
+    b.appendChild(tr);
+  }
+  bindFields();loadFields();
+  b.querySelectorAll('[data-del]').forEach(function(x){x.addEventListener('click',function(){delLog(parseInt(x.dataset.del,10))})});
+}
+function delLog(i){
+  var n=logRows(),cols=['d','s','p','a','r'];
+  for(var j=i;j<n-1;j++)cols.forEach(function(c){kvSet('log.'+j+'.'+c,gv('log.'+(j+1)+'.'+c))});
+  cols.forEach(function(c){kvSet('log.'+(n-1)+'.'+c,'')});
+  kvSet('log.n',String(n-1));renderLog();refresh();
+}
+document.getElementById('addLog').addEventListener('click',function(){kvSet('log.n',String(logRows()+1));renderLog();refresh()});
+
+/* ---------- images ---------- */
+function renderShots(){
+  document.querySelectorAll('[data-shots]').forEach(function(box){box.innerHTML=''});
+  Object.keys(mem.img).map(function(k){return mem.img[k]}).sort(function(a,b){return a.ts-b.ts}).forEach(function(o){
+    var box=document.querySelector('[data-shots="'+o.step+'"]');if(!box)return;
+    var d=document.createElement('div');d.className='shot';
+    d.innerHTML='<img src="'+o.data+'" alt="'+esc(o.caption||o.name||'скриншот')+'"><input type="text" placeholder="Подпись" value="'+esc(o.caption||'')+'"><button type="button">Удалить</button>';
+    d.querySelector('img').addEventListener('click',function(){var lb=document.getElementById('lightbox');lb.querySelector('img').src=o.data;lb.style.display='flex'});
+    d.querySelector('input').addEventListener('input',function(e){o.caption=e.target.value;imgPut(o)});
+    d.querySelector('button').addEventListener('click',function(){imgDel(o.id);renderShots();refresh()});
+    box.appendChild(d);
+  });
+}
+document.getElementById('lightbox').addEventListener('click',function(){this.style.display='none'});
+function addImage(stepId,file){
+  if(!file||file.type.indexOf('image/')!==0)return;
+  var fr=new FileReader();
+  fr.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var w=im.width,h=im.height,max=1600,sc=w>max?max/w:1;
+      var c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      var data=c.toDataURL('image/png');
+      if(data.length>2400000)data=c.toDataURL('image/jpeg',0.88);
+      imgPut({id:'i'+Date.now()+Math.random().toString(36).slice(2,6),step:stepId,name:file.name||'paste.png',caption:'',data:data,ts:Date.now()});
+      renderShots();refresh();toast('Скриншот добавлен к шагу '+stepId);
+    };
+    im.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+document.querySelectorAll('[data-drop]').forEach(function(z){
+  var id=z.dataset.drop;
+  ['dragenter','dragover'].forEach(function(ev){z.addEventListener(ev,function(e){e.preventDefault();z.classList.add('over')})});
+  ['dragleave','drop'].forEach(function(ev){z.addEventListener(ev,function(e){e.preventDefault();z.classList.remove('over')})});
+  z.addEventListener('drop',function(e){[].slice.call(e.dataTransfer.files).forEach(function(f){addImage(id,f)})});
+});
+document.querySelectorAll('[data-pick]').forEach(function(inp){inp.addEventListener('change',function(){[].slice.call(inp.files).forEach(function(f){addImage(inp.dataset.pick,f)});inp.value=''})});
+document.querySelectorAll('.stepbox[data-id]').forEach(function(d){d.addEventListener('focusin',function(){lastStep=d.dataset.id});d.addEventListener('click',function(){lastStep=d.dataset.id})});
+document.addEventListener('paste',function(e){
+  var items=(e.clipboardData&&e.clipboardData.items)||[],img=null;
+  for(var i=0;i<items.length;i++){if(items[i].type.indexOf('image/')===0){img=items[i].getAsFile();break}}
+  if(!img)return;
+  if(!lastStep){toast('Сначала кликните внутрь нужного шага');return}
+  e.preventDefault();addImage(lastStep,img);
+});
+
+/* ---------- summary ---------- */
+function counts(){
+  var c=[0,0,0,0,0];allSteps.forEach(function(s){if(!s.optional||stOf(s.id)>0)c[stOf(s.id)]++});return c;
+}
+function refresh(){
+  var req=allSteps.filter(function(s){return !s.optional});
+  var done=req.filter(function(s){return stOf(s.id)===2}).length;
+  var p=req.length?Math.round(done/req.length*100):0;
+  document.getElementById('pbar').style.width=p+'%';
+  var c=[0,0,0,0,0];allSteps.forEach(function(s){c[stOf(s.id)]++});
+  var shots=Object.keys(mem.img).length,issues=0;for(var i=0;i<logRows();i++)if(gv('log.'+i+'.r')!=='Да'&&(gv('log.'+i+'.p')||gv('log.'+i+'.a')))issues++;
+  document.getElementById('sumgrid').innerHTML=
+    '<div><b>'+done+'/'+req.length+'</b><span>обязательных шагов готово</span></div><div><b>'+c[1]+'</b><span>в процессе</span></div><div><b>'+c[3]+'</b><span>с проблемой</span></div><div><b>'+shots+'</b><span>скриншотов</span></div><div><b>'+issues+'</b><span>нерешённых проблем</span></div>';
+  document.getElementById('sumtext').textContent='Готово '+p+'% обязательных шагов (A–F).';
+  allSteps.forEach(function(s){
+    var el=document.querySelector('[data-pill="'+s.id+'"]');if(!el)return;
+    var v=stOf(s.id);el.textContent=STATUS[v];el.className='pill'+(v===2?' s2':v===1?' s1':v===3?' s3':'');
+  });
+  document.getElementById('statusout').value=statusText();
+}
+function phaseLine(ph){
+  var req=ph.steps.filter(function(s){return !s.optional}),d=req.filter(function(s){return stOf(s.id)===2}).length;
+  var run=ph.steps.filter(function(s){return stOf(s.id)===1}).map(function(s){return s.id});
+  var bad=ph.steps.filter(function(s){return stOf(s.id)===3}).map(function(s){return s.id});
+  var mark=(d===req.length&&req.length)?'готово':(d||run.length?'в процессе':'не начато');
+  return ph.title+': '+mark+' ('+d+'/'+req.length+')'+(run.length?'; сейчас: '+run.join(', '):'')+(bad.length?'; проблемы: '+bad.join(', '):'');
+}
+function statusText(){
+  var t=[];
+  var dt=new Date();var ds=('0'+dt.getDate()).slice(-2)+'.'+('0'+(dt.getMonth()+1)).slice(-2)+'.'+dt.getFullYear();
+  t.push('Статус по AI-сертификации, '+ds);
+  if(gv('meta.name'))t.push('Кандидат: '+gv('meta.name'));
+  var req=allSteps.filter(function(s){return !s.optional}),d=req.filter(function(s){return stOf(s.id)===2}).length;
+  t.push('Общий прогресс: '+d+' из '+req.length+' обязательных шагов ('+(req.length?Math.round(d/req.length*100):0)+'%)');
+  DATA.phases.forEach(function(ph){t.push('- '+phaseLine(ph))});
+  var open=[];for(var i=0;i<logRows();i++){if(gv('log.'+i+'.r')!=='Да'&&(gv('log.'+i+'.p')))open.push('  '+(gv('log.'+i+'.s')||'?')+': '+gv('log.'+i+'.p').replace(/\s+/g,' ').slice(0,160))}
+  if(open.length){t.push('Нерешённые проблемы:');t=t.concat(open)}
+  if(gv('final.help'))t.push('Нужна помощь: '+gv('final.help').replace(/\s+/g,' '));
+  if(gv('final.text'))t.push('Комментарий: '+gv('final.text').replace(/\s+/g,' '));
+  return t.join('\n');
+}
+function copyText(txt,msg){
+  function ok(){toast(msg||'Скопировано')}
+  function fb(){var ta=document.getElementById('statusout');ta.value=txt;ta.select();try{document.execCommand('copy');ok()}catch(e){toast('Выделено, нажмите Ctrl+C')}}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb)}else fb()}catch(e){fb()}
+}
+document.getElementById('bStatus').addEventListener('click',function(){refresh();copyText(statusText(),'Статус скопирован')});
+document.getElementById('bStatus2').addEventListener('click',function(){refresh();copyText(statusText(),'Статус скопирован')});
+
+/* ---------- export ---------- */
+function dl(name,blob){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+document.getElementById('bJson').addEventListener('click',function(){
+  dl('orders-report-backup.json',new Blob([JSON.stringify({v:1,kv:mem.kv,img:mem.img})],{type:'application/json'}));toast('Копия сохранена');
+});
+document.getElementById('fJson').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var o=JSON.parse(r.result);if(!o||!o.kv)throw 0;clearAll();Object.keys(o.kv).forEach(function(k){kvSet(k,o.kv[k])});Object.keys(o.img||{}).forEach(function(k){imgPut(o.img[k])});renderLog();loadFields();renderShots();refresh();toast('Копия загружена')}catch(x){toast('Файл не похож на копию отчёта')}};
+  r.readAsText(f);e.target.value='';
+});
+document.getElementById('bPrint').addEventListener('click',function(){document.querySelectorAll('details').forEach(function(d){d.open=true});try{window.print()}catch(e){toast('Печать недоступна')}});
+document.getElementById('bHtml').addEventListener('click',function(){
+  var h=[];
+  h.push('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчёт orders-analytics</title><style>body{font:15px/1.55 Segoe UI,system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#17201d}h1,h2,h3{font-family:Georgia,serif}h2{border-top:1px solid #ccd;padding-top:14px;margin-top:28px}pre{background:#eef2f0;padding:10px;border-radius:6px;white-space:pre-wrap}.q{margin:10px 0}.q b{display:block;color:#445}.s{border:1px solid #ccd;border-radius:8px;padding:8px 12px;margin:10px 0}.pill{font:12px monospace;background:#e6ecea;border-radius:99px;padding:1px 8px}img{max-width:100%;border:1px solid #ccd;border-radius:6px;margin:6px 0}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccd;padding:5px 8px;text-align:left;vertical-align:top}</style></head><body>');
+  h.push('<h1>Отчёт по проекту orders-analytics</h1>');
+  h.push('<p><b>Кандидат:</b> '+esc(gv('meta.name'))+' &nbsp; <b>Куратор:</b> '+esc(gv('meta.curator'))+' &nbsp; <b>Начало:</b> '+esc(gv('meta.start'))+'<br><b>Папка проекта:</b> '+esc(gv('meta.project'))+' &nbsp; <b>Репозиторий:</b> '+esc(gv('meta.repo'))+' &nbsp; <b>Система:</b> '+esc(gv('meta.os'))+'</p>');
+  h.push('<h2>Сводка</h2><pre>'+esc(statusText())+'</pre>');
+  h.push('<h2>Среда</h2><table><tr><th>Инструмент</th><th>Факт</th><th>Ожидается</th></tr>'+ENV.map(function(e){return '<tr><td>'+esc(e[1])+'</td><td>'+esc(gv('env.'+e[0]))+'</td><td>'+esc(e[2])+'</td></tr>'}).join('')+'</table>');
+  h.push('<h2>Шаги</h2>');
+  allSteps.forEach(function(s){
+    var imgs=Object.keys(mem.img).map(function(k){return mem.img[k]}).filter(function(o){return o.step===s.id}).sort(function(a,b){return a.ts-b.ts});
+    var touched=stOf(s.id)>0||gv('step.'+s.id+'.o')||gv('step.'+s.id+'.n')||imgs.length;
+    if(!touched)return;
+    h.push('<div class="s"><h3>'+esc(s.id)+'. '+esc(s.title)+' <span class="pill">'+STATUS[stOf(s.id)]+'</span> <span class="pill">'+MATCH[parseInt(gv('step.'+s.id+'.m'),10)||0]+'</span></h3>'+
+      (gv('step.'+s.id+'.o')?'<b>Результат:</b><pre>'+esc(gv('step.'+s.id+'.o'))+'</pre>':'')+
+      (gv('step.'+s.id+'.n')?'<b>Заметки:</b><pre>'+esc(gv('step.'+s.id+'.n'))+'</pre>':'')+
+      imgs.map(function(o){return '<div><img src="'+o.data+'" alt="">'+(o.caption?'<div><i>'+esc(o.caption)+'</i></div>':'')+'</div>'}).join('')+'</div>');
+  });
+  h.push('<h2>Ответы и решения</h2>');
+  QA.forEach(function(g){
+    h.push('<h3>'+esc(g.t)+'</h3>');
+    g.items.forEach(function(it){
+      var v=gv(it[0]);
+      if(it[2]==='check')h.push('<div class="q">'+(v==='1'?'[x] ':'[ ] ')+esc(it[1])+'</div>');
+      else h.push('<div class="q"><b>'+esc(it[1])+'</b>'+(v?'<pre>'+esc(v)+'</pre>':'<i>не заполнено</i>')+'</div>');
+    });
+  });
+  var rows=[];for(var i=0;i<logRows();i++)rows.push('<tr><td>'+esc(gv('log.'+i+'.d'))+'</td><td>'+esc(gv('log.'+i+'.s'))+'</td><td>'+esc(gv('log.'+i+'.p'))+'</td><td>'+esc(gv('log.'+i+'.a'))+'</td><td>'+esc(gv('log.'+i+'.r'))+'</td></tr>');
+  h.push('<h2>Журнал проблем</h2>'+(rows.length?'<table><tr><th>Дата</th><th>Шаг</th><th>Проблема</th><th>Что сделала</th><th>Решено</th></tr>'+rows.join('')+'</table>':'<p>Записей нет.</p>'));
+  h.push('<h2>Итог</h2><pre>'+esc(gv('final.text'))+'</pre><p><b>Нужна помощь:</b> '+esc(gv('final.help'))+'</p></body></html>');
+  dl('orders-report.html',new Blob([h.join('\n')],{type:'text/html'}));toast('Отчёт сохранён');
+});
+var armed=false;
+document.getElementById('bClear').addEventListener('click',function(){
+  var b=this;if(!armed){armed=true;b.textContent='Нажмите ещё раз: удалить всё';setTimeout(function(){armed=false;b.textContent='Очистить весь отчёт'},3500);return}
+  clearAll();renderLog();loadFields();renderShots();refresh();armed=false;b.textContent='Очистить весь отчёт';toast('Отчёт очищен');
+});
+
+/* ---------- start ---------- */
+openDB().then(function(ok){
+  if(!ok){document.getElementById('storewarn').hidden=false;return {kv:{},img:{}}}
+  return Promise.all([idbAll('kv'),idbAll('img')]).then(function(r){return {kv:r[0],img:r[1]}});
+}).then(function(d){
+  mem=d;bindFields();renderLog();loadFields();renderShots();refresh();
+  if(!gv('meta.start')){var t=new Date(),s=t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2);var el=document.getElementById('m_start');el.value=s;kvSet('meta.start',s)}
+});
+})();
+</script>
+</body>
+</html>
