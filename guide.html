@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Установка окружения: интерактивный гайд</title>
+<style>
+  :root {
+    --bg: #fafaf7; --fg: #1d1d1b; --muted: #6b6b66; --card: #ffffff;
+    --accent: #c2410c; --ok: #15803d; --code-bg: #f1f1ec; --border: #e4e4dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161614; --fg: #ecece6; --muted: #9c9c94; --card: #1f1f1c;
+      --accent: #fb923c; --ok: #4ade80; --code-bg: #2a2a26; --border: #34342f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161614; --fg: #ecece6; --muted: #9c9c94; --card: #1f1f1c;
+    --accent: #fb923c; --ok: #4ade80; --code-bg: #2a2a26; --border: #34342f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .progress { position: sticky; top: 0; background: var(--bg); padding: 12px 0; z-index: 2; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .bar > div { height: 100%; width: 0; background: var(--ok); transition: width .2s; }
+  .progress-text { font-size: .9rem; color: var(--muted); margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 8px; padding: 6px 12px; }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin: 14px 0; }
+  .step.done { border-color: var(--ok); }
+  .step h2 { font-size: 1.15rem; margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+  .step .where { color: var(--muted); font-size: .9rem; margin: 0 0 10px; }
+  .done-mark { color: var(--ok); }
+  label.check { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; cursor: pointer; }
+  label.check input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+  pre { position: relative; background: var(--code-bg); border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 10px 0; font: 14px/1.45 ui-monospace, Consolas, monospace; }
+  pre code { white-space: pre; }
+  .copy { position: absolute; top: 6px; right: 6px; font-size: .8rem; padding: 3px 8px; }
+  .note { border-left: 3px solid var(--accent); padding: 4px 12px; margin: 10px 0; color: var(--muted); }
+  .warn { border-left-color: #dc2626; }
+  details { margin: 10px 0; }
+  summary { cursor: pointer; color: var(--accent); }
+  .toolbar { display: flex; gap: 8px; margin: 12px 0 0; flex-wrap: wrap; }
+  .hidden { display: none; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; margin: 8px 0; }
+  th, td { text-align: left; border-bottom: 1px solid var(--border); padding: 6px 4px; vertical-align: top; }
+  @media (max-width: 480px) { main { padding: 16px 12px 48px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Установка окружения</h1>
+  <p class="sub">Пошагово: отмечайте выполненное, копируйте команды кнопкой «Копировать». Прогресс сохраняется в этом браузере.</p>
+
+  <div class="progress">
+    <div class="bar"><div id="bar"></div></div>
+    <div class="progress-text">
+      <span id="count">0 из 7 шагов</span>
+      <span><button id="reset" type="button">Сбросить прогресс</button></span>
+    </div>
+  </div>
+
+  <section class="step" data-id="s1">
+    <h2><span class="done-mark"></span>1. Программы: PowerShell 7, Git, Python 3.11, Claude Code</h2>
+    <p class="where">Где: обычный PowerShell · Время: 10–15 минут</p>
+    <p>Dbt 1.7 не работает на Python 3.12 и новее, поэтому нужен именно 3.11.</p>
+    <pre><code>winget install --id Microsoft.PowerShell
+winget install --id Git.Git
+winget install --id Python.Python.3.11</code><button class="copy" type="button">Копировать</button></pre>
+    <p>Claude Code установите по официальной инструкции Anthropic. Затем <strong>откройте новое окно терминала</strong> и проверьте версии:</p>
+    <pre><code>pwsh --version
+git --version
+py -3.11 --version
+claude --version</code><button class="copy" type="button">Копировать</button></pre>
+    <table>
+      <tr><th>Программа</th><th>Нужная версия</th></tr>
+      <tr><td>PowerShell</td><td>7.4 и выше</td></tr>
+      <tr><td>Git</td><td>2.45.1 и выше</td></tr>
+      <tr><td>Python</td><td>3.11.x</td></tr>
+    </table>
+    <label class="check"><input type="checkbox" data-step="s1"> Все четыре команды показали версии</label>
+  </section>
+
+  <section class="step" data-id="s2">
+    <h2><span class="done-mark"></span>2. Установить accelerator и навык accelerator-setup</h2>
+    <p class="where">Где: папка <code>installation</code> из курса · Время: 5 минут</p>
+    <p>Распакуйте папку <code>installation</code> и запустите скрипт <strong>из неё</strong>. Не используйте <code>install.ps1</code> и <code>install.sh</code>: они ставят только команду, без навыка.</p>
+    <pre><code>cd C:\путь\к\installation
+pwsh -File install-accelerator.ps1 --agent claude</code><button class="copy" type="button">Копировать</button></pre>
+    <details>
+      <summary>PowerShell не даёт запустить скрипт</summary>
+      <pre><code>Set-ExecutionPolicy -Scope Process Bypass -Force</code><button class="copy" type="button">Копировать</button></pre>
+    </details>
+    <p>Откройте <strong>новое</strong> окно терминала и проверьте:</p>
+    <pre><code>accelerator --version</code><button class="copy" type="button">Копировать</button></pre>
+    <p class="note">Ожидаемо: первая строка — версия (например, 0.18.0), затем пути launcher, module, pwsh и git. Если Claude Code был открыт во время установки, перезапустите его.</p>
+    <label class="check"><input type="checkbox" data-step="s2"> <code>accelerator --version</code> показывает версию</label>
+  </section>
+
+  <section class="step" data-id="s3">
+    <h2><span class="done-mark"></span>3. Pester 5.6.1 (для Epic-03)</h2>
+    <p class="where">Где: PowerShell · Время: 2 минуты</p>
+    <pre><code>Install-Module Pester -RequiredVersion 5.6.1 -Scope CurrentUser -Force -SkipPublisherCheck
+Import-Module Pester -RequiredVersion 5.6.1
+(Get-Module Pester).Version.ToString()</code><button class="copy" type="button">Копировать</button></pre>
+    <p class="note">Последняя строка должна вывести <code>5.6.1</code>. Другая мажорная версия Pester не подходит.</p>
+    <label class="check"><input type="checkbox" data-step="s3"> Вывод: <code>5.6.1</code></label>
+  </section>
+
+  <section class="step" data-id="s4">
+    <h2><span class="done-mark"></span>4. Рабочая копия проекта</h2>
+    <p class="where">Где: PowerShell · Время: 1 минута</p>
+    <p>Скопируйте папку <code>fixture</code> из папки <code>exercises</code> в отдельное место. Работайте в копии, а не в папке из курса.</p>
+    <pre><code>Copy-Item -Recurse C:\путь\к\exercises\fixture C:\Users\&lt;вы&gt;\orders-analytics
+cd C:\Users\&lt;вы&gt;\orders-analytics</code><button class="copy" type="button">Копировать</button></pre>
+    <label class="check"><input type="checkbox" data-step="s4"> Папка <code>orders-analytics</code> существует и в ней есть <code>requirements.txt</code></label>
+  </section>
+
+  <section class="step" data-id="s5">
+    <h2><span class="done-mark"></span>5. Окружение Python и пакеты</h2>
+    <p class="where">Где: папка проекта в PowerShell · Время: 3–5 минут</p>
+    <p>Скрипт <code>scripts\setup-env.ps1</code> из этого репозитория: находит Python 3.11, создаёт <code>.venv</code>, ставит все пакеты <strong>одной командой</strong> и запускает <code>pip check</code>. Сам скрипт положите в папку <code>scripts</code> проекта (скопируйте из репозитория).</p>
+    <pre><code>powershell -ExecutionPolicy Bypass -File scripts\setup-env.ps1</code><button class="copy" type="button">Копировать</button></pre>
+    <div class="note warn">Не ставьте dbt-core и dbt-duckdb отдельными командами: dbt-core заменится, и появится ошибка <code>No module named 'dbt.adapters.factory'</code>. Если так произошло, удалите <code>.venv</code> и запустите скрипт заново.</div>
+    <label class="check"><input type="checkbox" data-step="s5"> Скрипт закончился строкой <code>Done.</code>, а <code>pip check</code> написал <code>No broken requirements found.</code></label>
+  </section>
+
+  <section class="step" data-id="s6">
+    <h2><span class="done-mark"></span>6. Проверка всего окружения</h2>
+    <p class="where">Где: папка проекта в PowerShell · Время: 1 минута</p>
+    <p>Скрипт <code>scripts\check-env.ps1</code> ничего не меняет, только выводит версии.</p>
+    <pre><code>powershell -ExecutionPolicy Bypass -File scripts\check-env.ps1</code><button class="copy" type="button">Копировать</button></pre>
+    <table>
+      <tr><th>Строка</th><th>Ожидаемо</th></tr>
+      <tr><td>python</td><td>Python 3.11.x</td></tr>
+      <tr><td>dbt</td><td>installed: 1.7.9</td></tr>
+      <tr><td>pytest</td><td>pytest 8.1.1</td></tr>
+      <tr><td>duckdb</td><td>0.10.2</td></tr>
+      <tr><td>pester</td><td>True</td></tr>
+    </table>
+    <label class="check"><input type="checkbox" data-step="s6"> Все строки совпадают с таблицей</label>
+  </section>
+
+  <section class="step" data-id="s7">
+    <h2><span class="done-mark"></span>7. Если dbt или duckdb заблокированы Windows</h2>
+    <p class="where">Где: проверка и обращение к администратору · Время: зависит от IT</p>
+    <p>Симптомы:</p>
+    <ul>
+      <li><code>dbt.exe</code> выдаёт <code>Permission denied</code>;</li>
+      <li><code>import duckdb</code> выдаёт <code>An Application Control policy has blocked this file</code>.</li>
+    </ul>
+    <p>Политику безопасности не обходите: её меняет только администратор. Чтобы проверить, что dbt вообще работает, запустите через Python, чтобы проверить, что dbt вообще работает:</p>
+    <pre><code>.venv\Scripts\python.exe -m dbt.cli.main --version</code><button class="copy" type="button">Копировать</button></pre>
+    <p>Если блокируется <code>_duckdb</code>, попросите администратора добавить исключение для папки <code>.venv</code> (или для файлов <code>duckdb</code> и <code>_duckdb*.pyd</code>). Приложите вывод <code>check-env.ps1</code>.</p>
+    <label class="check"><input type="checkbox" data-step="s7"> Исключение есть, либо вы знаете, что нужно сделать с IT, или блокировки нет</label>
+  </section>
+
+  <section class="step" data-id="done">
+    <h2>Готово</h2>
+    <p>Окружение собрано. Следующие шаги:</p>
+    <ul>
+      <li><strong>Epic-01:</strong> в Claude Code, в папке проекта, запустите <code>/accelerator:accelerator-setup</code>.</li>
+      <li><strong>Epic-02:</strong> <code>.venv\Scripts\Activate.ps1</code>, затем <code>dbt</code> в папке проекта.</li>
+      <li><strong>Epic-03:</strong> тесты Pester с <code>Import-Module Pester -RequiredVersion 5.6.1</code>.</li>
+    </ul>
+    <div class="toolbar"><button id="reset2" type="button">Сбросить прогресс</button></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var KEY = 'install-guide-progress-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('input[data-step]'));
+  var total = boxes.length;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable: keep working */ }
+  }
+  function render() {
+    var state = load();
+    var done = 0;
+    boxes.forEach(function (b) {
+      b.checked = !!state[b.dataset.step];
+      if (b.checked) done++;
+      var section = b.closest('.step');
+      section.classList.toggle('done', b.checked);
+      section.querySelector('.done-mark').textContent = b.checked ? '✓' : '';
+    });
+    document.getElementById('bar').style.width = (done / total * 100) + '%';
+    document.getElementById('count').textContent = done + ' из ' + total + ' шагов';
+  }
+
+  boxes.forEach(function (b) {
+    b.addEventListener('change', function () {
+      var state = load();
+      state[b.dataset.step] = b.checked;
+      save(state);
+      render();
+    });
+  });
+
+  function reset() {
+    save({});
+    render();
+  }
+  document.getElementById('reset').addEventListener('click', reset);
+  document.getElementById('reset2').addEventListener('click', reset);
+
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = btn.parentNode.querySelector('code').textContent;
+      var done = function () { btn.textContent = 'Скопировано'; setTimeout(function () { btn.textContent = 'Копировать'; }, 1500); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+      } else { fallback(text); done(); }
+    });
+  });
+  function fallback(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
